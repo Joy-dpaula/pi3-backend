@@ -3,3 +3,16 @@
 3° semestre de 2024
 
 ````
+
+´´´´
+###Comandos para branch 
+
+git checkout 'nome da branch'
+
+git status
+
+git add .
+
+
+
+´´´´
