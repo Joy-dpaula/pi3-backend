@@ -1,11 +1,11 @@
 ````
-## Repositório criado para o backend do Projeto Integrador do 
+### Repositório criado para o backend do Projeto Integrador do 
 3° semestre de 2024
 
 ````
 
 ´´´´
-###Comandos para branch 
+### Comandos para branch 
 
 git checkout 'nome da branch'
 
@@ -16,3 +16,15 @@ git add .
 
 
 ´´´´
+
+
+
+´´´´´
+ ### Instalando prisma 
+
+npm install prisma --save-dev
+
+
+
+
+´´´´´
