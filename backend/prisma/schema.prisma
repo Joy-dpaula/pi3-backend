@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,9 +6,35 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 model Usuario {
-  id             Int      @id @default(autoincrement())
-  nome           String   @db.VarChar(50)
- 
+  id         Int       @id @default(autoincrement())
+  nome       String    @db.VarChar(50)
+  cpf        String    @unique @db.VarChar(15)
+  telefone   String    @db.VarChar(15)
+  email      String    @db.VarChar(200)
+  nascimento DateTime
+  senha      String    @db.VarChar(20)
+  Veiculo    Veiculo[]
 }
 
+model Veiculo {
+  id            Int      @id @default(autoincrement())
+  modelo        String   @db.VarChar(50)
+  anoFabricacao DateTime
+  cor           String   @db.VarChar(5)
+  descricao     String   @db.VarChar(500)
+  valor         Int
+  km            Int
+  marca         String   @db.VarChar(20)
+  foto          String
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId     Int
+  Compra        Compra[]
+}
+
+model Compra {
+  id           Int     @id @default(autoincrement())
+  veiculo      Veiculo @relation(fields: [veiculoId], references: [id])
+  veiculoId    Int
+}
