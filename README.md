@@ -24,7 +24,9 @@ git add .
 
 npm install prisma --save-dev
 
+npx prisma generate
 
+npx prisma db push
 
 
 ´´´´´
