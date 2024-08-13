@@ -16,6 +16,7 @@ model Usuario {
   nascimento DateTime
   senha      String    @db.VarChar(30)
   Veiculo    Veiculo[]
+  Compra     Compra[]
 }
 
 model Veiculo {
@@ -34,7 +35,9 @@ model Veiculo {
 }
 
 model Compra {
-  id           Int     @id @default(autoincrement())
-  veiculo      Veiculo @relation(fields: [veiculoId], references: [id])
-  veiculoId    Int
+  id        Int     @id @default(autoincrement())
+  veiculo   Veiculo @relation(fields: [veiculoId], references: [id])
+  veiculoId Int
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
 }
