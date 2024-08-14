@@ -1,4 +1,3 @@
-
 var express = require('express');
 var router = express.Router();
 
@@ -10,6 +9,7 @@ const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const router = express.Router();
+})
 
 // Criar um novo usuário
 router.post('/', async (req, res) => {
@@ -25,6 +25,7 @@ router.post('/', async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+
 // Obter todos os usuários
 router.get('/', async (req, res) => {
   try {

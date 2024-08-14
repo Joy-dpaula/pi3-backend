@@ -6,13 +6,13 @@ var logger = require('morgan');
 var cors = require('cors'); // Importa o pacote cors
 
 
-var indexRouter = require('./routes/index');
+var indexRouter = require('./src/routers/index');
 
-var usersRouter = require('./routes/usuarios');
+var usersRouter = require('./src/routers/usuarios');
   
 
-var usersRouter = require('./routes/users');
-var usuariosRoutes = require('./routes/usuarios');
+var usersRouter = require('./src/routers/users');
+var usuariosRoutes = require('./src/routers/usuarios');
 
 var app = express();
 
@@ -47,7 +47,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-
 
 module.exports = app;
