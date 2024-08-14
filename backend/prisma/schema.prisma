@@ -14,15 +14,16 @@ model Usuario {
   telefone   String    @db.VarChar(15)
   email      String    @db.VarChar(200)
   nascimento DateTime
-  senha      String    @db.VarChar(20)
+  senha      String    @db.VarChar(30)
   Veiculo    Veiculo[]
+  Compra     Compra[]
 }
 
 model Veiculo {
   id            Int      @id @default(autoincrement())
   modelo        String   @db.VarChar(50)
   anoFabricacao DateTime
-  cor           String   @db.VarChar(5)
+  cor           String   @db.VarChar(30)
   descricao     String   @db.VarChar(500)
   valor         Int
   km            Int
@@ -34,7 +35,9 @@ model Veiculo {
 }
 
 model Compra {
-  id           Int     @id @default(autoincrement())
-  veiculo      Veiculo @relation(fields: [veiculoId], references: [id])
-  veiculoId    Int
+  id        Int     @id @default(autoincrement())
+  veiculo   Veiculo @relation(fields: [veiculoId], references: [id])
+  veiculoId Int
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
 }

@@ -7,6 +7,10 @@ var cors = require('cors'); // Importa o pacote cors
 
 
 var indexRouter = require('./routes/index');
+
+var usersRouter = require('./routes/usuarios');
+  
+
 var usersRouter = require('./routes/users');
 var usuariosRoutes = require('./routes/usuarios');
 
