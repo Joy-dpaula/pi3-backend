@@ -3,18 +3,17 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var cors = require('cors'); // Importa o pacote cors
+var cors = require('cors'); 
 
+var indexRouter = require('./src/routers/index');
 
-var indexRouter = require('./routes/index');
-
-var usersRouter = require('./routes/usuarios');
+var usersRouter = require('./src/routers/accountRoutes');
   
 
-var usersRouter = require('./routes/users');
-var usuariosRoutes = require('./routes/usuarios');
+var usersRouter = require('./src/routers/users');
+var usuariosRoutes = require('./src/routers/accountRoutes');
 
-var app = express();
+var app = express(); 
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -47,7 +46,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-
 
 module.exports = app;
