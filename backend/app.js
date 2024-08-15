@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan'
 import cors from 'cors'
 
-import accountRoutes from './src/routers/accountRoutes.js'
+import accountRoutes from './src/routers/accountRouter.js'
 // var indexRouter = require('./src/routers/index');
 // var usersRouter = require('./src/routers/accountRoutes');
 // var usersRouter = require('./src/routers/users');
