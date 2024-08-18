@@ -30,3 +30,17 @@ npx prisma db push
 
 
 ´´´´´
+### Para puxar os códigos da branch master para a sua branch atual, siga os seguintes passos:
+
+`````
+git checkout sua-branch
+
+git checkout master
+
+git pull origin master
+
+git checkout sua-branch
+
+
+
+`````
