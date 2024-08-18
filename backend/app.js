@@ -10,9 +10,12 @@ import accountRoutes from './src/routers/accountRouter.js'
 // var usersRouter = require('./src/routers/users');
 // var usuariosRoutes = require('./src/routers/accountRoutes');
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 const app = express(); 
 
 app.set('views', path.join(__dirname, 'views'));
+
 app.set('view engine', 'jade');
 
 app.use(cors()); 
@@ -25,4 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/usuarios', accountRoutes);
 
-export default router
+export default app
+
+
+// git commit -m "Padrão de importação configurado"    
