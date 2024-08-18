@@ -30,5 +30,4 @@ app.use('/usuarios', accountRoutes);
 
 export default app
 
-
-// git commit -m "Padrão de importação configurado"    
+   
