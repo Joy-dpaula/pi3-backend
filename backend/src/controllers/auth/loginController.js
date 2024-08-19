@@ -1,15 +1,18 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { setCookie } from '../../../utils/cookie.js'; // Verifique o caminho do módulo de cookies
+import { setCookie } from '../../../utils/cookie.js';
+
+ // Verifique o caminho do módulo de cookies
 
 const prisma = new PrismaClient();
 
 
+
 const loginController = async (req, res) => {
   try {
-    const { password, cpf } = req.body;
+    const { senha, cpf } = req.body;
 
-    if (!password || !cpf) {
+    if (!('senha' in data) || !('cpf' in data)) {
       return res.status(401).json({
         success: false,
         error: "Usuário e senha são obrigatórios"
@@ -17,7 +20,9 @@ const loginController = async (req, res) => {
     }
 
     const usuario = await prisma.usuario.findUnique({
-      where: { cpf }
+      where: {
+          cpf: data.cpf
+      } 
     });
 
     if (!usuario) {
@@ -27,24 +32,25 @@ const loginController = async (req, res) => {
       });
     }
 
-    const passwordCheck = await bcrypt.compare(password, usuario.password);
+    // Debugging: Log the values
+    console.log('Senha enviada:', senha);
+    console.log('Senha do usuário no banco de dados:', usuario.senha);
 
-    if (!passwordCheck) {
+    const hashedPassword = await bcrypt.hash(data.senha, usuario.senha);
+
+    if (!hashedPassword) {
       return res.status(401).json({
         success: false,
         error: "Usuário e/ou senha incorreta(s)"
       });
     }
 
-    // Remove a senha antes de armazenar nos cookies
-    delete usuario.password;
+    delete usuario.senha;
 
-    // Define um cookie assinado com as informações do usuário
     setCookie(res, 'userData', JSON.stringify(usuario), { 
-      maxAge: 24 * 60 * 60 * 1000 // Define a duração do cookie (24 horas)
+      maxAge: 24 * 60 * 60 * 1000 
     });
 
-    // Retorna um objeto contendo o usuário
     res.json({
       success: true,
       user: usuario

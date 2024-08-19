@@ -8,6 +8,9 @@ import accountRouter from './src/routers/accountRouter.js'
 import authRouter from './src/routers/authRouter.js'
 import cookieRouter from './src/routers/cookieRouter.js'
 
+
+
+
 const app = express(); 
 
 
@@ -18,12 +21,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+
+
 app.use('/usuarios', accountRouter);
 app.use('/auth' , authRouter)
 app.use('/cookie' , cookieRouter)
 
 
 
-app.listen(3000, () => {
-    console.log('Servidor Rodando em http://localhost:3000')
+app.listen(5000, () => {
+    console.log('Servidor Rodando em http://localhost:5000')
 })
