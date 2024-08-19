@@ -1,5 +1,4 @@
 import pkg from '@prisma/client';
-
 const { PrismaClientValidationError } = pkg;
 
 export function exceptionHandler(exception, res) {
