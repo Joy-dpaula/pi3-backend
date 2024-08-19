@@ -3,7 +3,6 @@ const router = express.Router();
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient({ errorFormat: "minimal" });
-const bcrypt = require('bcryptjs');
 const { exceptionHandler } = require('../utils/ajuda');
 const { generateAccessToken, authenticateToken } = require('../utils/auth');
 
