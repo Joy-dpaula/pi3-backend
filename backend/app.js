@@ -5,6 +5,8 @@ import logger from 'morgan'
 import cors from 'cors'
 
 import accountRoutes from './src/routers/accountRouter.js'
+import shoppingRoutes from './src/routers/shoppingRouter.js'
+
 // var indexRouter = require('./src/routers/index');
 // var usersRouter = require('./src/routers/accountRoutes');
 // var usersRouter = require('./src/routers/users');
@@ -27,6 +29,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/usuarios', accountRoutes);
+app.use('/veiculos', shoppingRoutes);
+
 
 export default app
 
