@@ -1,4 +1,4 @@
-import { setCookie } from '../../../utils/cookie.js'; // Ajuste o caminho conforme necessário
+import { setCookie } from '../../utils/cookie.js'; // Ajuste o caminho conforme necessário
 
 const postController = (req, res) => {
   const { name, value } = req.body;

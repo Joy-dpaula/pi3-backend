@@ -1,4 +1,4 @@
-import { getCookie } from '../../../utils/cookie.js'; // Ajuste o caminho conforme necessário
+import { getCookie } from '../../utils/cookie.js'; // Ajuste o caminho conforme necessário
 
 const getController = (req, res) => {
   const { name } = req.params;

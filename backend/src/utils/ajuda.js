@@ -1,7 +1,8 @@
-const { PrismaClientValidationError } = require('@prisma/client');
+import pkg from '@prisma/client';
+const { PrismaClientValidationError } = pkg;
 
-function exceptionHandler(exception, res) {
-    console.error(exception); // Adicionando esta linha para imprimir o erro completo no console
+export function exceptionHandler(exception, res) {
+    console.error(exception);
     if (exception instanceof PrismaClientValidationError) {
         res.status(400).json({
             error: "PrismaClientValidationError",
@@ -15,7 +16,3 @@ function exceptionHandler(exception, res) {
         });
     }
 }
-
-module.exports = {
-    exceptionHandler
-};
