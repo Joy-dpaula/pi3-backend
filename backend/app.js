@@ -8,7 +8,10 @@ import authRouter from './src/routers/authRouter.js'
 import cookieRouter from './src/routers/cookieRouter.js'
 import { exceptionHandler } from './src/utils/ajuda.js';
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 const app = express(); 
+
 
 app.use(cors()); 
 app.use(logger('dev'));
@@ -19,6 +22,7 @@ app.use(exceptionHandler)
 app.use('/usuarios', accountRouter);
 app.use('/auth' , authRouter)
 app.use('/cookie' , cookieRouter)
+
 
 app.listen(5000, () => {
     console.log('Servidor Rodando em http://localhost:5000')
