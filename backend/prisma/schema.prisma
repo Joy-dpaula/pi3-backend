@@ -12,10 +12,18 @@ model Usuario {
   nome       String    @db.VarChar(50)
   cpf        String    @unique @db.VarChar(15)
   telefone   String    @db.VarChar(15)
-  email      String    @db.VarChar(200)
+  email      String    @unique @db.VarChar(200)
   nascimento DateTime
   senha      String    @db.VarChar(20)
   Veiculo    Veiculo[]
+<<<<<<< Updated upstream
+=======
+  Compra     Compra[]
+  messagesSent    Message[] @relation("Sender")
+  messagesReceived Message[] @relation("Recipient")
+  
+  @@index([email])  // indice no campo email para otimização de buscas
+>>>>>>> Stashed changes
 }
 
 model Veiculo {
@@ -37,4 +45,14 @@ model Compra {
   id           Int     @id @default(autoincrement())
   veiculo      Veiculo @relation(fields: [veiculoId], references: [id])
   veiculoId    Int
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  sender      Usuario  @relation("Sender", fields: [senderId], references: [id])
+  senderId    Int
+  recipient   Usuario  @relation("Recipient", fields: [recipientId], references: [id])
+  recipientId Int
+  content     String
+  timestamp   DateTime @default(now())
 }

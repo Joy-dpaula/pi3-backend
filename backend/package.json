@@ -3,7 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+<<<<<<< Updated upstream
     "start": "node ./bin/www"
+=======
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "migrate": "npx prisma migrate dev",
+    "generate": "npx prisma generate",
+    "seed": "node prisma/seed.js",
+    "lint": "eslint . --fix"
+>>>>>>> Stashed changes
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
@@ -16,9 +25,24 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "redis": "^4.7.0"
   },
   "devDependencies": {
-    "prisma": "^5.18.0"
+    "prisma": "^5.18.0",
+    "nodemon": "^2.0.15",
+    "eslint": "^8.29.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base",
+    "env": {
+      "node": true,
+      "es6": true
+    },
+    "rules": {
+      "no-console": "off"
+    }
   }
 }

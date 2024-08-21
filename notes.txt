@@ -1,0 +1,142 @@
+Passo a Passo para Testar a API no Thunder Client
+
+1. Instalar o Thunder Client:
+
+    Abra o VS Code.
+    Na barra lateral, clique no ícone de extensões (ou use Ctrl+Shift+X).
+    Pesquise por "Thunder Client" e clique em "Instalar".
+    Uma vez instalado, você verá um ícone de nuvem na barra lateral do VS Code. Este é o Thunder Client.
+
+2. Criar uma Nova Coleção no Thunder Client:
+
+    Clique no ícone do Thunder Client na barra lateral do VS Code.
+    No Thunder Client, clique em "New Collection".
+    Nomeie a coleção como "API Usuários" para organizar todas as requisições relacionadas.
+    Dentro desta coleção, você pode criar pastas para cada grupo de funcionalidades, como "Contas", "Perfil", "Preferências", "Recomendações e Fraudes".
+
+3. Configurar Requisições HTTP no Thunder Client:
+
+Dentro da coleção "API Usuários", crie as seguintes requisições:
+
+A. CRUD de Contas de Usuário
+
+    Criar uma Conta
+        Método: POST
+        URL: http://localhost:3000/usuarios/
+        Body:
+
+        json
+
+    {
+      "name": "MEYER",
+      "email": "Meyer.Leo@example.com",
+      "password": "password123"
+    }
+
+    O que esperar: Uma resposta confirmando a criação da conta.
+
+Obter Todas as Contas
+
+    Método: GET
+    URL: http://localhost:3000/usuarios/
+    O que esperar: Uma lista de todas as contas cadastradas.
+
+Obter Conta por ID
+
+    Método: GET
+    URL: http://localhost:3000/usuarios/{id}
+    Substitua {id} pelo ID da conta que você quer buscar.
+    O que esperar: Os detalhes da conta específica.
+
+Atualizar uma Conta
+
+    Método: PUT
+    URL: http://localhost:3000/usuarios/{id}
+    Body:
+
+    json
+
+        {
+          "name": "John Updated",
+          "email": "john.updated@example.com"
+        }
+
+        O que esperar: Confirmação de que a conta foi atualizada.
+
+    Excluir uma Conta
+        Método: DELETE
+        URL: http://localhost:3000/usuarios/{id}
+        O que esperar: Confirmação de que a conta foi excluída.
+
+B. Perfil de Usuário
+
+    Obter o Perfil do Usuário
+        Método: GET
+        URL: http://localhost:3000/usuarios/profile
+        O que esperar: Os detalhes do perfil do usuário logado.
+
+    Atualizar o Perfil do Usuário
+        Método: PUT
+        URL: http://localhost:3000/usuarios/profile
+        Body:
+
+        json
+
+        {
+          "name": "Jane Doe",
+          "email": "jane.doe@example.com",
+          "phone": "123-456-7890",
+          "address": "123 Main St"
+        }
+
+        O que esperar: Confirmação de que o perfil foi atualizado.
+
+C. Preferências do Usuário
+
+    Obter Preferências do Usuário
+        Método: GET
+        URL: http://localhost:3000/usuarios/preferences
+        O que esperar: As preferências do usuário logado.
+
+    Atualizar Preferências do Usuário
+        Método: PUT
+        URL: http://localhost:3000/usuarios/preferences
+        Body:
+
+        json
+
+        {
+          "emailNotifications": true,
+          "smsNotifications": false,
+          "preferredLanguage": "en"
+        }
+
+        O que esperar: Confirmação de que as preferências foram atualizadas.
+
+D. Recomendações e Detecção de Fraudes
+
+    Recomendações de Carros
+        Método: GET
+        URL: http://localhost:3000/usuarios/recommendations
+        O que esperar: Uma lista de carros recomendados com base no perfil e histórico do usuário.
+
+    Detecção de Fraudes
+        Método: GET
+        URL: http://localhost:3000/usuarios/fraud-detection
+        O que esperar: Mensagem indicando se foi detectado algum comportamento suspeito.
+
+4. Rodando os Testes no Thunder Client:
+
+    Selecionar Requisição
+        No Thunder Client, selecione a requisição que você deseja testar.
+
+    Enviar Requisição
+        Clique no botão "Send" para enviar a requisição ao servidor.
+
+    Verificar Respostas
+        Verifique a resposta da API no painel de resposta abaixo. Certifique-se de que a resposta corresponde ao que você esperava.
+
+5. Organizar e Reutilizar:
+
+    Ambientes: No Thunder Client, você pode configurar ambientes para facilitar a reutilização de URLs e outras variáveis, como tokens de autenticação.
+    Headers e Tokens: Se sua API requer autenticação, não se esqueça de adicionar os cabeçalhos de autenticação necessários para simular um usuário logado.
