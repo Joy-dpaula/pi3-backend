@@ -40,3 +40,4 @@ export default async function loginController(req, res) {
         exceptionHandler(exception, res);
     }
 }
+

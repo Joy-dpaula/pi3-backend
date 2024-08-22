@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "dev": "node app.js"
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
@@ -24,4 +25,7 @@
   "devDependencies": {
     "prisma": "^5.18.0"
   }
+  
+  
+  
 }

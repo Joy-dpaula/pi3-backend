@@ -55,3 +55,4 @@ export default async function createAccount(req, res) {
         exceptionHandler(exception, res);
     }
 }
+
