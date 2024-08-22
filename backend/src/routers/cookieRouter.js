@@ -1,5 +1,5 @@
-const express = require('express');
-const { setCookie, getCookie } = require('./cookie');
+import express from 'express';
+import { setCookie, getCookie } from '../../utils/cookie.js';  // Certifique-se de usar a extensão .js
 const router = express.Router();
 
 // Rota para definir um cookie
@@ -21,4 +21,4 @@ router.get('/get-cookie/:name', (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -6,7 +6,9 @@ import cors from 'cors'
 
 import accountRoutes from './src/routers/accountRouter.js'
 import shoppingRoutes from './src/routers/shoppingRouter.js'
-
+//import authRouter from './src/routers/authRouter.js'
+import cookieRouter from './src/routers/cookieRouter.js'
+//import { exceptionHandler } from './utils/ajuda.js';
 // var indexRouter = require('./src/routers/index');
 // var usersRouter = require('./src/routers/accountRoutes');
 // var usersRouter = require('./src/routers/users');
@@ -27,9 +29,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+//app.use(exceptionHandler)
+//app.use('/auth' , authRouter)
+app.use('/cookie' , cookieRouter)
 app.use('/usuarios', accountRoutes);
 app.use('/veiculos', shoppingRoutes);
+
 
 
 export default app
