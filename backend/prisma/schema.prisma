@@ -41,3 +41,4 @@ model Compra {
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
   usuarioId Int
 }
+
