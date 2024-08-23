@@ -1,7 +1,5 @@
-import { getCookie } from '../../utils/cookie.js'; // Ajuste o caminho conforme necessário
-
 // Função para obter o valor de um cookie
-export const getCookie = (req, name) => {
+const getCookie = (req, name) => {
   const cookies = req.headers.cookie;
   
   if (cookies) {

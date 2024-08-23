@@ -8,7 +8,7 @@ import accountRouter from './src/routers/accountRouter.js';
 import authRouter from './src/routers/authRouter.js';
 import cookieRouter from './src/routers/cookieRouter.js';
 import shoppingRouter from './src/routers/shoppingRouter.js';
-import { exceptionHandler } from './src/utils/ajuda.js';
+//import { exceptionHandler } from './src/utils/ajuda.js';
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
@@ -31,8 +31,7 @@ app.use('/cookie', cookieRouter);
 app.use('/veiculos', shoppingRouter);
 
 // Middleware para tratar exceções
-app.use(exceptionHandler);
+//app.use(exceptionHandler);
 
-app.listen(5000, () => {
-    console.log('Servidor Rodando em http://localhost:5000');
-});
+
+export default app

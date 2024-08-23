@@ -4,7 +4,7 @@ import deleteVeiculo from '../controllers/shopping/deleteVeiculo.js'; // Atualiz
 import getVeiculoById from '../controllers/shopping/getByIdVeiculo.js'; // Atualize conforme necessário
 import updateVeiculo from '../controllers/shopping/updateVeiculo.js'; // Atualize conforme necessário
 import getVeiculos from '../controllers/shopping/getVeiculo.js'; // Atualize conforme necessário
-import uploadSingle from '../../utils/uploadSingle.js'; // Atualize o caminho para o seu middleware
+import uploadSingle from '../utils/uploadSingle.js'; // Atualize o caminho para o seu middleware
 
 const router = express.Router();
 
