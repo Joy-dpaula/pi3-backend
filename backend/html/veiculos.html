@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Veículos</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+        .success {
+            color: green;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>CRUD de Veículos</h1>
+
+    <form id="vehicleForm">
+        <input type="hidden" id="vehicleId">
+        <label for="modelo">Modelo:</label><br>
+        <input type="text" id="modelo" required><br>
+        <label for="anoFabricacao">Ano de Fabricação:</label><br>
+        <input type="date" id="anoFabricacao" required><br>
+        <label for="cor">Cor:</label><br>
+        <input type="text" id="cor" maxlength="5" required><br>
+        <label for="descricao">Descrição:</label><br>
+        <textarea id="descricao" rows="4" cols="50" required></textarea><br>
+        <label for="valor">Valor:</label><br>
+        <input type="number" id="valor" required><br>
+        <label for="km">Quilometragem:</label><br>
+        <input type="number" id="km" required><br>
+        <label for="marca">Marca:</label><br>
+        <input type="text" id="marca" maxlength="20" required><br>
+        <label for="foto">Foto URL:</label><br>
+        <input type="text" id="foto"><br>
+        <label for="usuarioId">ID do Usuário:</label><br>
+        <input type="number" id="usuarioId" required><br><br>
+        <button type="submit">Salvar Veículo</button>
+        <button type="button" onclick="clearForm()">Cancelar</button>
+        <div id="formFeedback" class="error"></div>
+    </form>
+
+    <h2>Lista de Veículos</h2>
+    <table id="vehicleTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Modelo</th>
+                <th>Ano de Fabricação</th>
+                <th>Cor</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Quilometragem</th>
+                <th>Marca</th>
+                <th>Foto</th>
+                <th>Usuário ID</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', fetchVehicles);
+
+        const vehicleForm = document.getElementById('vehicleForm');
+        vehicleForm.addEventListener('submit', saveVehicle);
+
+        function fetchVehicles() {
+            fetch('http://localhost:5000/veiculos')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(vehicles => {
+                    const vehicleTableBody = document.querySelector('#vehicleTable tbody');
+                    vehicleTableBody.innerHTML = '';
+                    vehicles.forEach(vehicle => {
+                        vehicleTableBody.innerHTML += `
+                            <tr>
+                                <td>${vehicle.id}</td>
+                                <td>${vehicle.modelo}</td>
+                                <td>${vehicle.anoFabricacao.split('T')[0]}</td>
+                                <td>${vehicle.cor}</td>
+                                <td>${vehicle.descricao}</td>
+                                <td>${vehicle.valor}</td>
+                                <td>${vehicle.km}</td>
+                                <td>${vehicle.marca}</td>
+                                <td><img src="${vehicle.foto}" alt="Foto do veículo" width="100"></td>
+                                <td>${vehicle.usuarioId}</td>
+                                <td>
+                                    <button onclick="editVehicle(${vehicle.id})">Editar</button>
+                                    <button onclick="deleteVehicle(${vehicle.id})">Excluir</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(error => console.error('Erro ao buscar veículos:', error));
+        }
+
+        function saveVehicle(event) {
+            event.preventDefault();
+            const vehicleId = document.getElementById('vehicleId').value;
+            const url = vehicleId ? `http://localhost:5000/veiculos/${vehicleId}` : 'http://localhost:5000/veiculos';
+            const method = vehicleId ? 'PUT' : 'POST';
+
+            const anoFabricacao = document.getElementById('anoFabricacao').value;
+            const dateTime = anoFabricacao ? new Date(anoFabricacao).toISOString() : null;
+
+            const vehicleData = {
+                modelo: document.getElementById('modelo').value,
+                anoFabricacao: dateTime,
+                cor: document.getElementById('cor').value,
+                descricao: document.getElementById('descricao').value,
+                valor: parseInt(document.getElementById('valor').value),
+                km: parseInt(document.getElementById('km').value),
+                marca: document.getElementById('marca').value,
+                foto: document.getElementById('foto').value || '',
+                usuarioId: parseInt(document.getElementById('usuarioId').value)
+            };
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(vehicleData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(() => {
+                vehicleForm.reset();
+                fetchVehicles();
+                document.getElementById('formFeedback').textContent = 'Veículo salvo com sucesso!';
+                document.getElementById('formFeedback').className = 'success';
+            })
+            .catch(error => {
+                console.error('Erro ao salvar veículo:', error);
+                document.getElementById('formFeedback').textContent = 'Erro ao salvar veículo.';
+                document.getElementById('formFeedback').className = 'error';
+            });
+        }
+
+        function editVehicle(id) {
+            fetch(`http://localhost:5000/veiculos/${id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(vehicle => {
+                    document.getElementById('vehicleId').value = vehicle.id;
+                    document.getElementById('modelo').value = vehicle.modelo;
+                    document.getElementById('anoFabricacao').value = vehicle.anoFabricacao.split('T')[0];
+                    document.getElementById('cor').value = vehicle.cor;
+                    document.getElementById('descricao').value = vehicle.descricao;
+                    document.getElementById('valor').value = vehicle.valor;
+                    document.getElementById('km').value = vehicle.km;
+                    document.getElementById('marca').value = vehicle.marca;
+                    document.getElementById('foto').value = vehicle.foto;
+                    document.getElementById('usuarioId').value = vehicle.usuarioId;
+                    document.getElementById('formFeedback').textContent = '';
+                })
+                .catch(error => console.error('Erro ao buscar veículo:', error));
+        }
+
+        function deleteVehicle(id) {
+            if (confirm('Tem certeza que deseja excluir este veículo?')) {
+                fetch(`http://localhost:5000/veiculos/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    fetchVehicles();
+                })
+                .catch(error => console.error('Erro ao excluir veículo:', error));
+            }
+        }
+
+        function clearForm() {
+            vehicleForm.reset();
+            document.getElementById('vehicleId').value = '';
+            document.getElementById('formFeedback').textContent = '';
+        }
+    </script>
+</body>
+</html>

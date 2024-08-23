@@ -1,21 +1,21 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
+import { exceptionHandler } from '../../../utils/ajuda.js';
 
 const prisma = new PrismaClient();
 
-const getAccountById =  async (req, res) => {
-    const { id } = req.params;
+export default async function getAccountById(req, res) {
     try {
-      const usuario = await prisma.usuario.findUnique({
-        where: { id: Number(id) },
-      });
-      if (usuario) {
-        res.json(usuario);
-      } else {
-        res.status(404).json({ error: 'Usuário não encontrado' });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
+        const id = Number(req.params.id);
+        const usuario = await prisma.usuario.findUniqueOrThrow({ where: { id } });
 
-export default getAccountById
+        const usuarioFormatted = {
+            ...usuario,
+            cpf: usuario.cpf.toString(),
+            telefone: usuario.telefone ? usuario.telefone.toString() : null,
+        };
+
+        res.json(usuarioFormatted);
+    } catch (exception) {
+        exceptionHandler(exception, res);
+    }
+}

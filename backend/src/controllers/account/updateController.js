@@ -1,19 +1,45 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { exceptionHandler } from '../../../utils/ajuda.js';
+import { authenticateToken } from '../../../utils/auth.js';
 
 const prisma = new PrismaClient();
 
-const updateAccount =  async (req, res) => {
-    const { id } = req.params;
-    const { nome, cpf, telefone, email, nascimento, senha } = req.body;
+export default async function updateAccount(req, res) {
     try {
-      const usuario = await prisma.usuario.update({
-        where: { id: Number(id) },
-        data: { nome, cpf, telefone, email, nascimento, senha },
-      });
-      res.json(usuario);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
+        const id = Number(req.params.id);
+        const { nome, email, senha, cpf, telefone, nascimento, isAdmin } = req.body;
+        const token = req.accessToken;
 
-export default updateAccount
+        const checkUsuario = await prisma.usuario.findUnique({ where: { id } });
+
+        if (!checkUsuario || (checkUsuario.email !== token.email && !token.isAdmin)) {
+            return res.sendStatus(403);
+        }
+
+        const data = {
+            nome,
+            email,
+            senha: senha ? await bcrypt.hash(senha, 12) : undefined,
+            cpf: cpf ? cpf.toString() : undefined,
+            telefone: telefone ? telefone.toString() : undefined,
+            nascimento: nascimento ? new Date(nascimento) : undefined,
+            isAdmin: isAdmin !== undefined ? isAdmin : undefined,
+        };
+
+        const usuario = await prisma.usuario.update({
+            where: { id },
+            data,
+            select: {
+                id: true,
+                nome: true,
+                email: true,
+                isAdmin: true,
+            }
+        });
+
+        res.json(usuario);
+    } catch (exception) {
+        exceptionHandler(exception, res);
+    }
+}
