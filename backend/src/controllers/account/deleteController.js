@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { exceptionHandler } from '../../../utils/ajuda.js';
-import { authenticateToken } from '../../../utils/auth.js';
+import { exceptionHandler } from '../../utils/ajuda.js';
+import { authenticateToken } from '../../utils/auth.js';
 
 const prisma = new PrismaClient();
 

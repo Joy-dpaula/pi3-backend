@@ -1,5 +1,5 @@
 import express from 'express';
-import { setCookie, getCookie } from '../../utils/cookie.js';
+import { setCookie, getCookie } from '../utils/cookie.js';
 
 const router = express.Router();
 

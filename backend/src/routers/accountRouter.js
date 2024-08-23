@@ -5,7 +5,7 @@ import updateAccount from '../controllers/account/updateController.js';
 import getAccountById from '../controllers/account/getByIdController.js';
 import getAccount from '../controllers/account/getController.js';
 import loginController from '../controllers/auth/loginController.js';
-import { authenticateToken } from '../../utils/auth.js'; // Certifique-se de que o caminho está correto
+import { authenticateToken } from '../utils/auth.js'; // Certifique-se de que o caminho está correto
 
 const router = express.Router();
 

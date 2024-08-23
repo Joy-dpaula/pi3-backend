@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { exceptionHandler } from '../../../utils/ajuda.js';
+import { exceptionHandler } from '../../utils/ajuda.js';
 
 const prisma = new PrismaClient();
 

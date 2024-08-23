@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { exceptionHandler } from '../../../utils/ajuda.js';
-import uploadSingle from '../../../utils/uploadSingle.js'; // Importe o middleware de upload
+import { exceptionHandler } from '../../utils/ajuda.js';
+import uploadSingle from '../../utils/uploadSingle.js'; // Importe o middleware de upload
 
 const prisma = new PrismaClient();
 
