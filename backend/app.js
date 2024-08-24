@@ -9,11 +9,9 @@ import accountRouter from './src/routers/accountRouter.js';
 import authRouter from './src/routers/authRouter.js';
 import cookieRouter from './src/routers/cookieRouter.js';
 import vehicleRouter from './src/routers/vehicle.js';
-
-
-
-
 import { exceptionHandler } from './src/utils/ajuda.js';
+import messageRouter from './src/routers/messageRouter.js'
+
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const app = express(); 
@@ -36,6 +34,8 @@ app.use('/usuarios', accountRouter);
 app.use('/auth', authRouter);
 app.use('/cookie', cookieRouter);
 app.use('/veiculos', vehicleRouter);
+app.use('/message' , messageRouter)
+
 
 // Middleware para tratar exceções
 app.use(exceptionHandler);
