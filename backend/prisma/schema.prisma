@@ -8,16 +8,19 @@ datasource db {
 }
 
 model Usuario {
-  id         Int       @id @default(autoincrement())
-  nome       String    @db.VarChar(50)
-  cpf        String    @unique @db.VarChar(15)
-  telefone   String    @db.VarChar(15)
-  email      String    @unique @db.VarChar(200)
-  nascimento DateTime
-  senha      String    @db.VarChar(200)
-  isAdmin    Boolean   @default(false) // Adiciona o campo isAdmin
-  Veiculo    Veiculo[]
-  Compra     Compra[]
+
+  id               Int       @id @default(autoincrement())
+  nome             String    @db.VarChar(50)
+  cpf              String    @unique @db.VarChar(15)
+  telefone         String    @db.VarChar(15)
+  email            String    @db.VarChar(200)
+  nascimento       DateTime
+  senha            String    @db.VarChar(30)
+  Veiculo          Veiculo[]
+  Compra           Compra[]
+  messagesSent     Message[] @relation("SentMessages")
+  messagesReceived Message[] @relation("ReceivedMessages")
+
 }
 
 model Veiculo {
@@ -41,4 +44,14 @@ model Compra {
   veiculoId Int
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
   usuarioId Int
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  sender      Usuario  @relation("SentMessages", fields: [senderId], references: [id])
+  senderId    Int
+  recipient   Usuario  @relation("ReceivedMessages", fields: [recipientId], references: [id])
+  recipientId Int
+  content     String
+  timestamp   DateTime @default(now())
 }

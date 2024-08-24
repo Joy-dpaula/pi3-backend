@@ -1,3 +1,4 @@
+
 import { PrismaClient } from '@prisma/client';
 import { exceptionHandler } from '../../utils/ajuda.js';
 

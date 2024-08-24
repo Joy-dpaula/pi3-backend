@@ -3,7 +3,7 @@ const { PrismaClientValidationError } = pkg;
 
 export function exceptionHandler(exception, res) {
     console.error(exception);
-    
+
     if (exception instanceof PrismaClientValidationError) {
         res.status(400).json({
             error: "PrismaClientValidationError",
@@ -16,4 +16,3 @@ export function exceptionHandler(exception, res) {
             message: exception.message
         });
     }
-}

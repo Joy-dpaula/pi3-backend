@@ -50,3 +50,4 @@ const uploadSingle = (req, res, next) => {
 };
 
 export default uploadSingle;
+
