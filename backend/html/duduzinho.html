@@ -16,6 +16,14 @@
             padding: 10px;
             text-align: left;
         }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+        .success {
+            color: green;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -26,17 +34,18 @@
         <label for="nome">Nome:</label><br>
         <input type="text" id="nome" required><br>
         <label for="cpf">CPF:</label><br>
-        <input type="text" id="cpf" required><br>
+        <input type="text" id="cpf" pattern="\d{11}" title="CPF deve conter 11 dígitos" required><br>
         <label for="telefone">Telefone:</label><br>
-        <input type="text" id="telefone" required><br>
+        <input type="text" id="telefone" pattern="\d{10,11}" title="Telefone deve conter 10 ou 11 dígitos" required><br>
         <label for="email">Email:</label><br>
         <input type="email" id="email" required><br>
         <label for="nascimento">Data de Nascimento:</label><br>
         <input type="date" id="nascimento" required><br>
         <label for="senha">Senha:</label><br>
-        <input type="password" id="senha" required><br><br>
+        <input type="password" id="senha" minlength="8" required><br><br>
         <button type="submit">Salvar Usuário</button>
         <button type="button" onclick="clearForm()">Cancelar</button>
+        <div id="formFeedback" class="error"></div>
     </form>
 
     <h2>Lista de Usuários</h2>
@@ -81,7 +90,7 @@
                                 <td>${user.cpf}</td>
                                 <td>${user.telefone}</td>
                                 <td>${user.email}</td>
-                                <td>${user.nascimento}</td>
+                                <td>${user.nascimento.split('T')[0]}</td> <!-- Corrigido para exibir apenas a data -->
                                 <td>
                                     <button onclick="editUser(${user.id})">Editar</button>
                                     <button onclick="deleteUser(${user.id})">Excluir</button>
@@ -95,12 +104,10 @@
 
         function saveUser(event) {
             event.preventDefault();
-
             const userId = document.getElementById('userId').value;
             const url = userId ? `http://localhost:5000/usuarios/${userId}` : 'http://localhost:5000/usuarios';
             const method = userId ? 'PUT' : 'POST';
 
-            // Obtendo e convertendo a data para DateTime
             const nascimento = document.getElementById('nascimento').value;
             const dateTime = nascimento ? new Date(nascimento).toISOString() : null;
 
@@ -129,8 +136,14 @@
             .then(() => {
                 userForm.reset();
                 fetchUsers();
+                document.getElementById('formFeedback').textContent = 'Usuário salvo com sucesso!';
+                document.getElementById('formFeedback').className = 'success';
             })
-            .catch(error => console.error('Erro ao salvar usuário:', error));
+            .catch(error => {
+                console.error('Erro ao salvar usuário:', error);
+                document.getElementById('formFeedback').textContent = 'Erro ao salvar usuário.';
+                document.getElementById('formFeedback').className = 'error';
+            });
         }
 
         function editUser(id) {
@@ -148,6 +161,7 @@
                     document.getElementById('telefone').value = user.telefone;
                     document.getElementById('email').value = user.email;
                     document.getElementById('nascimento').value = user.nascimento.split('T')[0]; // Apenas a data para o campo de input
+                    document.getElementById('formFeedback').textContent = '';
                 })
                 .catch(error => console.error('Erro ao buscar usuário:', error));
         }
@@ -170,6 +184,7 @@
         function clearForm() {
             userForm.reset();
             document.getElementById('userId').value = '';
+            document.getElementById('formFeedback').textContent = '';
         }
     </script>
 </body>

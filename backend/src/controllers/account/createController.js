@@ -1,13 +1,16 @@
 
+
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { exceptionHandler } from '../../utils/ajuda.js';
 import { generateAccessToken } from '../../utils/auth.js';
 
+
 const prisma = new PrismaClient();
 
 export default async function createAccount(req, res) {
     const { nome, email, senha, cpf, telefone, nascimento, isAdmin } = req.body;
+
 
     // Validação básica dos dados
     if (!nome || !email || !senha || !cpf || !telefone) {

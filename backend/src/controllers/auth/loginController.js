@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { exceptionHandler } from '../../utils/ajuda.js';
 import { generateAccessToken } from '../../utils/auth.js';
+
 import { setCookie} from '../../utils/cookie.js' 
 import { encrypt } from '../../utils/crypto.js';
 
@@ -33,6 +34,7 @@ export default async function loginController(req, res) {
             telefone: usuario.telefone ? usuario.telefone.toString() : null,
             isAdmin: usuario.isAdmin
         });
+
 
         setCookie(res, 'userData', encrypt(JSON.stringify({
             id: usuario.id,

@@ -9,11 +9,21 @@ export default async function getAccountById(req, res) {
         const id = Number(req.params.id);
         const usuario = await prisma.usuario.findUniqueOrThrow({ where: { id } });
 
+
         const usuarioFormatted = {
             ...usuario,
             cpf: usuario.cpf.toString(),
             telefone: usuario.telefone ? usuario.telefone.toString() : null,
         };
+
+
+
+        const usuarioFormatted = {
+            ...usuario,
+            cpf: usuario.cpf.toString(),
+            telefone: usuario.telefone ? usuario.telefone.toString() : null,
+        };
+
 
         res.json(usuarioFormatted);
     } catch (exception) {

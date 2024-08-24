@@ -4,12 +4,16 @@ import deleteAccount from '../controllers/account/deleteController.js';
 import updateAccount from '../controllers/account/updateController.js';
 import getAccountById from '../controllers/account/getByIdController.js';
 import getAccount from '../controllers/account/getController.js';
+
 import {authenticateToken}  from '../utils/auth.js'; // Certifique-se de que o caminho está correto
+
 
 const router = express.Router();
 
 // Rota pública para criar uma conta
 router.post('/', createAccount);
+
+
 
 
 
@@ -23,4 +27,6 @@ router.get('/:id', getAccountById);
 router.patch('/:id', authenticateToken, updateAccount);
 router.delete('/:id', authenticateToken, deleteAccount);
 
+
 export default router;
+

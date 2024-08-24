@@ -1,6 +1,12 @@
 
+
 import express from 'express';
 import { setCookie, getCookie } from '../utils/cookie.js';
+
+
+import express from 'express';
+import { setCookie, getCookie } from '../utils/cookie.js';
+
 
 const router = express.Router();
 
@@ -10,6 +16,7 @@ const setCookieHandler = (req, res) => {
   setCookie(res, name, value, { maxAge: 24 * 60 * 60 * 1000 }); // Define cookie por 24 horas
   res.send('Cookie has been set');
 };
+
 
 // Função para ler um cookie
 const getCookieHandler = (req, res) => {
@@ -28,5 +35,4 @@ router.post('/set-cookie', setCookieHandler);
 router.get('/get-cookie/:name', getCookieHandler);
 
 export default router;
-
 
