@@ -18,13 +18,6 @@ export default async function getAccountById(req, res) {
 
 
 
-        const usuarioFormatted = {
-            ...usuario,
-            cpf: usuario.cpf.toString(),
-            telefone: usuario.telefone ? usuario.telefone.toString() : null,
-        };
-
-
         res.json(usuarioFormatted);
     } catch (exception) {
         exceptionHandler(exception, res);
