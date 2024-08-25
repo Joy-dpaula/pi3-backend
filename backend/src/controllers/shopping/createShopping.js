@@ -8,11 +8,40 @@ const prisma = new PrismaClient()
 
 export default async function createShopping(req, res) {
 
-   try{
-    
+    const { usuarioId, veiculoId } = req.body
 
-   }catch(exception) {
-    exceptionHandler(exception, res);
-}
+    try {
+        const veiculo = await prisma.veiculo.create({
+            data: {
+                veiculoId: {
+                    connect: { id: veiculoId }
+                },
+
+                usuarioId: {
+                    connect: { id: usuarioId }
+                }
+            }, 
+            select: {
+                id: true,
+                usuario: {
+                    select: {
+                        id: true,
+                    },
+                veiculo: {
+                    select: {
+                        id: true,
+                    }
+                }
+                }
+            }
+
+        })
+
+
+        res.status(201).json(veiculo);
+
+    } catch (exception) {
+        exceptionHandler(exception, res);
+    }
 
 }
