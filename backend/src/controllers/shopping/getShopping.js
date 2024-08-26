@@ -21,18 +21,7 @@ export default async function getShopping(req, res) {
         });
 
         // Formata as compras para o formato desejado
-        const comprasFormatted = compras.map(compra => ({
-            id: compra.id,
-            usuario: {
-                id: compra.usuario.id,
-            },
-            veiculo: {
-                id: compra.veiculo.id,
-            }
-        }));
-
-        // Retorna as compras formatadas como resposta
-        res.status(200).json(comprasFormatted);
+       c
 
     } catch (exception) {
         exceptionHandler(exception, res);
