@@ -9,6 +9,8 @@ const prisma = new PrismaClient()
 export default async function getByIdShopping(req, res) {
 
    try{
+
+    
     
 
    }catch(exception) {
