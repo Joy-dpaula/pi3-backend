@@ -16,3 +16,4 @@ export function exceptionHandler(exception, res) {
             message: exception.message
         });
     }
+}

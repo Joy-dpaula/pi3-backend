@@ -35,3 +35,4 @@ export function authenticateToken(req, res, next) {
         req.accessToken = data;
         next();
     });
+}

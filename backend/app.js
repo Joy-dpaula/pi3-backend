@@ -11,9 +11,8 @@ import accountRouter from './src/routers/accountRouter.js';
 import authRouter from './src/routers/authRouter.js';
 import cookieRouter from './src/routers/cookieRouter.js';
 
-import vehicleRouter from './src/routers/vehicle.js';
+import vehicleRouter from './src/routers/vehicleRouter.js';
 
-import shoppingRouter from './src/routers/shoppingRouter.js';
 
 import { exceptionHandler } from './src/utils/ajuda.js';
 import messageRouter from './src/routers/messageRouter.js'

@@ -1,18 +1,29 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
 import { exceptionHandler } from '../../utils/ajuda.js';
-import { generateAccessToken } from '../../utils/auth.js';
 
-const prisma = new PrismaClient()
-
+const prisma = new PrismaClient();
 
 export default async function getShopping(req, res) {
+    try {
+        const compras = await prisma.compra.findMany({
+            include: {
+                usuario: {
+                    select: {
+                        id: true,
+                    },
+                },
+                veiculo: {
+                    select: {
+                        id: true,
+                    },
+                },
+            },
+        });
 
-   try{
-    
+        // Formata as compras para o formato desejado
+       c
 
-   }catch(exception) {
-    exceptionHandler(exception, res);
-}
-
+    } catch (exception) {
+        exceptionHandler(exception, res);
+    }
 }
