@@ -1,12 +1,12 @@
 import express from 'express'
-import createVeiculo from '../controllers/shopping/createShopping.js'
 import getShopping from '../controllers/shopping/getShopping.js';
+import createShopping from '../controllers/shopping/createShopping.js'
+
 
 const router = express.Router();
 
 
-router.post('/' , createVeiculo)
-
+router.post('/' , createShopping)
 router.get('/' , getShopping )
 
 
