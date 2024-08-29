@@ -12,10 +12,10 @@ model Usuario {
   nome             String    @db.VarChar(50)
   cpf              String    @unique @db.VarChar(15)
   telefone         String    @db.VarChar(15)
-  email            String    @unique @db.VarChar(200)
+  email            String   @unique @db.VarChar(200)
   nascimento       DateTime
-  senha            String    @db.VarChar(30)
-  isAdmin          Boolean   @default(false)
+  senha            String    @db.VarChar(200)
+  isAdmin    Boolean   @default(false) // Adiciona o campo isAdmin
   Veiculo          Veiculo[]
   Compra           Compra[]
   messagesSent     Message[] @relation("SentMessages")
