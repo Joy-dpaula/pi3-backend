@@ -1,0 +1,15 @@
+Explicação do pixData
+
+    000201: Início do código EMV.
+    010212: Identificação de que o código é do tipo Pix.
+    2636: Este campo contém a chave Pix e o domínio do Banco Central (no exemplo: BR.GOV.BCB.PIX).
+    0114: Número de caracteres no campo da chave Pix. Alterar conforme necessário.
+    +556199999999: Exemplo de chave Pix, pode ser CPF, CNPJ, e-mail ou telefone.
+    52040000: Categoria do comércio (para simplificação, 0000 é geralmente usado).
+    5303986: Código de moeda (986 é o código do Real).
+    5405${formattedValue}: Valor da transação formatado com duas casas decimais.
+    5802BR: País (BR).
+    5913Nome do Recebedor: Nome do recebedor, pode ser o nome da empresa ou pessoa física.
+    6016Cidade do Recebedor: Cidade do recebedor.
+    62070503***: Campo adicional (pode ser usado para informações adicionais, se necessário).
+    6304: Checksum do código (geralmente calculado automaticamente, mas aqui é um valor fixo para o exemplo).
