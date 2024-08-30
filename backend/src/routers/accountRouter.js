@@ -13,7 +13,7 @@ import { authenticateToken } from '../utils/auth.js';
 // Importa os controladores para perfil de usuário, preferências, recomendações, detecção de fraudes, e autenticação
 import { updateUserProfile, getUserProfile } from '../controllers/account/profileController.js';
 import { updateUserPreferences, getUserPreferences } from '../controllers/account/preferencesController.js';
-import { recommendCars } from '../controllers/account/recommendationController.js';
+import { recommendCars } from '../controllers/account/recommedationController.js';
 import { detectFraud } from '../controllers/account/fraudDetectionController.js';
 
 const router = express.Router();
