@@ -4,17 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-<<<<<<< Updated upstream
-    "start": "node ./bin/www",
+    "start": "node ./bin/www.js",
     "dev": "nodemon ./bin/www",
     "migrate": "npx prisma migrate dev",
     "generate": "npx prisma generate",
     "seed": "node prisma/seed.js",
     "lint": "eslint . --fix"
-=======
-    "start": "node ./bin/www.js",
-    "dev": "node app.js"
->>>>>>> Stashed changes
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
@@ -28,11 +23,13 @@
     "jade": "~1.11.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
-<<<<<<< Updated upstream
-    "redis": "^4.7.0"
+    "redis": "^4.7.0",
+    "multer": "^1.4.5-lts.1",
+    "qrcode": "^1.5.4",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "prisma": "^5.18.0",
+    "prisma": "^5.19.0",
     "nodemon": "^2.0.15",
     "eslint": "^8.29.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -47,13 +44,5 @@
     "rules": {
       "no-console": "off"
     }
-=======
-    "multer": "^1.4.5-lts.1",
-    "qrcode": "^1.5.4",
-    "uuid": "^10.0.0"
-  },
-  "devDependencies": {
-    "prisma": "^5.19.0"
->>>>>>> Stashed changes
   }
 }

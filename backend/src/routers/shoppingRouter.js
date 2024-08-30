@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 const express = require('express');
 const router = express.Router();
 
@@ -10,17 +8,16 @@ const { updateCreditCard } = require('../controllers/shopping/updateCreditCard')
 const { deleteCreditCard } = require('../controllers/shopping/deleteCreditCard');
 const { generateBoleto } = require('../controllers/shopping/generateBoleto');
 
-// pagamento pix rota
+// Pagamento Pix - Rota
 router.post('/api/payment/pix', generatePixQRCode);
 
-// cartao de credito rota
+// Cartão de Crédito - Rotas
 router.post('/api/payment/credit-card', createCreditCard);
 router.get('/api/payment/credit-card/:cardId', getCreditCard);
 router.put('/api/payment/credit-card/:cardId', updateCreditCard);
 router.delete('/api/payment/credit-card/:cardId', deleteCreditCard);
 
-// boleto rota
+// Boleto - Rota
 router.post('/api/payment/boleto', generateBoleto);
 
 module.exports = router;
->>>>>>> Stashed changes
