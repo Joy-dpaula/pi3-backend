@@ -41,7 +41,7 @@ git pull origin master
 
 git checkout sua-branch
 
-### exemplo de env pq o gustavo é imbecil:
+### exemplo de env pq o gustavo é imbecil pinto mole:
 
 require('dotenv').config();
 
