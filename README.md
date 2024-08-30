@@ -41,6 +41,14 @@ git pull origin master
 
 git checkout sua-branch
 
+### exemplo de env pq o gustavo é imbecil pinto mole:
+
+require('dotenv').config();
+
+DATABASE_URL="mysql://root:aluno@localhost:3306/backend_db"
+PORT=5000
+SECRET_KEY=myChavesecreta12345!@#
+CLIENT_ORIGIN_URL="*"
 
 
 `````

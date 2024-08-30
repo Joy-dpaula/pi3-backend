@@ -1,12 +1,14 @@
-const express = require('express');
-const router = express.Router();
+import express from 'express';
+import { generatePixQRCode } from '../controllers/shopping/generatePixQRCode.js';
+import { createCreditCard } from '../controllers/shopping/createCreditCard.js';
+import { getCreditCard } from '../controllers/shopping/getCreditCard.js';
+import { updateCreditCard } from '../controllers/shopping/updateCreditCard.js';
+import { deleteCreditCard } from '../controllers/shopping/deleteCreditCard.js';
+import { generateBoleto } from '../controllers/shopping/generateBoleto.js';
+import createVeiculo from '../controllers/shopping/createShopping.js';
+import getShopping from '../controllers/shopping/getShopping.js';
 
-const { generatePixQRCode } = require('../controllers/shopping/generatePixQRCode');
-const { createCreditCard } = require('../controllers/shopping/createCreditCard');
-const { getCreditCard } = require('../controllers/shopping/getCreditCard');
-const { updateCreditCard } = require('../controllers/shopping/updateCreditCard');
-const { deleteCreditCard } = require('../controllers/shopping/deleteCreditCard');
-const { generateBoleto } = require('../controllers/shopping/generateBoleto');
+const router = express.Router();
 
 // Pagamento Pix - Rota
 router.post('/api/payment/pix', generatePixQRCode);
@@ -20,4 +22,8 @@ router.delete('/api/payment/credit-card/:cardId', deleteCreditCard);
 // Boleto - Rota
 router.post('/api/payment/boleto', generateBoleto);
 
-module.exports = router;
+// Veículo - Rotas
+router.post('/', createVeiculo);
+router.get('/', getShopping);
+
+export default router;

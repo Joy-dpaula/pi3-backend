@@ -6,14 +6,15 @@ import deleteAccount from '../controllers/account/deleteController.js';
 import updateAccount from '../controllers/account/updateController.js';
 import getAccountById from '../controllers/account/getByIdController.js';
 import getAccount from '../controllers/account/getController.js';
+import loginController from '../controllers/auth/loginController.js';
+
+import { authenticateToken } from '../utils/auth.js';
 
 // Importa os controladores para perfil de usuário, preferências, recomendações, detecção de fraudes, e autenticação
 import { updateUserProfile, getUserProfile } from '../controllers/account/profileController.js';
 import { updateUserPreferences, getUserPreferences } from '../controllers/account/preferencesController.js';
 import { recommendCars } from '../controllers/account/recommendationController.js';
 import { detectFraud } from '../controllers/account/fraudDetectionController.js';
-import loginController from '../controllers/auth/loginController.js';
-import { authenticateToken } from '../utils/auth.js';
 
 const router = express.Router();
 
@@ -21,26 +22,22 @@ const router = express.Router();
 router.post('/', createAccount); // Criar conta
 router.get('/', getAccount); // Obter todas as contas
 router.get('/:id', getAccountById); // Obter conta por ID
-router.put('/:id', updateAccount); // Atualizar conta por ID
-router.delete('/:id', deleteAccount); // Excluir conta por ID
+router.put('/:id', authenticateToken, updateAccount); // Atualizar conta por ID
+router.delete('/:id', authenticateToken, deleteAccount); // Excluir conta por ID
 
 // Rota pública para login
 router.post('/login', loginController);
 
-// Aplicar autenticação para as seguintes rotas
-router.patch('/:id', authenticateToken, updateAccount);
-router.delete('/:id', authenticateToken, deleteAccount);
-
 // Rotas para perfil de usuário
-router.get('/profile', getUserProfile);  // Obter o perfil do usuário
-router.put('/profile', updateUserProfile);  // Atualizar o perfil do usuário
+router.get('/profile', authenticateToken, getUserProfile);  // Obter o perfil do usuário
+router.put('/profile', authenticateToken, updateUserProfile);  // Atualizar o perfil do usuário
 
 // Rotas para preferências de usuário
-router.get('/preferences', getUserPreferences);  // Obter as preferências do usuário
-router.put('/preferences', updateUserPreferences);  // Atualizar as preferências do usuário
+router.get('/preferences', authenticateToken, getUserPreferences);  // Obter as preferências do usuário
+router.put('/preferences', authenticateToken, updateUserPreferences);  // Atualizar as preferências do usuário
 
 // Rotas para recomendação de carros e detecção de fraudes
-router.get('/recommendations', recommendCars);  // Recomendar carros ao usuário
-router.get('/fraud-detection', detectFraud);  // Detectar comportamentos fraudulentos
+router.get('/recommendations', authenticateToken, recommendCars);  // Recomendar carros ao usuário
+router.get('/fraud-detection', authenticateToken, detectFraud);  // Detectar comportamentos fraudulentos
 
 export default router;
