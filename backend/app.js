@@ -21,9 +21,9 @@ import { exceptionHandler } from './src/utils/ajuda.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express(); 
+const app = express();
 
-const COOKIE_SECRET = 'd4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d';
+const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d';
 
 // Configuração da visualização
 app.set('views', path.join(__dirname, 'views'));
@@ -46,7 +46,7 @@ app.use('/veiculos', vehicleRouter); // Rotas para gerenciar veículos
 app.use('/message', messageRouter); // Rotas para mensagens
 app.use('/payment', paymentRoutes); // Rotas para pagamentos
 
-// Roteamento de erro 404 e tratamento de erros
+// Middleware para tratamento de erro 404
 app.use((req, res, next) => {
     res.status(404).json({ message: 'Not Found' });
 });
@@ -54,13 +54,13 @@ app.use((req, res, next) => {
 // Middleware para tratamento de exceções
 app.use(exceptionHandler);
 
-// Error handler
+// Middleware de tratamento de erros
 app.use((err, req, res, next) => {
-    // Set locals, only providing error in development
+    // Define as variáveis locais, fornecendo erro apenas em desenvolvimento
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    // Render the error page
+    // Renderiza a página de erro
     res.status(err.status || 500);
     res.json({
         message: err.message,
