@@ -82,39 +82,11 @@
             <div id="message" class="message"></div>
         </form>
     </div>
+  
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
-            const messageDiv = document.getElementById('message');
-
-            try {
-                const response = await fetch('http://localhost:5000/usuarios/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, senha })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    messageDiv.textContent = 'Login realizado com sucesso!';
-                    messageDiv.className = 'message success';
-                    // Redirecionar para a página desejada
-                    window.location.href = './veiculos.html'; // Atualize para o caminho do arquivo HTML
-                } else {
-                    throw new Error(data.message || 'Erro ao realizar login');
-                }
-            } catch (error) {
-                messageDiv.textContent = error.message;
-                messageDiv.className = 'message error';
-            }
-        });
-    </script>
+   
+    
+    <script src="login.js"></script>
+    
 </body>
 </html>

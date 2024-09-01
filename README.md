@@ -1,6 +1,6 @@
 ````
 ### Repositório criado para o backend do Projeto Integrador do 
-3° semestre de 2024
+3° semestre de 2024 so os loucos sabem 🎶🎵
 
 ````
 
@@ -41,7 +41,10 @@ git pull origin master
 
 git checkout sua-branch
 
-### exemplo de env pq o gustavo é imbecil:
+git merge master
+
+
+### exemplo de env pq o gustavo é imbecil pinto mole:
 
 require('dotenv').config();
 

@@ -1,16 +1,12 @@
 import express from 'express';
-
-
-
-import getMessage from "../controllers/message/getMessage.js";
-import sendMessage from "../controllers/message/createMessage.js";
+import { sendMessage, getMessages } from '../controllers/messageController.js';
 
 const router = express.Router();
 
+// Enviar uma nova mensagem
+router.post('/send', sendMessage);
 
-router.post('/' , sendMessage)
-
-router.get('/' , getMessage)
-
+// Obter todas as mensagens trocadas com um usuário específico
+router.get('/:recipientId', getMessages);
 
 export default router;
