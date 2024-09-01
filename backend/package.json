@@ -29,7 +29,6 @@
     "stripe": "^16.9.0",
     "uuid": "^10.0.0"
   },
-
   "devDependencies": {
     "axios": "^1.7.5",
     "eslint": "^8.29.0",
@@ -48,5 +47,4 @@
       "no-console": "off"
     }
   }
-
 }
