@@ -29,8 +29,7 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7
 
 
 // Configuração do middleware
-app.use(cors({
-    origin: 'http://localhost:5000', // URL do frontend
+app.use(cors({// URL do frontend
     credentials: true // Permite o envio de cookies e credenciais
 }));// Habilita CORS para permitir requisições de diferentes origens
 app.use(logger('dev')); // Configura o logger de requisições HTTP
