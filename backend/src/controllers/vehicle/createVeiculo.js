@@ -31,7 +31,7 @@ export default async function createVeiculo(req, res) {
             const veiculo = await prisma.veiculo.create({
                 data: {
                     modelo,
-                    anoFabricacao: new Date(anoFabricacao),
+                    anoFabricacao,
                     cor,
                     descricao,
                     valor,
