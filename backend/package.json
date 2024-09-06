@@ -2,10 +2,11 @@
   "name": "backend",
   "version": "0.0.0",
   "private": true,
+  "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "start": "node ./bin/www.js",
-    "dev": "node --env-file=.env --watch app.js",
+    "start": "node app.js",
+    "dev": "node --env-file=.env --watch src/app.js",
     "prisma:pull": "npx prisma db pull --schema=./prisma/schema-production.prisma",
     "prisma:push": "npx prisma db push --schema=./prisma/schema-production.prisma",
     "prisma:generate": "npx prisma generate --schema=./prisma/schema-production.prisma",
