@@ -13,6 +13,7 @@ import authRouter from './src/routers/authRouter.js';
 import cookieRouter from './src/routers/cookieRouter.js';
 import vehicleRouter from './src/routers/vehicleRouter.js';
 import messageRouter from './src/routers/messageRouter.js';
+import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './src/routers/paymentRouter.js';
 
 import { exceptionHandler } from './src/utils/ajuda.js';
@@ -26,11 +27,10 @@ const app = express();
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d';
 
 // Configuração da visualização
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+
 
 // Configuração do middleware
-app.use(cors()); // Habilita CORS para permitir requisições de diferentes origens
+app.use(cors({}));// Habilita CORS para permitir requisições de diferentes origens
 app.use(logger('dev')); // Configura o logger de requisições HTTP
 app.use(express.json()); // Parseia o corpo das requisições como JSON
 app.use(express.urlencoded({ extended: false })); // Parseia o corpo das requisições URL encoded
@@ -68,4 +68,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-export default app;
+
+app.listen(PORT, () => {
+    console.log(`Servidor Rodando no Ambiente ${ENVIRONMENT} em ${ENVIRONMENT == 'production' ? HOST : HOST + ':' + PORT}`)
+});
