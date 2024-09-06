@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { exceptionHandler } from '../../utils/ajuda.js';
 import { generateAccessToken } from '../../utils/auth.js';
 import { setCookie } from '../../utils/cookie.js';
+import { encrypt } from '../../utils/crypto.js';
 
 
 const prisma = new PrismaClient();
