@@ -25,6 +25,10 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7
 
 // Configuração da visualização
 
+import dotenv from 'dotenv';
+dotenv.config();
+
+
 
 // Configuração do middleware
 app.use(cors({}));// Habilita CORS para permitir requisições de diferentes origens
