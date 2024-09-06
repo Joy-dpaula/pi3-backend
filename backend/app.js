@@ -13,6 +13,7 @@ import authRouter from './src/routers/authRouter.js';
 import cookieRouter from './src/routers/cookieRouter.js';
 import vehicleRouter from './src/routers/vehicleRouter.js';
 import messageRouter from './src/routers/messageRouter.js';
+import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './src/routers/paymentRouter.js';
 
 import { exceptionHandler } from './src/utils/ajuda.js';
@@ -29,9 +30,7 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7
 
 
 // Configuração do middleware
-app.use(cors({// URL do frontend
-    credentials: true // Permite o envio de cookies e credenciais
-}));// Habilita CORS para permitir requisições de diferentes origens
+app.use(cors({}));// Habilita CORS para permitir requisições de diferentes origens
 app.use(logger('dev')); // Configura o logger de requisições HTTP
 app.use(express.json()); // Parseia o corpo das requisições como JSON
 app.use(express.urlencoded({ extended: false })); // Parseia o corpo das requisições URL encoded
@@ -70,6 +69,6 @@ app.use((err, req, res, next) => {
 });
 
 
-app.listen(5000, () => {
-    console.log('Servidor Rodando em http://localhost:5000');
+app.listen(PORT, () => {
+    console.log(`Servidor Rodando no Ambiente ${ENVIRONMENT} em ${ENVIRONMENT == 'production' ? HOST : HOST + ':' + PORT}`)
 });

@@ -33,12 +33,21 @@ export default async function loginController(req, res) {
             isAdmin: usuario.isAdmin
         });
 
-        setCookie(res, 'userData', accessToken, { // Ajuste o valor se necessário
+       
+        setCookie(res, 'userData', encrypt(JSON.stringify({
+            id: usuario.id,
+            nome: usuario.nome,
+            email: usuario.email,
+            cpf: usuario.cpf.toString(),
+            telefone: usuario.telefone ? usuario.telefone.toString() : null,
+            isAdmin: usuario.isAdmin,
+            accessToken
+          })), { 
             maxAge: 24 * 60 * 60 * 1000, // 24 horas
             httpOnly: true, // Não acessível via JavaScript
             secure: process.env.NODE_ENV === 'production', // Somente HTTPS em produção
             sameSite: 'Strict' // Protege contra CSRF
-        });
+          });
     
 
         res.json({
