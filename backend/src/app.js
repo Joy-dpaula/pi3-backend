@@ -22,7 +22,6 @@ import { fileURLToPath } from 'url';
 
 import accountRouter from './routers/accountRouter.js';
 import authRouter from './routers/authRouter.js';
-import cookieRouter from './routers/cookieRouter.js';
 import vehicleRouter from './routers/vehicleRouter.js';
 import messageRouter from './routers/messageRouter.js';
 import { ENVIRONMENT, PORT, HOST } from './config.js';
@@ -55,7 +54,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/usuarios', accountRouter);
 app.use('/auth', authRouter);
-app.use('/cookie', cookieRouter); 
 app.use('/veiculos', vehicleRouter); 
 app.use('/message', messageRouter); 
 app.use('/payment', paymentRoutes); 
