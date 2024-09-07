@@ -12,6 +12,8 @@
     "prisma:local:pull": "npx prisma db pull --schema=./prisma/schema-local.prisma",
     "prisma:local:push": "npx prisma db push --schema=./prisma/schema-local.prisma",
     "prisma:local:generate": "npx prisma generate --schema=./prisma/schema-local.prisma",
+    "prisma:local:migrate": "npx prisma migrate dev --schema=./prisma/schema-local.prisma",
+
     "seed": "node prisma/seed.js",
     "lint": "eslint . --fix"
   },

@@ -4,6 +4,20 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
+
+
+const app = express();
+
+
+const corsOptions = {
+    origin: 'http://localhost:5000', // Defina a origem exata do frontend
+    credentials: true, // Permitir envio de cookies
+  };
+  
+  // Middleware para aplicar CORS
+  app.use(cors(corsOptions));
+
+
 import { fileURLToPath } from 'url';
 
 import accountRouter from './routers/accountRouter.js';
@@ -19,7 +33,6 @@ import { exceptionHandler } from './utils/ajuda.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
 
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d';
 
@@ -30,9 +43,10 @@ dotenv.config();
 
 
 
+
+
 // Configuração do middleware
-app.use(cors({}));// Habilita CORS para permitir requisições de diferentes origens
-app.use(logger('dev')); // Configura o logger de requisições HTTP
+app.use(logger('dev')); 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: false })); 
 app.use(cookieParser(COOKIE_SECRET)); 

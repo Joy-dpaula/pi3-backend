@@ -34,7 +34,8 @@ export default async function loginController(req, res) {
             isAdmin: usuario.isAdmin
         });
 
-       
+        const isProduction = process.env.NODE_ENV === 'production';
+
         setCookie(res, 'userData', encrypt(JSON.stringify({
             id: usuario.id,
             nome: usuario.nome,
@@ -43,13 +44,13 @@ export default async function loginController(req, res) {
             telefone: usuario.telefone ? usuario.telefone.toString() : null,
             isAdmin: usuario.isAdmin,
             accessToken
-          })), { 
+        })), {
             maxAge: 24 * 60 * 60 * 1000, // 24 horas
-            httpOnly: true, // Não acessível via JavaScript
-            secure: process.env.NODE_ENV === 'production', // Somente HTTPS em produção
-            sameSite: 'Strict' // Protege contra CSRF
-          });
-    
+            httpOnly: false, // Permitir acesso via JavaScript
+            secure: isProduction, // HTTPS apenas em produção
+            sameSite: isProduction ? 'None' : 'Lax' // 'None' para produção, 'Lax' para desenvolvimento
+        });
+
 
         res.json({
             id: usuario.id,
