@@ -36,6 +36,15 @@ export default async function loginController(req, res) {
 
         const isProduction = process.env.NODE_ENV === 'production';
 
+        // Certifique-se de que o valor de sameSite seja válido
+        const sameSiteOption = isProduction ? 'None' : 'Lax';
+        const secureOption = isProduction; // HTTPS apenas em produção
+        
+        // Verificação extra para garantir que a opção 'None' está acompanhada de 'secure: true'
+        if (sameSiteOption === 'None' && !secureOption) {
+          throw new Error("sameSite 'None' requires 'secure' to be true in production.");
+        }
+        
         setCookie(res, 'userData', encrypt(JSON.stringify({
             id: usuario.id,
             nome: usuario.nome,
@@ -46,10 +55,11 @@ export default async function loginController(req, res) {
             accessToken
         })), {
             maxAge: 24 * 60 * 60 * 1000, // 24 horas
-            httpOnly: true, // Permitir acesso via JavaScript
-            secure: isProduction, // HTTPS apenas em produção
-            sameSite: isProduction ? 'None' : 'Lax' // 'None' para produção, 'Lax' para desenvolvimento
+            httpOnly: true, // Para segurança, considere usar sempre httpOnly
+            secure: secureOption, // HTTPS apenas em produção
+            sameSite: sameSiteOption // Use a opção correta baseada no ambiente
         });
+        
 
 
         res.json({
