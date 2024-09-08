@@ -46,7 +46,7 @@ export default async function loginController(req, res) {
             accessToken
         })), {
             maxAge: 24 * 60 * 60 * 1000, // 24 horas
-            httpOnly: false, // Permitir acesso via JavaScript
+            httpOnly: true, // Permitir acesso via JavaScript
             secure: isProduction, // HTTPS apenas em produção
             sameSite: isProduction ? 'None' : 'Lax' // 'None' para produção, 'Lax' para desenvolvimento
         });
