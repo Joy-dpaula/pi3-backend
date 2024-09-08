@@ -53,12 +53,7 @@ export default async function loginController(req, res) {
             telefone: usuario.telefone ? usuario.telefone.toString() : null,
             isAdmin: usuario.isAdmin,
             accessToken
-        })), {
-            maxAge: 24 * 60 * 60 * 1000, // 24 horas
-            httpOnly: true, // Para segurança, considere usar sempre httpOnly
-            secure: secureOption, // HTTPS apenas em produção
-            sameSite: sameSiteOption // Use a opção correta baseada no ambiente
-        });
+        })));
         
 
 
