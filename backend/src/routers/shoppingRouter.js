@@ -1,25 +1,36 @@
+
 import express from 'express';
-import createVeiculo from '../controllers/shopping/createVeiculo.js'; // Atualize conforme necessário
-import deleteVeiculo from '../controllers/shopping/deleteVeiculo.js'; // Atualize conforme necessário
-import getVeiculoById from '../controllers/shopping/getByIdVeiculo.js'; // Atualize conforme necessário
-import updateVeiculo from '../controllers/shopping/updateVeiculo.js'; // Atualize conforme necessário
-import getVeiculos from '../controllers/shopping/getVeiculo.js'; // Atualize conforme necessário
-import uploadSingle from '../utils/uploadSingle.js'; // Atualize o caminho para o seu middleware
+
+import { generatePixQRCode } from '../controllers/shopping/generatePixQRCode.js';
+import { createCreditCard } from '../controllers/shopping/createCreditCard.js';
+import { getCreditCard } from '../controllers/shopping/getCreditCard.js';
+import { updateCreditCard } from '../controllers/shopping/updateCreditCard.js';
+import { deleteCreditCard } from '../controllers/shopping/deleteCreditCard.js';
+import { generateBoleto } from '../controllers/shopping/generateBoleto.js';
+import createVeiculo from '../controllers/shopping/createShopping.js';
+import getShopping from '../controllers/shopping/getShopping.js';
+import createShopping from '../controllers/shopping/createShopping.js'
 
 const router = express.Router();
 
-// Rota para criar um veículo
-router.post('/', createVeiculo, uploadSingle);
+// Pagamento Pix - Rota
+router.post('/api/payment/pix', generatePixQRCode);
 
-router.get('/', getVeiculos)
+router.post('/' , createShopping)
+router.get('/' , getShopping )
 
-// Rota para obter um veículo específico por ID
-router.get('/:id', getVeiculoById);
+// Cartão de Crédito - Rotas
+router.post('/api/payment/credit-card', createCreditCard);
+router.get('/api/payment/credit-card/:cardId', getCreditCard);
+router.put('/api/payment/credit-card/:cardId', updateCreditCard);
+router.delete('/api/payment/credit-card/:cardId', deleteCreditCard);
 
-// Rota para atualizar um veículo específico por ID
-router.put('/:id', updateVeiculo);
 
-// Rota para excluir um veículo específico por ID
-router.delete('/:id', deleteVeiculo);
+// Boleto - Rota
+router.post('/api/payment/boleto', generateBoleto);
+
+// Veículo - Rotas
+router.post('/', createVeiculo);
+router.get('/', getShopping);
 
 export default router;

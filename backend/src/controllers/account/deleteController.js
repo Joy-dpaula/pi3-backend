@@ -1,6 +1,8 @@
+
+
 import { PrismaClient } from '@prisma/client';
 import { exceptionHandler } from '../../utils/ajuda.js';
-import { authenticateToken } from '../../utils/auth.js';
+
 
 const prisma = new PrismaClient();
 
@@ -16,6 +18,7 @@ export default async function deleteAccount(req, res) {
 
         const checkUsuario = await prisma.usuario.findUnique({ where: { id } });
 
+
         // Verificar se o usuário existe e se o token é válido para deletar o usuário
         if (!checkUsuario || (checkUsuario.email !== token.email && !token.isAdmin)) {
             return res.sendStatus(403); // Forbidden
@@ -27,3 +30,4 @@ export default async function deleteAccount(req, res) {
         exceptionHandler(exception, res);
     }
 }
+

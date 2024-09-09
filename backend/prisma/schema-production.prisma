@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js" // Define o gerador que cria o cliente Prisma para JavaScript
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+model Usuario {
+  id               Int             @id @default(autoincrement()) // Campo 'id' é a chave primária e será incrementado automaticamente
+  nome             String          @db.VarChar(50) // Campo 'nome' é uma string com até 50 caracteres
+  cpf              String          @unique @db.VarChar(15) // Campo 'cpf' é uma string única (não repetida) com até 15 caracteres
+  telefone         String          @db.VarChar(15) // Campo 'telefone' é uma string com até 15 caracteres
+  email            String          @unique @db.VarChar(200) // Campo 'email' é uma string única com até 200 caracteres
+  nascimento       DateTime // Campo 'nascimento' armazena a data e hora de nascimento
+  senha            String          @db.VarChar(200) // Campo 'senha' é uma string com até 200 caracteres (geralmente usada para hash de senhas)
+  isAdmin          Boolean         @default(false) // Campo 'isAdmin' é um booleano que por padrão é falso
+  Veiculo          Veiculo[] // Relacionamento um-para-muitos com o modelo 'Veiculo' (um usuário pode ter vários veículos)
+  Compra           Compra[] // Relacionamento um-para-muitos com o modelo 'Compra' (um usuário pode ter várias compras)
+  Cartoes          CartaoCredito[] // Relacionamento com os cartões de crédito // Relacionamento um-para-muitos com o modelo 'CartaoCredito' (um usuário pode ter vários cartões de crédito)
+  messagesSent     Message[]       @relation("SentMessages") // Relacionamento um-para-muitos com o modelo 'Message' para mensagens enviadas
+  messagesReceived Message[]       @relation("ReceivedMessages") // Relacionamento um-para-muitos com o modelo 'Message' para mensagens recebidas
+  Payment          Payment[] // Relacionamento um-para-muitos com o modelo 'Payment' (um usuário pode ter vários pagamentos)
+}
+
+model Veiculo {
+  id            Int      @id @default(autoincrement()) // Campo 'id' é a chave primária e será incrementado automaticamente
+  modelo        String   @db.VarChar(50) // Campo 'modelo' é uma string com até 50 caracteres
+  anoFabricacao Int // Campo 'anoFabricacao' armazena o ano de fabricação do veículo
+  cor           String   @db.VarChar(5) // Campo 'cor' é uma string com até 5 caracteres
+  descricao     String   @db.VarChar(500) // Campo 'descricao' é uma string com até 500 caracteres
+  valor         Int // Campo 'valor' armazena o valor do veículo como um inteiro
+  km            Int // Campo 'km' armazena a quilometragem do veículo como um inteiro
+  marca         String   @db.VarChar(20) // Campo 'marca' é uma string com até 20 caracteres
+  foto          String // Campo 'foto' armazena uma string que representa o caminho ou URL da foto do veículo
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id]) // Relacionamento muitos-para-um com o modelo 'Usuario' (muitos veículos pertencem a um usuário)
+  usuarioId     Int // Campo 'usuarioId' armazena a referência à chave primária do modelo 'Usuario'
+  Compra        Compra[] // Relacionamento um-para-muitos com o modelo 'Compra' (um veículo pode ter várias compras associadas)
+}
+
+model Compra {
+  id        Int      @id @default(autoincrement()) // Campo 'id' é a chave primária e será incrementado automaticamente
+  veiculo   Veiculo  @relation(fields: [veiculoId], references: [id]) // Relacionamento muitos-para-um com o modelo 'Veiculo' (muitas compras podem estar relacionadas a um veículo)
+  veiculoId Int // Campo 'veiculoId' armazena a referência à chave primária do modelo 'Veiculo'
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id]) // Relacionamento muitos-para-um com o modelo 'Usuario' (muitas compras podem estar relacionadas a um usuário)
+  usuarioId Int // Campo 'usuarioId' armazena a referência à chave primária do modelo 'Usuario'
+  payment   Payment? // Relacionamento um-para-um opcional com o modelo 'Payment' (uma compra pode ter um pagamento associado)
+  paymentId Int? // não precisa de @unique se a relação for opcional // Campo opcional 'paymentId' armazena a referência à chave primária do modelo 'Payment'
+}
+
+model Payment {
+  id        Int     @id @default(autoincrement()) // Campo 'id' é a chave primária e será incrementado automaticamente
+  usuarioId Int // Campo 'usuarioId' armazena a referência à chave primária do modelo 'Usuario'
+  usuario   Usuario @relation(fields: [usuarioId], references: [id]) // Relacionamento muitos-para-um com o modelo 'Usuario' (muitos pagamentos podem estar relacionados a um usuário)
+  compra    Compra? @relation(fields: [compraId], references: [id]) // Relacionamento um-para-um opcional com o modelo 'Compra' (um pagamento pode estar relacionado a uma compra)
+  compraId  Int?    @unique // Adicionando @unique para garantir a unicidade // Campo 'compraId' armazena a referência única à chave primária do modelo 'Compra' para manter a unicidade da relação
+  paymentMethod String   @db.VarChar(20) // Campo 'paymentMethod' armazena o método de pagamento como uma string com até 20 caracteres
+  status        String   @db.VarChar(20) // Campo 'status' armazena o status do pagamento como uma string com até 20 caracteres
+  pixQRCodeURL  String?  @db.VarChar(255) // Campo opcional 'pixQRCodeURL' armazena a URL do código QR do Pix como uma string com até 255 caracteres
+  boletoURL     String?  @db.VarChar(255) // Campo opcional 'boletoURL' armazena a URL do boleto como uma string com até 255 caracteres
+  amount        Int // Campo 'amount' armazena o valor do pagamento como um inteiro
+  timestamp     DateTime @default(now()) // Campo 'timestamp' armazena a data e hora do pagamento com valor padrão como o momento atual
+}
+
+model CartaoCredito {
+  id           Int      @id @default(autoincrement()) // Campo 'id' é a chave primária e será incrementado automaticamente
+  numero       String   @db.VarChar(16) // Número do cartão, deve ser armazenado de forma segura // Campo 'numero' armazena o número do cartão de crédito como uma string com até 16 caracteres
+  validade     String   @db.VarChar(5) // Data de validade no formato MM/AA // Campo 'validade' armazena a data de validade do cartão no formato MM/AA como uma string com até 5 caracteres
+  cvv          String   @db.VarChar(3) // Código de segurança, deve ser armazenado de forma segura // Campo 'cvv' armazena o código de segurança do cartão como uma string com até 3 caracteres
+  nomeTitular  String   @db.VarChar(100) // Nome do titular do cartão // Campo 'nomeTitular' armazena o nome do titular do cartão como uma string com até 100 caracteres
+  bandeira     String   @db.VarChar(20) // Bandeira do cartão (Visa, MasterCard, etc.) // Campo 'bandeira' armazena a bandeira do cartão como uma string com até 20 caracteres
+  usuario      Usuario  @relation(fields: [usuarioId], references: [id]) // Relacionamento muitos-para-um com o modelo 'Usuario' (muitos cartões podem estar relacionados a um usuário)
+  usuarioId    Int // Campo 'usuarioId' armazena a referência à chave primária do modelo 'Usuario'
+  criadoEm     DateTime @default(now()) // Campo 'criadoEm' armazena a data e hora de criação do cartão com valor padrão como o momento atual
+  atualizadoEm DateTime @updatedAt // Campo 'atualizadoEm' armazena a data e hora da última atualização do cartão com valor padrão como o momento atual
+}
+
+model Message {
+  id          Int      @id @default(autoincrement()) // Campo 'id' é a chave primária e será incrementado automaticamente
+  sender      Usuario  @relation("SentMessages", fields: [senderId], references: [id]) // Relacionamento muitos-para-um com o modelo 'Usuario' para mensagens enviadas (muitas mensagens podem ser enviadas por um usuário)
+  senderId    Int // Campo 'senderId' armazena a referência à chave primária do modelo 'Usuario' (quem enviou a mensagem)
+  recipient   Usuario  @relation("ReceivedMessages", fields: [recipientId], references: [id]) // Relacionamento muitos-para-um com o modelo 'Usuario' para mensagens recebidas (muitas mensagens podem ser recebidas por um usuário)
+  recipientId Int // Campo 'recipientId' armazena a referência à chave primária do modelo 'Usuario' (quem recebeu a mensagem)
+  content     String // Campo 'content' armazena o conteúdo da mensagem como uma string
+  timestamp   DateTime @default(now()) // Campo 'timestamp' armazena a data e hora da mensagem com valor padrão como o momento atual
+}
