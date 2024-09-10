@@ -5,10 +5,10 @@ const prisma = new PrismaClient();
 
 export default async function updateVeiculo(req, res) {
     const { id } = req.params;
-    const { modelo, anoFabricacao, cor, descricao, valor, km, marca, foto, usuarioId } = req.body;
+    const { modelo, anoFabricacao, cor, descricao, valor, km, marca, foto, usuarioId, cidade, estado } = req.body;
 
     // Validação básica dos dados
-    if (!modelo || !anoFabricacao || !cor || !descricao || !valor || !km || !marca || !usuarioId) {
+    if (!modelo || !anoFabricacao || !cor || !descricao || !valor || !km || !marca || !usuarioId || !cidade || !estado) {
         return res.status(400).json({ error: "Modelo, ano de fabricação, cor, descrição, valor, km, marca e usuário são obrigatórios." });
     }
 
@@ -32,12 +32,14 @@ export default async function updateVeiculo(req, res) {
             where: { id: parseInt(id) },
             data: {
                 modelo,
-                anoFabricacao: new Date(anoFabricacao),
+                anoFabricacao,
                 cor,
                 descricao,
                 valor,
                 km,
                 marca,
+                estado,
+                cidade,
                 foto: foto || '',
                 usuario: {
                     connect: { id: usuarioId }
@@ -53,6 +55,8 @@ export default async function updateVeiculo(req, res) {
                 km: true,
                 marca: true,
                 foto: true,
+                cidade: true,
+                estado: true,
                 usuario: {
                     select: {
                         id: true,

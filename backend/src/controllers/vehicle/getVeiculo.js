@@ -27,6 +27,8 @@ export default async function getVeiculo(req, res) {
             km: veiculo.km,
             marca: veiculo.marca,
             foto: veiculo.foto,
+            cidade: veiculo.cidade,
+            estado: veiculo.estado,
             usuario: {
                 id: veiculo.usuario.id,
                 nome: veiculo.usuario.nome,
