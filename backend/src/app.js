@@ -11,6 +11,7 @@ import authRouter from './routers/authRouter.js';
 import cookieRouter from './routers/cookieRouter.js';
 import vehicleRouter from './routers/vehicleRouter.js';
 import messageRouter from './routers/messageRouter.js';
+import shoppingRouter from './routers/shoppingRouter.js';
 import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
 import { exceptionHandler } from './utils/ajuda.js';
@@ -41,7 +42,7 @@ app.use('/cookie', cookieRouter);
 app.use('/veiculos', vehicleRouter); 
 app.use('/message', messageRouter); 
 app.use('/payment', paymentRoutes); 
-
+app.use('/compras', shoppingRouter);
 
 app.use((req, res, next) => {
     res.status(404).json({ message: 'Not Found' });
