@@ -5,21 +5,23 @@ export function configureCookieParser(app, secret) {
   app.use(cookieParser(secret));
 }
 
-// Função para definir um cookie criptografado
+
 export function setCookie(res, name, value, options = {}) {
-  res.cookie(name, value, {
+  const isProduction = process.env.NODE_ENV === 'production';
 
-    signed: true, // Indica que o cookie deve ser assinado
-    httpOnly: true, // Torna o cookie inacessível ao JavaScript do lado do cliente
-    secure: process.env.NODE_ENV === 'production', // Define o cookie como seguro somente em HTTPS em produção
-    sameSite: 'Strict', // Prevê que o cookie não será enviado com requisições cross-site
+  const cookieOptions = {
+    maxAge: 24 * 60 * 60 * 1000, // 24 horas
+    httpOnly: true, // Segurança
+    secure: isProduction, // HTTPS apenas em produção
+    ...options // Permite sobrescrever opções
+  };
 
-    signed: true,
-    httpOnly: true,
-
-    ...options
-  });
+  // Remova temporariamente sameSite para depuração
+  res.cookie(name, value, cookieOptions);
 }
+
+
+
 
 
 // Função para ler um cookie criptografado

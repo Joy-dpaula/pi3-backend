@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
             background-color: #f4f4f4;
             margin: 0;
         }
+
         .container {
             max-width: 400px;
             width: 100%;
@@ -22,23 +24,28 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
             margin-bottom: 20px;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         .form-group label {
             display: block;
             margin-bottom: 5px;
         }
+
         .form-group input {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
         .form-group button {
             width: 100%;
             padding: 10px;
@@ -49,21 +56,26 @@
             font-size: 16px;
             cursor: pointer;
         }
+
         .form-group button:hover {
             background-color: #0056b3;
         }
+
         .message {
             text-align: center;
             margin-top: 20px;
         }
+
         .message.success {
             color: #28a745;
         }
+
         .message.error {
             color: #dc3545;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Login</h1>
@@ -84,7 +96,7 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
             event.preventDefault();
 
             const email = document.getElementById('email').value;
@@ -97,8 +109,10 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, senha })
+                    body: JSON.stringify({ email, senha }),
+                    credentials: 'include' // Incluir cookies ou credenciais na requisição
                 });
+               
 
                 const data = await response.json();
 
@@ -110,11 +124,14 @@
                 } else {
                     throw new Error(data.message || 'Erro ao realizar login');
                 }
-            } catch (error) {
+            }
+            
+            catch (error) {
                 messageDiv.textContent = error.message;
                 messageDiv.className = 'message error';
             }
         });
     </script>
 </body>
+
 </html>
