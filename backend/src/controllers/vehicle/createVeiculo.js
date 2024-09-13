@@ -11,12 +11,12 @@ export default async function createVeiculo(req, res) {
             return res.status(400).json({ error: err.message });
         }
 
-        const { modelo, anoFabricacao, cor, descricao, valor, km, marca, usuarioId } = req.body;
+        const { modelo, anoFabricacao, cor, descricao, valor, km, marca, cidade, estado, usuarioId } = req.body;
         const foto = req.upload ? req.upload.customPath : ''; // Caminho da imagem se houver
 
         // Validação básica dos dados
-        if (!modelo || !anoFabricacao || !cor || !descricao || !valor || !km || !marca || !usuarioId) {
-            return res.status(400).json({ error: "Modelo, ano de fabricação, cor, descrição, valor, km, marca e usuário são obrigatórios." });
+        if (!modelo || !anoFabricacao || !cor || !descricao || !valor || !km || !marca || !usuarioId || !cidade || !estado ) {
+            return res.status(400).json({ error: "Modelo, ano de fabricação, cor, descrição, valor, km, marca, local e usuário são obrigatórios." });
         }
 
         if (cor.length > 5) {
@@ -31,13 +31,15 @@ export default async function createVeiculo(req, res) {
             const veiculo = await prisma.veiculo.create({
                 data: {
                     modelo,
-                    anoFabricacao: new Date(anoFabricacao),
+                    anoFabricacao,
                     cor,
                     descricao,
                     valor,
                     km,
                     marca,
                     foto,
+                    cidade,
+                    estado,
                     usuario: {
                         connect: { id: usuarioId }
                     }
@@ -52,6 +54,8 @@ export default async function createVeiculo(req, res) {
                     km: true,
                     marca: true,
                     foto: true,
+                    cidade: true,
+                    estado: true,
                     usuario: {
                         select: {
                             id: true,

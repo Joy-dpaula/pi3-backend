@@ -20,13 +20,15 @@ export default async function getVeiculo(req, res) {
         const veiculosFormatted = veiculos.map(veiculo => ({
             id: veiculo.id,
             modelo: veiculo.modelo,
-            anoFabricacao: veiculo.anoFabricacao.toISOString().split('T')[0], // Converte para string no formato YYYY-MM-DD
+            anoFabricacao: veiculo.anoFabricacao, // Converte para string no formato YYYY-MM-DD
             cor: veiculo.cor,
             descricao: veiculo.descricao,
             valor: veiculo.valor,
             km: veiculo.km,
             marca: veiculo.marca,
             foto: veiculo.foto,
+            cidade: veiculo.cidade,
+            estado: veiculo.estado,
             usuario: {
                 id: veiculo.usuario.id,
                 nome: veiculo.usuario.nome,

@@ -1,13 +1,19 @@
 {
   "name": "backend",
   "version": "0.0.0",
-  "private": true,
+  "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "start": "node ./bin/www.js",
-    "dev": "nodemon ./bin/www",
-    "migrate": "npx prisma migrate dev",
-    "generate": "npx prisma generate",
+    "start": "nodemon src/app.js",
+    "dev": "nodemon src/app.js",
+    "prisma:pull": "npx prisma db pull --schema=./prisma/schema-production.prisma",
+    "prisma:push": "npx prisma db push --schema=./prisma/schema-production.prisma",
+    "prisma:generate": "npx prisma generate --schema=./prisma/schema-production.prisma",
+    "prisma:local:pull": "npx prisma db pull --schema=./prisma/schema-local.prisma",
+    "prisma:local:push": "npx prisma db push --schema=./prisma/schema-local.prisma",
+    "prisma:local:generate": "npx prisma generate --schema=./prisma/schema-local.prisma",
+    "prisma:local:migrate": "npx prisma migrate dev --schema=./prisma/schema-local.prisma",
+
     "seed": "node prisma/seed.js",
     "lint": "eslint . --fix"
   },
@@ -23,17 +29,19 @@
     "jade": "~1.11.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
-    "redis": "^4.7.0",
     "multer": "^1.4.5-lts.1",
     "qrcode": "^1.5.4",
+    "redis": "^4.7.0",
+    "stripe": "^16.9.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "prisma": "^5.19.0",
-    "nodemon": "^2.0.15",
+    "axios": "^1.7.5",
     "eslint": "^8.29.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.26.0"
+    "eslint-plugin-import": "^2.26.0",
+    "nodemon": "^2.0.15",
+    "prisma": "^5.19.0"
   },
   "eslintConfig": {
     "extends": "airbnb-base",

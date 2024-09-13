@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js" // Define o gerador que cria o cliente Prisma para JavaScript
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model cartaocredito {
+  id           Int      @id @default(autoincrement())
+  numero       String   @db.VarChar(16)
+  validade     String   @db.VarChar(5)
+  cvv          String   @db.VarChar(3)
+  nomeTitular  String   @db.VarChar(100)
+  bandeira     String   @db.VarChar(20)
+  usuarioId    Int
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime
+  usuario      usuario  @relation(fields: [usuarioId], references: [id], map: "CartaoCredito_usuarioId_fkey")
+
+  @@index([usuarioId], map: "CartaoCredito_usuarioId_fkey")
+}
+
+model compra {
+  id        Int      @id @default(autoincrement())
+  veiculoId Int
+  usuarioId Int
+  paymentId Int?
+  usuario   usuario  @relation(fields: [usuarioId], references: [id], map: "Compra_usuarioId_fkey")
+  veiculo   veiculo  @relation(fields: [veiculoId], references: [id], map: "Compra_veiculoId_fkey")
+  payment   payment?
+
+  @@index([usuarioId], map: "Compra_usuarioId_fkey")
+  @@index([veiculoId], map: "Compra_veiculoId_fkey")
+}
+
+model message {
+  id                                   Int      @id @default(autoincrement())
+  senderId                             Int
+  recipientId                          Int
+  content                              String
+  timestamp                            DateTime @default(now())
+  usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id], map: "Message_recipientId_fkey")
+  usuario_message_senderIdTousuario    usuario  @relation("message_senderIdTousuario", fields: [senderId], references: [id], map: "Message_senderId_fkey")
+
+  @@index([recipientId], map: "Message_recipientId_fkey")
+  @@index([senderId], map: "Message_senderId_fkey")
+}
+
+model payment {
+  id            Int      @id @default(autoincrement())
+  usuarioId     Int
+  compraId      Int?     @unique(map: "Payment_compraId_key")
+  paymentMethod String   @db.VarChar(20)
+  status        String   @db.VarChar(20)
+  pixQRCodeURL  String?  @db.VarChar(255)
+  boletoURL     String?  @db.VarChar(255)
+  amount        Int
+  timestamp     DateTime @default(now())
+  compra        compra?  @relation(fields: [compraId], references: [id], map: "Payment_compraId_fkey")
+  usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Payment_usuarioId_fkey")
+
+  @@index([usuarioId], map: "Payment_usuarioId_fkey")
+}
+
+model usuario {
+  id                                   Int             @id @default(autoincrement())
+  nome                                 String          @db.VarChar(50)
+  cpf                                  String          @unique(map: "Usuario_cpf_key") @db.VarChar(15)
+  telefone                             String          @db.VarChar(15)
+  email                                String          @unique(map: "Usuario_email_key") @db.VarChar(200)
+  nascimento                           DateTime
+  senha                                String          @db.VarChar(200)
+  isAdmin                              Boolean         @default(false)
+  cartaocredito                        cartaocredito[]
+  compra                               compra[]
+  message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
+  message_message_senderIdTousuario    message[]       @relation("message_senderIdTousuario")
+  payment                              payment[]
+  veiculo                              veiculo[]
+}
+
+model veiculo {
+  id            Int      @id @default(autoincrement())
+  modelo        String   @db.VarChar(50)
+  anoFabricacao Int
+  cor           String   @db.VarChar(5)
+  descricao     String   @db.VarChar(500)
+  valor         Int
+  km            Int
+  marca         String   @db.VarChar(20)
+  foto          String
+  usuarioId     Int
+  cidade        String   @db.VarChar(30)
+  estado        String   @db.VarChar(30)
+  compra        compra[]
+  usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
+
+  @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
+}
