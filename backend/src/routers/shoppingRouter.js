@@ -1,6 +1,16 @@
 
 // import express from 'express';
 
+
+import { createCreditCard } from '../controllers/shopping/createCreditCard.js';
+import { getCreditCard } from '../controllers/shopping/getCreditCard.js';
+import { updateCreditCard } from '../controllers/shopping/updateCreditCard.js';
+import { deleteCreditCard } from '../controllers/shopping/deleteCreditCard.js';
+import { generateBoleto } from '../controllers/shopping/generateBoleto.js';
+import createVeiculo from '../controllers/shopping/createShopping.js';
+import getShopping from '../controllers/shopping/getShopping.js';
+import createShopping from '../controllers/shopping/createShopping.js'
+
 // import { generatePixQRCode } from '../controllers/shopping/generatePixQRCode.js';
 // import { createCreditCard } from '../controllers/shopping/createCreditCard.js';
 // import { getCreditCard } from '../controllers/shopping/getCreditCard.js';
@@ -11,10 +21,14 @@
 // import getShopping from '../controllers/shopping/getShopping.js';
 // import createShopping from '../controllers/shopping/createShopping.js'
 
+
 // const router = express.Router();
+
+// Pagamento Pix - Rota
 
 // // Pagamento Pix - Rota
 // router.post('/api/payment/pix', generatePixQRCode);
+
 
 // router.post('/' , createShopping)
 // router.get('/' , getShopping )
