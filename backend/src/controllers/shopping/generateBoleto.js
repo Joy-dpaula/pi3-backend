@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import bwipjs from 'bwip-js';
 
 /**
  * Simula a geração de um boleto com código de barras

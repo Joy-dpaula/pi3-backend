@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
  * @param {Object} req - Requisição HTTP
  * @param {Object} res - Resposta HTTP
  */
-export async function generatePixPayment(req, res) {
+export default async function generatePixPayment(req, res) {
     try {
         // Gerar um identificador único para a transação simulada
         const transactionId = uuidv4();

@@ -1,23 +1,23 @@
-import { PrismaClient } from '@prisma/client';
-import { exceptionHandler } from '../../utils/ajuda.js';
+import { deleteVeiculo } from "../../models/vehicleModel.js";
 
-const prisma = new PrismaClient();
-
-export default async function deleteVeiculo(req, res) {
+const remove = async (req, res, next) => {
     const { id } = req.params;
 
     try {
-        // Verifica se o veículo existe
-        const veiculo = await prisma.veiculo.findUnique({ where: { id: parseInt(id) } });
-        if (!veiculo) {
-            return res.status(404).json({ error: "Veículo não encontrado." });
+        const veiculo = await deleteVeiculo(+id);
+
+        return res.json({
+            success: "Veículo removido com sucesso!",
+            veiculo,
+        });
+    } catch (error) {
+        if (error?.code === 'P2025') {
+            return res.status(404).json({
+                error: `Veículo com o id ${id} não encontrado!`,
+            });
         }
-
-        // Remove o veículo
-        await prisma.veiculo.delete({ where: { id: parseInt(id) } });
-
-        res.status(200).json({ message: "Veículo removido com sucesso." });
-    } catch (exception) {
-        exceptionHandler(exception, res);
+        next(error); 
     }
-}
+};
+
+export default remove;
