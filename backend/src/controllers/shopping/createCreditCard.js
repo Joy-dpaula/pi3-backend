@@ -1,6 +1,6 @@
-const creditCardValidator = require('card-validator');
+const creditCardValidator = 'card-validator';
 
-exports.createCreditCard = (req, res) => {
+export const createCreditCard = (req, res) => {
     const { cardNumber, expiryDate, cvv, holderName } = req.body;
 
     const numberValidation = creditCardValidator.number(cardNumber);

@@ -37,3 +37,50 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
     return usuario;
 }
 
+export async function getUsuarios() {
+
+    const usuarios = await prisma.usuario.findMany();
+
+    return usuarios
+    
+}
+
+export async function getUsuarioById(id) {
+    const account= await prisma.usuario.findUnique({
+        where: { id: Number(id) },
+    });
+    return account
+};
+
+
+
+
+export const deleteUsuarioById = async (id) => {
+    return await prisma.usuario.delete({
+        where: { id: Number(id) },
+    });
+};
+
+
+export const update = async (id, data) => {
+    // Certifique-se de que o id está sendo usado corretamente
+    if (!id) {
+        throw new Error('ID não fornecido');
+    }
+
+    // Atualize o usuário no banco de dados usando o Prisma
+    return await prisma.usuario.update({
+        where: { id: Number(id) }, // Certifique-se de que o ID está sendo passado corretamente
+        data, // Dados a serem atualizados
+        select: {
+            id: true,
+            nome: true,
+            email: true,
+            isAdmin: true,
+        },
+    });
+}
+
+
+
+

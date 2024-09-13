@@ -1,7 +1,6 @@
 
 import express from 'express';
 
-import { generatePixQRCode } from '../controllers/shopping/generatePixQRCode.js';
 import { createCreditCard } from '../controllers/shopping/createCreditCard.js';
 import { getCreditCard } from '../controllers/shopping/getCreditCard.js';
 import { updateCreditCard } from '../controllers/shopping/updateCreditCard.js';
@@ -14,7 +13,6 @@ import createShopping from '../controllers/shopping/createShopping.js'
 const router = express.Router();
 
 // Pagamento Pix - Rota
-router.post('/api/payment/pix', generatePixQRCode);
 
 router.post('/' , createShopping)
 router.get('/' , getShopping )
