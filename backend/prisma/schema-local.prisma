@@ -85,7 +85,7 @@ model veiculo {
   id            Int      @id @default(autoincrement())
   modelo        String   @db.VarChar(50)
   anoFabricacao Int
-  cor           String   @db.VarChar(5)
+  cor           String   @db.VarChar(25)
   descricao     String   @db.VarChar(500)
   valor         Int
   km            Int

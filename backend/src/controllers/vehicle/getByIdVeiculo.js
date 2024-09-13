@@ -1,49 +1,31 @@
-import { PrismaClient } from '@prisma/client';
-import { exceptionHandler } from '../../utils/ajuda.js';
+import { getByIdVeiculo } from "../../models/vehicleModel.js";
 
-const prisma = new PrismaClient();
-
-export default async function getVeiculoById(req, res) {
-    const { id } = req.params;
-
+const getById = async (req, res, next) => {
     try {
-        // Busca o veículo pelo ID
-        const veiculo = await prisma.veiculo.findUnique({
-            where: { id: parseInt(id) },
-            include: {
-                usuario: {
-                    select: {
-                        id: true,
-                        nome: true,
-                        email: true,
-                    },
-                },
-            },
-        });
+        const { id } = req.params;
 
-        if (!veiculo) {
-            return res.status(404).json({ error: "Veículo não encontrado." });
+        // Verifica se o parâmetro id existe
+        if (!id) {
+            return res.status(400).json({
+                error: "ID não fornecido na requisição.",
+            });
         }
 
-        res.status(200).json({
-            id: veiculo.id,
-            modelo: veiculo.modelo,
-            anoFabricacao: veiculo.anoFabricacao,// Converte para string no formato YYYY-MM-DD
-            cor: veiculo.cor,
-            descricao: veiculo.descricao,
-            valor: veiculo.valor,
-            km: veiculo.km,
-            marca: veiculo.marca,
-            foto: veiculo.foto,
-            cidade: veiculo.cidade,
-            estado: veiculo.estado,
-            usuario: {
-                id: veiculo.usuario.id,
-                nome: veiculo.usuario.nome,
-                email: veiculo.usuario.email,
-            }
+        const veiculo = await getByIdVeiculo(+id); // "+" converte o ID para número
+
+        if (!veiculo) {
+            return res.status(404).json({
+                error: `Veículo com o id ${id} não encontrado!`
+            });
+        }
+
+        return res.json({
+            success: "Veículo encontrado com sucesso!",
+            veiculo
         });
-    } catch (exception) {
-        exceptionHandler(exception, res);
+    } catch (error) {
+        next(error);
     }
-}
+};
+
+export default getById;

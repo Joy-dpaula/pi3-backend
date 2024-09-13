@@ -1,43 +1,15 @@
-import { PrismaClient } from '@prisma/client';
-import { exceptionHandler } from '../../utils/ajuda.js';
+import { getveiculo } from "../../models/vehicleModel.js" 
 
-const prisma = new PrismaClient();
-
-export default async function getVeiculo(req, res) {
-    try {
-        const veiculos = await prisma.veiculo.findMany({
-            include: {
-                usuario: {
-                    select: {
-                        id: true,
-                        nome: true,
-                        email: true,
-                    },
-                },
-            },
-        });
-
-        const veiculosFormatted = veiculos.map(veiculo => ({
-            id: veiculo.id,
-            modelo: veiculo.modelo,
-            anoFabricacao: veiculo.anoFabricacao, // Converte para string no formato YYYY-MM-DD
-            cor: veiculo.cor,
-            descricao: veiculo.descricao,
-            valor: veiculo.valor,
-            km: veiculo.km,
-            marca: veiculo.marca,
-            foto: veiculo.foto,
-            cidade: veiculo.cidade,
-            estado: veiculo.estado,
-            usuario: {
-                id: veiculo.usuario.id,
-                nome: veiculo.usuario.nome,
-                email: veiculo.usuario.email,
-            }
-        }));
-
-        res.json(veiculosFormatted);
-    } catch (exception) {
-        exceptionHandler(exception, res);
+const list = async (req, res, next) => {
+    try{
+        const veiculos = await getveiculo()
+        return res.json({
+            message: "veiculos com sucesso!",
+            veiculos
+        })
+    } catch(error) {
+        next(error)
     }
 }
+
+export default list

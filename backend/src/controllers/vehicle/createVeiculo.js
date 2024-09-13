@@ -1,74 +1,22 @@
-import { PrismaClient } from '@prisma/client';
-import { exceptionHandler } from '../../utils/ajuda.js';
-import uploadSingle from '../../utils/uploadSingle.js'; // Importe o middleware de upload
+import { createVeiculo } from "../../models/vehicleModel.js"; // Certifique-se que está corretamente importado
 
-const prisma = new PrismaClient();
+const handleCreateVeiculo = async (req, res, next) => {
+    try{
+        const veiculo = req.body
+        const result = await createVeiculo(veiculo)
 
-export default async function createVeiculo(req, res) {
-    // Primeiro, lidamos com o upload da imagem
-    uploadSingle(req, res, async (err) => {
-        if (err) {
-            return res.status(400).json({ error: err.message });
-        }
+        if(!result)
+            return res.status(401).json({
+                error: "Erro ao criar!"
+            })
 
-        const { modelo, anoFabricacao, cor, descricao, valor, km, marca, cidade, estado, usuarioId } = req.body;
-        const foto = req.upload ? req.upload.customPath : ''; // Caminho da imagem se houver
-
-        // Validação básica dos dados
-        if (!modelo || !anoFabricacao || !cor || !descricao || !valor || !km || !marca || !usuarioId || !cidade || !estado ) {
-            return res.status(400).json({ error: "Modelo, ano de fabricação, cor, descrição, valor, km, marca, local e usuário são obrigatórios." });
-        }
-
-        if (cor.length > 5) {
-            return res.status(400).json({ error: "A cor deve ter no máximo 5 caracteres." });
-        }
-
-        if (marca.length > 20) {
-            return res.status(400).json({ error: "A marca deve ter no máximo 20 caracteres." });
-        }
-
-        try {
-            const veiculo = await prisma.veiculo.create({
-                data: {
-                    modelo,
-                    anoFabricacao,
-                    cor,
-                    descricao,
-                    valor,
-                    km,
-                    marca,
-                    foto,
-                    cidade,
-                    estado,
-                    usuario: {
-                        connect: { id: usuarioId }
-                    }
-                },
-                select: {
-                    id: true,
-                    modelo: true,
-                    anoFabricacao: true,
-                    cor: true,
-                    descricao: true,
-                    valor: true,
-                    km: true,
-                    marca: true,
-                    foto: true,
-                    cidade: true,
-                    estado: true,
-                    usuario: {
-                        select: {
-                            id: true,
-                            nome: true,
-                            email: true,
-                        }
-                    }
-                }
-            });
-
-            res.status(201).json(veiculo);
-        } catch (exception) {
-            exceptionHandler(exception, res);
-        }
-    });
+        return res.json({
+            success: "veiculo criado com sucesso!",
+            account: result
+        })
+    } catch(error) {
+        next(error)
+    }
 }
+
+export default handleCreateVeiculo;
