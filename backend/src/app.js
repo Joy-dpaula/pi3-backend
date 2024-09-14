@@ -10,7 +10,6 @@ import accountRouter from './routers/accountRouter.js';
 import authRouter from './routers/authRouter.js';
 import vehicleRouter from './routers/vehicleRouter.js';
 import messageRouter from './routers/messageRouter.js';
-// import shoppingRouter from './routers/shoppingRouter.js';
 import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
 import { exceptionHandler } from './utils/ajuda.js';

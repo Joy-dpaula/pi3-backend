@@ -46,7 +46,6 @@ git merge master
 
 ### exemplo de env pq o gustavo é imbecil pinto mole:
 
-require('dotenv').config();
 
 DATABASE_URL="mysql://root:aluno@localhost:3306/backend_db"
 PORT=5000
