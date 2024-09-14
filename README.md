@@ -4,29 +4,16 @@
 
 ````
 
-´´´´
-### Comandos para branch 
+ ### Comandos do prisma 
 
-git checkout 'nome da branch'
+npm run prisma:local:push
 
-git status
+npm run prisma:local:pull
 
-git add .
+npm run prisma:local:generate
 
+npm run prisma:local:migrate
 
- 
-´´´´
-
-
-
-´´´´´
- ### Instalando prisma 
-
-npm install prisma --save-dev
-
-npx prisma generate
-
-npx prisma db push
 
 
 ´´´´´
@@ -44,8 +31,9 @@ git checkout sua-branch
 git merge master
 
 
-### exemplo de env pq o gustavo é imbecil pinto mole:
-
+`````
+### exemplo de env:
+`````
 
 DATABASE_URL="mysql://root:aluno@localhost:3306/backend_db"
 PORT=5000
@@ -55,4 +43,3 @@ SECRET_KEY=myChavesecreta12345!@#
 CLIENT_ORIGIN_URL="*"
 
 
-`````
