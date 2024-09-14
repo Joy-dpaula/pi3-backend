@@ -1,7 +1,9 @@
-const { PrismaClient } = require('@prisma/client');
+// Importando Prisma Client
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-const getPaginatedUsers = async (req, res) => {
+// Função para obter usuários paginados
+export const getPaginatedUsers = async (req, res) => {
     const pageNumber = parseInt(req.query.page) || 0;
 
     try {
@@ -15,7 +17,8 @@ const getPaginatedUsers = async (req, res) => {
     }
 };
 
-const getUsersSummary = async (req, res) => {
+// Função para obter um resumo de usuários
+export const getUsersSummary = async (req, res) => {
     try {
         const users = await prisma.usuario.findMany({
             select: {
@@ -28,9 +31,4 @@ const getUsersSummary = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Erro ao obter resumo dos usuários' });
     }
-};
-
-module.exports = {
-    getPaginatedUsers,
-    getUsersSummary,
 };

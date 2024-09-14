@@ -1,4 +1,4 @@
-exports.updateCreditCard = (req, res) => {
+export const updateCreditCard = (req, res) => {
     const { cardId } = req.params;
     const { cardNumber, expiryDate, cvv, holderName } = req.body;
 
