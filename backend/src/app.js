@@ -13,6 +13,7 @@ import messageRouter from './routers/messageRouter.js';
 import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
 import { exceptionHandler } from './utils/ajuda.js';
+import create  from './routers/shoppingRouter.js';
 
 
 
@@ -47,6 +48,8 @@ app.use('/auth', authRouter);
 app.use('/veiculos', vehicleRouter); 
 app.use('/message', messageRouter); 
 app.use('/payment', paymentRoutes); 
+
+app.use('/compra', create)
 // app.use('/compras', shoppingRouter);
 
 app.use((req, res, next) => {
