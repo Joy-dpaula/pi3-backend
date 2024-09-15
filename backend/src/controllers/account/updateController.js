@@ -1,35 +1,28 @@
-
-
-
 import bcrypt from 'bcryptjs';
 import { exceptionHandler } from '../../utils/ajuda.js';
 import { update } from '../../models/accountModel.js';
-
-
-
+import { getUsuarioById } from '../../models/accountModel.js'; // Assumindo que 'del' é equivalente a 'getUsuarioById'
 
 export default async function updateAccount(req, res) {
     try {
         const id = Number(req.params.id);
 
-
-        if (!id) {
+        if (isNaN(id)) {
             return res.status(400).json({ error: 'ID não fornecido ou inválido' });
         }
 
         const { nome, email, senha, cpf, telefone, nascimento, isAdmin } = req.body;
-       
         const token = req.accessToken;
 
-
-        
-        const checkUsuario = await del(id);
+        // Verificar se o usuário existe
+        const checkUsuario = await getUsuarioById(id); // Atualize conforme o nome correto da função
 
         if (!checkUsuario || (checkUsuario.email !== token.email && !token.isAdmin)) {
             return res.sendStatus(403);
         }
-    
-        const usuario =  await update(id,{
+
+        // Atualizar usuário
+        const usuario = await update(id, {
             nome,
             email,
             senha: senha ? await bcrypt.hash(senha, 12) : undefined,
@@ -39,9 +32,7 @@ export default async function updateAccount(req, res) {
             isAdmin: isAdmin !== undefined ? isAdmin : undefined,
         });
 
-        
-
-      return  res.json(usuario);
+        return res.json(usuario);
     } catch (exception) {
         exceptionHandler(exception, res);
     }
