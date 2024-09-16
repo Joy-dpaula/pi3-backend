@@ -14,6 +14,7 @@ import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
 import { exceptionHandler } from './utils/ajuda.js';
 import create  from './routers/shoppingRouter.js';
+import creditCard from './routers/creditCardRouter.js'
 
 
 
@@ -47,7 +48,8 @@ app.use('/usuarios', accountRouter);
 app.use('/auth', authRouter);
 app.use('/veiculos', vehicleRouter); 
 app.use('/message', messageRouter); 
-app.use('/payment', paymentRoutes); 
+app.use('/payment', paymentRoutes);
+app.use('/credit' , creditCard) 
 
 app.use('/compra', create)
 // app.use('/compras', shoppingRouter);

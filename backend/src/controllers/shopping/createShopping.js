@@ -8,7 +8,7 @@ export default async function createShopping(req, res) {
     const { usuarioId, veiculoId } = req.body;
 
     try {
-        // Verificar se o usuário existe
+     
         const usuario = await prisma.usuario.findUnique({
             where: { id: usuarioId }
         });
@@ -17,7 +17,7 @@ export default async function createShopping(req, res) {
             return res.status(404).json({ error: 'Usuário não encontrado.' });
         }
 
-        // Verificar se o veículo existe
+     
         const veiculo = await prisma.veiculo.findUnique({
             where: { id: veiculoId }
         });
@@ -26,20 +26,19 @@ export default async function createShopping(req, res) {
             return res.status(404).json({ error: 'Veículo não encontrado.' });
         }
 
-        // Criar a compra com status inicial "pendente"
         const compra = await prisma.compra.create({
             data: {
                 veiculoId: veiculoId,
                 usuarioId: usuarioId,
-                status: 'pendente' // Definindo o status inicial
+                status: 'pendente' 
             },
             select: {
                 id: true,
-                status: true // Incluindo o status na resposta
+                status: true 
             }
         });
 
-        // Gerar token de acesso
+     
         const jwt = generateAccessToken(compra);
         compra.accessToken = jwt;
 

@@ -4,27 +4,27 @@ import { exceptionHandler } from '../../utils/ajuda.js';
 const prisma = new PrismaClient();
 
 export default async function createPayment(req, res) {
-    const { usuarioId, compraId, numero, validade, cvv, nomeTitular, bandeira } = req.body;
+    const { usuarioId, compraId, creditCardId } = req.body;
 
     try {
-        // Validar o cartão de crédito
-        const cartaoCredito = await prisma.cartaocredito.findFirst({
+       
+        const cartaoCredito = await prisma.cartaocredito.findUnique({
             where: {
-                usuarioId: usuarioId,
-                numero: numero,
-                validade: validade,
-                cvv: cvv,
-                nomeTitular: nomeTitular,
-                bandeira: bandeira
+                id: creditCardId
             }
         });
 
-   
+      
+        console.log('Cartão de Crédito encontrado:', cartaoCredito);
 
-        // Obter a compra com o veículo associado
+      
+        if (!cartaoCredito || cartaoCredito.usuarioId !== usuarioId) {
+            return res.status(404).json({ error: 'Cartão de crédito não encontrado ou não pertence ao usuário.' });
+        }
+
         const compra = await prisma.compra.findUnique({
             where: { id: compraId },
-            include: { veiculo: true } // Inclui o veículo na consulta
+            include: { veiculo: true }
         });
 
         if (!compra) {
@@ -35,21 +35,20 @@ export default async function createPayment(req, res) {
             return res.status(404).json({ error: 'Veículo relacionado à compra não encontrado.' });
         }
 
-
-        // Criar o pagamento e relacionar com a compra
+        
         const pagamento = await prisma.payment.create({
             data: {
                 usuarioId: usuarioId,
-                compraId: compraId, // Relaciona com a compra
+                compraId: compraId,
+                creditCardId: cartaoCredito.id, 
                 paymentMethod: 'Cartão de Crédito',
                 status: 'Aprovado',
-                amount: compra.veiculo.valor, // Atribui o valor do veículo ao pagamento
+                amount: compra.veiculo.valor,
                 timestamp: new Date()
-              
             }
         });
 
-        // Atualizar o status da compra para aceita
+    
         await prisma.compra.update({
             where: { id: compraId },
             data: { 
