@@ -18,6 +18,10 @@ export default async function loginController(req, res) {
             id: usuario.id,
             nome: usuario.nome,
             email: usuario.email,
+            cpf: usuario.cpf,
+            telefone: usuario.telefone,
+            nascimento: usuario.nascimento,
+            senha: usuario.senha,
             accessToken
         });
 

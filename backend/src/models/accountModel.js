@@ -62,20 +62,23 @@ export const deleteUsuarioById = async (id) => {
 };
 
 
+
 export const update = async (id, data) => {
-    // Certifique-se de que o id está sendo usado corretamente
-    return await prisma.usuario.update({
-        where: { id },
+    if (!id) {
+        throw new Error('ID não fornecido');
+    }
+
+    // Atualize o usuário no banco de dados usando o Prisma
+    const updatedUsuario = await prisma.usuario.update({
+        where: { id: Number(id) },
         data,
         select: {
             id: true,
             nome: true,
             email: true,
             isAdmin: true,
-        }
+        },
     });
-}
 
-
-
-
+    return updatedUsuario;
+};
