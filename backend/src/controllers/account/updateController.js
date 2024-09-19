@@ -2,7 +2,7 @@
 
 
 import bcrypt from 'bcryptjs';
-import { exceptionHandler } from '../../utils/ajuda.js';
+import exceptionHandler from '../../utils/ajuda.js';
 import { update } from '../../models/accountModel.js';
 
 

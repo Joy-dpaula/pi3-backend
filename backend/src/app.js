@@ -1,4 +1,3 @@
-
 import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -10,9 +9,13 @@ import accountRouter from './routers/accountRouter.js';
 import authRouter from './routers/authRouter.js';
 import vehicleRouter from './routers/vehicleRouter.js';
 import messageRouter from './routers/messageRouter.js';
-import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
-import { exceptionHandler } from './utils/ajuda.js';
+import compraVeiculoRouter from './routers/compraVeiculoRouter.js';
+import config from './config.js'; // Importando o objeto padrão
+import exceptionHandler from './utils/ajuda.js';
+
+// Desestruturando as variáveis a partir do objeto importado
+const { ENVIRONMENT, PORT, HOST } = config;
 
 // Para garantir a compatibilidade com ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -36,20 +39,19 @@ app.use(cookieParser(COOKIE_SECRET));
 
 app.use(express.static(path.join(__dirname, 'public'))); 
 
+// Adicionando os routers
 app.use('/usuarios', accountRouter);
 app.use('/auth', authRouter);
 app.use('/veiculos', vehicleRouter); 
 app.use('/message', messageRouter); 
 app.use('/payment', paymentRoutes); 
-// app.use('/compras', shoppingRouter);
+app.use('/comprasVeiculos', compraVeiculoRouter); // Adiciona as rotas de compras de veículos
 
 app.use((req, res, next) => {
     res.status(404).json({ message: 'Not Found' });
 });
 
-
 app.use(exceptionHandler);
-
 
 app.use((err, req, res, next) => {
     res.locals.message = err.message;
@@ -60,7 +62,6 @@ app.use((err, req, res, next) => {
         error: res.locals.error,
     });
 });
-
 
 app.listen(PORT, () => {
     console.log(`Servidor Rodando no Ambiente ${ENVIRONMENT} em ${ENVIRONMENT == 'production' ? HOST : HOST + ':' + PORT}`)

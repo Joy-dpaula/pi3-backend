@@ -1,6 +1,6 @@
 // controllers/accountController.js
 import { getUsuarioById, deleteUsuarioById } from '../../models/accountModel.js';
-import { exceptionHandler } from '../../utils/ajuda.js';
+import exceptionHandler from '../../utils/ajuda.js';
 
 export const deleteAccount = async (req, res) => {
     try {

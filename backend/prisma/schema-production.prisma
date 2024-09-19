@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -18,7 +18,6 @@ model cartaocredito {
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime
   usuario      usuario  @relation(fields: [usuarioId], references: [id])
-
 }
 
 model compra {
@@ -30,6 +29,8 @@ model compra {
   veiculo   veiculo  @relation(fields: [veiculoId], references: [id])
   payment   payment?
 
+  @@index([usuarioId])
+  @@index([veiculoId])
 }
 
 model message {
@@ -40,7 +41,6 @@ model message {
   timestamp                            DateTime @default(now())
   usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id])
   usuario_message_senderIdTousuario    usuario  @relation("message_senderIdTousuario", fields: [senderId], references: [id])
-
 }
 
 model payment {
@@ -55,7 +55,6 @@ model payment {
   timestamp     DateTime @default(now())
   compra        compra?  @relation(fields: [compraId], references: [id])
   usuario       usuario  @relation(fields: [usuarioId], references: [id])
-
 }
 
 model usuario {
@@ -73,22 +72,39 @@ model usuario {
   message_message_senderIdTousuario    message[]       @relation("message_senderIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
+  CompraVeiculo                        CompraVeiculo[]
 }
 
 model veiculo {
-  id            Int      @id @default(autoincrement())
-  modelo        String   @db.VarChar(50)
+  id            Int              @id @default(autoincrement())
+  modelo        String           @db.VarChar(50)
   anoFabricacao Int
-  cor           String   @db.VarChar(5)
-  descricao     String   @db.VarChar(500)
+  cor           String           @db.VarChar(25)
+  descricao     String           @db.VarChar(500)
   valor         Int
   km            Int
-  marca         String   @db.VarChar(20)
+  marca         String           @db.VarChar(20)
   foto          String
   usuarioId     Int
-  cidade        String   @db.VarChar(30)
-  estado        String   @db.VarChar(30)
-  compra        compra[]
-  usuario       usuario  @relation(fields: [usuarioId], references: [id])
+  cidade        String           @db.VarChar(30)
+  estado        String           @db.VarChar(30)
+  compra        compra[]         // Adicionando o campo de relação para o modelo 'compra'
+  compraVeiculo CompraVeiculo[]  // Campo existente
+  usuario       usuario          @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
 
+  @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
+}
+
+model CompraVeiculo {
+  id           Int      @id @default(autoincrement())
+  veiculoId    Int
+  usuarioId    Int
+  dataCompra   DateTime @default(now())
+  valor        Float
+  veiculo      veiculo  @relation(fields: [veiculoId], references: [id])
+  usuario      usuario  @relation(fields: [usuarioId], references: [id])
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  @@map("compra_veiculo")
 }
