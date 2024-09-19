@@ -14,7 +14,7 @@ import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
 import { exceptionHandler } from './utils/ajuda.js';
 import create  from './routers/shoppingRouter.js';
-import creditCard from './routers/creditCardRouter.js'
+import creditCard from './routers/paymentRouter.js'
 
 
 

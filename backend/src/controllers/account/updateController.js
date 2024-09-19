@@ -1,9 +1,7 @@
 
 import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
 import { exceptionHandler } from '../../utils/ajuda.js';
-import { update } from '../../models/accountModel.js'; // Ensure this function exists and works as intended
 
 const prisma = new PrismaClient();
 

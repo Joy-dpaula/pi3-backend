@@ -20,8 +20,7 @@ export default async function getShopping(req, res) {
             },
         });
 
-        // Formata as compras para o formato desejado
-       c
+       
 
     } catch (exception) {
         exceptionHandler(exception, res);

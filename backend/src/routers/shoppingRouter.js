@@ -1,7 +1,7 @@
 import express from 'express'
 
 import create from '../controllers/shopping/createShopping.js';
-import paymente from '../controllers/shopping/createPayment.js'
+import paymente from '../controllers/payment/createPayment.js'
 
 const router = express.Router();
 

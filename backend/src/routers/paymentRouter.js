@@ -1,20 +1,19 @@
 import express from 'express';
-import  generatePixPayment  from '../controllers/payment/pixPayment.js';
-import { generateBoleto } from '../controllers/payment/generateBoleto.js';
+import  generatePixPayment  from '../controllers/typePayment/pixPayment.js';
+import { generateBoleto } from '../controllers/typePayment/generateBoleto.js';
+import {createCreditCard} from '../controllers/typePayment/creditCard/createCreditCard.js'
+import { deleteCreditCard } from '../controllers/typePayment/creditCard/deleteCreditCard.js';
+import {updateCreditCard} from '../controllers/typePayment/creditCard/updateCreditCard.js'
+import {getCreditCard} from '../controllers/typePayment/creditCard/getCreditCard.js'
 
 const router = express.Router();
 
-// Rota para processar pagamento com cartão de crédito
- // router.post('/credit-card', async (req, res) => {
-    //  try {
-        //  await processCreditCardPayment(req, res);
-   //   } catch (error) {
-    //      console.error('Erro ao processar pagamento com cartão de crédito:', error);
-     //     res.status(500).json({ error: 'Erro interno ao processar pagamento com cartão de crédito' });
-    //  }
- //   });
+router.post('/', createCreditCard);
+router.get('/' , getCreditCard)
+router.delete('/', deleteCreditCard);
+router.put('/', updateCreditCard);
 
-// Rota para gerar pagamento com Pix
+
 router.post('/pix', async (req, res) => {
     try {
         await generatePixPayment(req, res);
