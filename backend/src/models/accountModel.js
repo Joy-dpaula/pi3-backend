@@ -1,86 +1,83 @@
-// import { PrismaClient } from "@prisma/client"
-// const prisma = new PrismaClient()
-// import bcrypt from 'bcryptjs';
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient()
+import bcrypt from 'bcryptjs';
 
 
 
-// export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin }) {
-//     // Verifica se o usuário já existe
-//     const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
+export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin }) {
+    // Verifica se o usuário já existe
+    const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
 
-//     if (existingUsuario) {
-//         return null;
-//     }
+    if (existingUsuario) {
+        return null;
+    }
 
-//     // Hash da senha
-//     const hashedSenha = await bcrypt.hash(senha, 12);
+    // Hash da senha
+    const hashedSenha = await bcrypt.hash(senha, 12);
 
-//     // Criação do novo usuário no banco de dados
-//     const usuario = await prisma.usuario.create({
-//         data: {
-//             nome,
-//             email,
-//             senha: hashedSenha,
-//             cpf: cpf.toString(),
-//             telefone: telefone.toString(),
-//             nascimento: nascimento ? new Date(nascimento) : null,
-//             isAdmin: isAdmin || false,
-//         },
-//         select: {
-//             id: true,
-//             nome: true,
-//             email: true,
-//             isAdmin: true,
-//         }
-//     });
+    // Criação do novo usuário no banco de dados
+    const usuario = await prisma.usuario.create({
+        data: {
+            nome,
+            email,
+            senha: hashedSenha,
+            cpf: cpf.toString(),
+            telefone: telefone.toString(),
+            nascimento: nascimento ? new Date(nascimento) : null,
+            isAdmin: isAdmin || false,
+        },
+        select: {
+            id: true,
+            nome: true,
+            email: true,
+            isAdmin: true,
+        }
+    });
 
-//     return usuario;
-// }
+    return usuario;
+}
 
-// export async function getUsuarios() {
+export async function getUsuarios() {
 
-//     const usuarios = await prisma.usuario.findMany();
+    const usuarios = await prisma.usuario.findMany();
 
-//     return usuarios
+    return usuarios
     
-// }
+}
 
-// export async function getUsuarioById(id) {
-//     const account= await prisma.usuario.findUnique({
-//         where: { id: Number(id) },
-//     });
-//     return account
-// };
-
-
-
-
-// export const deleteUsuarioById = async (id) => {
-//     return await prisma.usuario.delete({
-//         where: { id: Number(id) },
-//     });
-// };
-
-
-// export const update = async (id, data) => {
-//     // Certifique-se de que o id está sendo usado corretamente
-//     if (!id) {
-//         throw new Error('ID não fornecido');
-//     }
-
-//     // Atualize o usuário no banco de dados usando o Prisma
-//     return await prisma.usuario.update({
-//         where: { id: Number(id) }, // Certifique-se de que o ID está sendo passado corretamente
-//         data, // Dados a serem atualizados
-//         select: {
-//             id: true,
-//             nome: true,
-//             email: true,
-//             isAdmin: true,
-//         },
-//     });
-// }
+export async function getUsuarioById(id) {
+    const account= await prisma.usuario.findUnique({
+        where: { id: Number(id) },
+    });
+    return account
+};
 
 
 
 
+export const deleteUsuarioById = async (id) => {
+    return await prisma.usuario.delete({
+        where: { id: Number(id) },
+    });
+};
+
+
+export const update = async (id, data) => {
+    if (!id) {
+        throw new Error('ID não fornecido');
+    }
+
+    // Atualize o usuário no banco de dados usando o Prisma
+    const updatedUsuario = await prisma.usuario.update({
+        where: { id: Number(id) },
+        data,
+        select: {
+            id: true,
+            nome: true,
+            email: true,
+            isAdmin: true,
+        },
+    });
+
+    return updatedUsuario;
+};
