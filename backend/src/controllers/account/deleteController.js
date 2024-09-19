@@ -6,7 +6,6 @@ export const deleteAccount = async (req, res) => {
     try {
         const id = Number(req.params.id);
         const token = req.accessToken;
-
         // Verificar se o token está definido e contém a propriedade email
         if (!token || !token.email) {
             return res.sendStatus(401); // Unauthorized
