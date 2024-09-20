@@ -67,17 +67,28 @@ export const update = async (id, data) => {
         throw new Error('ID não fornecido');
     }
 
-    // Atualize o usuário no banco de dados usando o Prisma
-    const updatedUsuario = await prisma.usuario.update({
-        where: { id: Number(id) },
-        data,
-        select: {
-            id: true,
-            nome: true,
-            email: true,
-            isAdmin: true,
-        },
-    });
+    const userId = Number(id);
+    console.log("Received ID:", userId); // Log the ID
 
-    return updatedUsuario;
+    if (isNaN(userId)) {
+        throw new Error('ID inválido');
+    }
+
+    try {
+        const updatedUsuario = await prisma.usuario.update({
+            where: { id: userId },
+            data, // Ensure this is correctly formatted
+            select: {
+                id: true,
+                nome: true,
+                email: true,
+                isAdmin: true,
+            },
+        });
+
+        return updatedUsuario;
+    } catch (error) {
+        console.error('Update failed:', error);
+        throw new Error('Failed to update user');
+    }
 };

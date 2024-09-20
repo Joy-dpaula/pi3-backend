@@ -1,39 +1,44 @@
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { exceptionHandler } from '../../utils/ajuda.js';
-import { update } from '../../models/accountModel.js'; // Ensure this function exists and works as intended
+import { update } from "../../models/accountModel.js";
 
-const prisma = new PrismaClient();
-
-export default async function updateAccount(req, res) {
+const updateController = async (req, res, next) => {
+    const { id } = req.params;
+    
     try {
-        const id = Number(req.params.id);
-        const { nome, email, senha, cpf, telefone, nascimento, isAdmin } = req.body;
-        const token = req.accessToken;
+        const usuario = req.body;
 
-        const checkUsuario = await prisma.usuario.findUnique({ where: { id } });
+        // Ensure id is included in the data
+        usuario.id = Number(id);
 
-        if (!checkUsuario || (checkUsuario.email !== token.email && !token.isAdmin)) {
-            return res.sendStatus(403);
+        // Validate the id
+        if (isNaN(usuario.id)) {
+            return res.status(400).json({
+                error: "ID inválido!"
+            });
         }
 
-        const updateData = {
-            nome,
-            email,
-            senha: senha ? await bcrypt.hash(senha, 12) : checkUsuario.senha, // Keep current password if not updating
-            cpf: cpf ? cpf.toString() : checkUsuario.cpf, // Keep current CPF if not updating
-            telefone: telefone ? telefone.toString() : checkUsuario.telefone, // Keep current phone if not updating
-            nascimento: nascimento ? new Date(nascimento) : checkUsuario.nascimento, // Keep current date if not updating
-            isAdmin: isAdmin !== undefined ? isAdmin : checkUsuario.isAdmin, // Keep current admin status if not updating
-        };
+        const result = await update(usuario.id, usuario); // Pass both ID and user data
 
-        const usuario = await prisma.usuario.update({
-            where: { id },
-            data: updateData,
+        if (!result) {
+            return res.status(404).json({
+                error: "Erro ao atualizar a conta!"
+            });
+        }
+
+        return res.json({
+            success: "Conta atualizada com sucesso!",
+            usuario: result
         });
-
-        return res.json(usuario);
-    } catch (exception) {
-        exceptionHandler(exception, res);
+    } catch (error) {
+        // Handle specific Prisma error
+        if (error?.code === 'P2025') {
+            return res.status(404).json({
+                error: `Conta com o id ${id} não encontrada!`
+            });
+        }
+        next(error); // Pass other errors to the next middleware
     }
 }
+
+export default updateController;
