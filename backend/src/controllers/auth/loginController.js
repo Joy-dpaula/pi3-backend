@@ -20,6 +20,7 @@ export default async function loginController(req, res) {
             email: usuario.email,
             cpf: usuario.cpf,
             telefone: usuario.telefone,
+            admin: usuario.isAdmin,
             nascimento: usuario.nascimento,
             senha: usuario.senha,
             accessToken
