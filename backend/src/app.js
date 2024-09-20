@@ -5,14 +5,16 @@ import logger from 'morgan';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 
-import accountRouter from './routers/accountRouter.js';
-import authRouter from './routers/authRouter.js';
-import vehicleRouter from './routers/vehicleRouter.js';
-import messageRouter from './routers/messageRouter.js';
-import paymentRoutes from './routers/paymentRouter.js';
-import compraVeiculoRouter from './routers/compraVeiculoRouter.js';
+import accountRouter from './routers/AccountRouter.js';
+import authRouter from './routers/AuthRouter.js';
+import vehicleRouter from './routers/VehicleRouter.js';
+import messageRouter from './routers/MessageRouter.js';
+import paymentRoutes from './routers/PaymentRouter.js';
+import compraVeiculoRouter from './routers/CompraVeiculoRouter.js';
+import adminRoutes from './routers/AdminRoutes.js';
 import config from './config.js'; // Importando o objeto padrão
 import exceptionHandler from './utils/ajuda.js';
+
 
 // Desestruturando as variáveis a partir do objeto importado
 const { ENVIRONMENT, PORT, HOST } = config;
@@ -26,7 +28,7 @@ const app = express();
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d';
 
 // Configuração da visualização
-app.use(express.json()); // Adiciona esse middleware para interpretar o corpo das requisições JSON
+app.use(express.json()); // Middleware para interpretar o corpo das requisições JSON
 
 // Configuração do middleware
 app.use(cors({}));
@@ -46,13 +48,17 @@ app.use('/veiculos', vehicleRouter);
 app.use('/message', messageRouter); 
 app.use('/payment', paymentRoutes); 
 app.use('/comprasVeiculos', compraVeiculoRouter); // Adiciona as rotas de compras de veículos
+app.use('/admin', adminRoutes); // Certifique-se de adicionar a rota de admin
 
+// Middleware para tratar erros de rota não encontrada (404)
 app.use((req, res, next) => {
     res.status(404).json({ message: 'Not Found' });
 });
 
+// Middleware global de tratamento de exceções
 app.use(exceptionHandler);
 
+// Middleware final para capturar qualquer erro restante e enviar resposta apropriada
 app.use((err, req, res, next) => {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -63,6 +69,9 @@ app.use((err, req, res, next) => {
     });
 });
 
+// Inicialização do servidor
 app.listen(PORT, () => {
-    console.log(`Servidor Rodando no Ambiente ${ENVIRONMENT} em ${ENVIRONMENT == 'production' ? HOST : HOST + ':' + PORT}`)
+    console.log(`Servidor rodando no ambiente ${ENVIRONMENT} em ${ENVIRONMENT === 'production' ? HOST : HOST + ':' + PORT}`);
 });
+
+export default app;

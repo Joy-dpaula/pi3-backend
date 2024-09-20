@@ -1,5 +1,4 @@
 // src/controllers/account/profileController.js
-
 // função para atualizar o perfil do usuario
 export const updateUserProfile = (req, res) => {
     const { userId } = req.user;  // supondo que o middleware de autenticação já tenha adicionado o ID do usuário ao req.user

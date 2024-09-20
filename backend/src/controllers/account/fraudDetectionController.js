@@ -1,5 +1,4 @@
 // src/controllers/account/fraudDetectionController.js
-
 // função para detectar comportamentos suspeitos ou fraudulentos
 export const detectFraud = (req, res) => {
     const { userId } = req.user;

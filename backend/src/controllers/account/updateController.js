@@ -1,17 +1,10 @@
-
-
-
 import bcrypt from 'bcryptjs';
 import exceptionHandler from '../../utils/ajuda.js';
 import { update } from '../../models/accountModel.js';
 
-
-
-
 export default async function updateAccount(req, res) {
     try {
         const id = Number(req.params.id);
-
 
         if (!id) {
             return res.status(400).json({ error: 'ID não fornecido ou inválido' });
@@ -21,8 +14,6 @@ export default async function updateAccount(req, res) {
        
         const token = req.accessToken;
 
-
-        
         const checkUsuario = await del(id);
 
         if (!checkUsuario || (checkUsuario.email !== token.email && !token.isAdmin)) {
@@ -38,8 +29,6 @@ export default async function updateAccount(req, res) {
             nascimento: nascimento ? new Date(nascimento) : undefined,
             isAdmin: isAdmin !== undefined ? isAdmin : undefined,
         });
-
-        
 
       return  res.json(usuario);
     } catch (exception) {

@@ -36,7 +36,6 @@ export async function generateBoleto(req, res) {
         return res.status(500).json({ error: 'Erro ao gerar o boleto simulado' });
     }
 }
-
 /**
  * Gera um código de barras fictício.
  * @returns {string} - Um código de barras fictício

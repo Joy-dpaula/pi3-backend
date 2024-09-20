@@ -1,11 +1,6 @@
-
-
 import exceptionHandler from '../../utils/ajuda.js';
 import { generateAccessToken } from '../../utils/auth.js';
 import { createNewUser } from '../../models/accountModel.js'
-
-
-
 
 export async function createAccount(req, res) {
     const { nome, email, senha, cpf, telefone, nascimento, isAdmin } = req.body;

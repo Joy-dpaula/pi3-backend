@@ -1,5 +1,4 @@
 // src/controllers/account/preferencesController.js
-
 // Função para atualizar as preferências do usuário
 export const updateUserPreferences = (req, res) => {
     const { userId } = req.user;
