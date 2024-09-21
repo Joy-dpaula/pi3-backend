@@ -13,8 +13,8 @@ const router = express.Router();
 router.post('/' , payment)
 router.delete('/:id' , paymentDelete)
 router.get('/' , paymentGet )
-router.get('/' , paymentGetById)
-router.update('/' , paymentUpdate)
+router.get('/:id' , paymentGetById)
+router.patch('/:id' , paymentUpdate)
 
 
 

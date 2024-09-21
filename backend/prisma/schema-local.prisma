@@ -11,7 +11,7 @@ model cartaocredito {
   id           Int       @id @default(autoincrement())
   numero       String    @db.VarChar(16)
   validade     String    @db.VarChar(5)
-  cvv          String    @db.VarChar(3)
+  cvv          String    @db.VarChar(100)
   nomeTitular  String    @db.VarChar(100)
   bandeira     String    @db.VarChar(20)
   usuarioId    Int
@@ -61,8 +61,8 @@ model payment {
   compra        compra        @relation(fields: [compraId], references: [id]) // Remove o campo compraId
   usuario       usuario       @relation(fields: [usuarioId], references: [id], map: "Payment_usuarioId_fkey")
   compraId      Int
-  creditCardId  Int?
-  creditCard    cartaocredito? @relation(fields: [creditCardId], references: [id])
+  creditCardId  Int
+  creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
   
 
 

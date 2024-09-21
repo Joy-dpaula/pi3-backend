@@ -1,7 +1,19 @@
-export const getCreditCard = (req, res) => {
-    const { cardId } = req.params;
+import { PrismaClient } from '@prisma/client';
 
-    const card = { cardId, cardNumber: '4111111111111111', brand: 'Visa' };
+const prisma = new PrismaClient();
+export default async function getCreditCard(req, res) {
+  const { bandeira } = req.query;
 
-    return res.status(200).json({ card });
-};
+  try {
+    const cartoesDeCredito = await prisma.cartaocredito.findMany({
+      where: {
+        bandeira,
+      },
+    });
+    res.json(cartoesDeCredito);
+  } catch (error) {
+    console.error('Erro ao buscar cartões de crédito:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+}
+

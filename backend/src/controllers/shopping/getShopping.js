@@ -26,6 +26,7 @@ export default async function getShopping(req, res) {
         // Formata a resposta de maneira mais legível
         const comprasFormatted = compras.map(compra => ({
             "Compra ID": compra.id,
+            "Status" : compra.status,
             "Usuário": {
                 "Usuário ID": compra.usuario.id,
                 "Nome": compra.usuario.nome,  // Exemplo de nome

@@ -20,7 +20,7 @@ export default async function deleteShopping(req, res) {
         await prisma.compra.delete({ where: { id: parseInt(id) } });
 
    
-        res.status(204).end();
+        res.status(200).end();
 
     } catch (exception) {
         exceptionHandler(exception, res);

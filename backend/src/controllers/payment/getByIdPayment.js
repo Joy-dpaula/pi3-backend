@@ -10,15 +10,6 @@ export default async function getByIdPayment(req, res) {
         // Busca um pagamento específico pelo ID
         const pagamento = await prisma.payment.findUnique({
             where: { id: Number(id) },
-            include: {
-                usuario: true, // Inclui informações do usuário
-                compra: {
-                    include: {
-                        veiculo: true // Inclui informações do veículo na compra
-                    }
-                },
-                cartaocredito: true // Inclui informações sobre o cartão de crédito
-            }
         });
 
         if (!pagamento) {

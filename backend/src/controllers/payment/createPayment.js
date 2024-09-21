@@ -7,39 +7,42 @@ export default async function createPayment(req, res) {
     const { usuarioId, compraId, creditCardId } = req.body;
 
     try {
-       
+        // Validação do creditCardId (opcional, mas recomendado)
+        if (!creditCardId || isNaN(creditCardId)) {
+            return res.status(400).json({ error: 'O ID do cartão de crédito é inválido.' });
+        }
+
+        // Busca o cartão de crédito e a compra
         const cartaoCredito = await prisma.cartaocredito.findUnique({
             where: {
                 id: creditCardId
             }
         });
 
-      
-        console.log('Cartão de Crédito encontrado:', cartaoCredito);
-
-      
-        if (!cartaoCredito || cartaoCredito.usuarioId !== usuarioId) {
-            return res.status(404).json({ error: 'Cartão de crédito não encontrado ou não pertence ao usuário.' });
-        }
-
         const compra = await prisma.compra.findUnique({
             where: { id: compraId },
             include: { veiculo: true }
         });
 
+        // Verifica se o cartão de crédito e a compra foram encontrados
+        if (!cartaoCredito) {
+            return res.status(404).json({ error: 'Cartão de crédito não encontrado.' });
+        }
+
         if (!compra) {
             return res.status(404).json({ error: 'Compra não encontrada.' });
         }
 
-        if (!compra.veiculo) {
-            return res.status(404).json({ error: 'Veículo relacionado à compra não encontrado.' });
+        // Verifica se o cartão pertence ao usuário
+        if (cartaoCredito.usuarioId !== usuarioId) {
+            return res.status(403).json({ error: 'Cartão de crédito não pertence ao usuário.' });
         }
 
-        
+        // Cria o pagamento e atualiza a compra
         const pagamento = await prisma.payment.create({
             data: {
-                usuarioId: usuarioId,
-                compraId: compraId,
+                usuarioId,
+                compraId,
                 creditCardId: cartaoCredito.id, 
                 paymentMethod: 'Cartão de Crédito',
                 status: 'Aprovado',
@@ -48,7 +51,6 @@ export default async function createPayment(req, res) {
             }
         });
 
-    
         await prisma.compra.update({
             where: { id: compraId },
             data: { 
