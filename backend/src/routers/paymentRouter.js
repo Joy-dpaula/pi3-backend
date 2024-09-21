@@ -1,37 +1,23 @@
-import express from 'express';
-import  generatePixPayment  from '../controllers/payment/pixPayment.js';
-import { generateBoleto } from '../controllers/payment/generateBoleto.js';
+import express from 'express'
+
+import payment from '../controllers/payment/createPayment.js'
+import paymentDelete from '../controllers/payment/deletePayment.js'
+import paymentGet from '../controllers/payment/getPayment.js'
+import paymentGetById from '../controllers/payment/getByIdPayment.js'
+import paymentUpdate from '../controllers/payment/updatePayment.js'
+
 
 const router = express.Router();
 
-// Rota para processar pagamento com cartão de crédito
- // router.post('/credit-card', async (req, res) => {
-    //  try {
-        //  await processCreditCardPayment(req, res);
-   //   } catch (error) {
-    //      console.error('Erro ao processar pagamento com cartão de crédito:', error);
-     //     res.status(500).json({ error: 'Erro interno ao processar pagamento com cartão de crédito' });
-    //  }
- //   });
 
-// Rota para gerar pagamento com Pix
-router.post('/pix', async (req, res) => {
-    try {
-        await generatePixPayment(req, res);
-    } catch (error) {
-        console.error('Erro ao gerar pagamento Pix:', error);
-        res.status(500).json({ error: 'Erro interno ao gerar pagamento Pix' });
-    }
-});
+router.post('/' , payment)
+router.delete('/:id' , paymentDelete)
+router.get('/' , paymentGet )
+router.get('/:id' , paymentGetById)
+router.patch('/:id' , paymentUpdate)
 
-// Rota para gerar boleto
-router.post('/boleto', async (req, res) => {
-    try {
-        await generateBoleto(req, res);
-    } catch (error) {
-        console.error('Erro ao gerar boleto:', error);
-        res.status(500).json({ error: 'Erro interno ao gerar boleto' });
-    }
-});
 
-export default router;
+
+
+
+export default router

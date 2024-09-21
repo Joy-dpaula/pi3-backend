@@ -8,28 +8,29 @@ datasource db {
 }
 
 model cartaocredito {
-  id           Int      @id @default(autoincrement())
-  numero       String   @db.VarChar(16)
-  validade     String   @db.VarChar(5)
-  cvv          String   @db.VarChar(3)
-  nomeTitular  String   @db.VarChar(100)
-  bandeira     String   @db.VarChar(20)
+  id           Int       @id @default(autoincrement())
+  numero       String    @db.VarChar(16)
+  validade     String    @db.VarChar(5)
+  cvv          String    @db.VarChar(100)
+  nomeTitular  String    @db.VarChar(100)
+  bandeira     String    @db.VarChar(20)
   usuarioId    Int
-  criadoEm     DateTime @default(now())
+  criadoEm     DateTime  @default(now())
   atualizadoEm DateTime
-  usuario      usuario  @relation(fields: [usuarioId], references: [id], map: "CartaoCredito_usuarioId_fkey")
+  usuario      usuario   @relation(fields: [usuarioId], references: [id], map: "CartaoCredito_usuarioId_fkey")
+  payment      payment[]
 
   @@index([usuarioId], map: "CartaoCredito_usuarioId_fkey")
 }
 
 model compra {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   veiculoId Int
   usuarioId Int
-  paymentId Int?
-  usuario   usuario  @relation(fields: [usuarioId], references: [id], map: "Compra_usuarioId_fkey")
-  veiculo   veiculo  @relation(fields: [veiculoId], references: [id], map: "Compra_veiculoId_fkey")
-  payment   payment?
+  status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
+  usuario   usuario   @relation(fields: [usuarioId], references: [id], map: "Compra_usuarioId_fkey")
+  veiculo   veiculo   @relation(fields: [veiculoId], references: [id], map: "Compra_veiculoId_fkey")
+  payment   payment[]
 
   @@index([usuarioId], map: "Compra_usuarioId_fkey")
   @@index([veiculoId], map: "Compra_veiculoId_fkey")
@@ -49,17 +50,21 @@ model message {
 }
 
 model payment {
-  id            Int      @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   usuarioId     Int
-  compraId      Int?     @unique(map: "Payment_compraId_key")
-  paymentMethod String   @db.VarChar(20)
-  status        String   @db.VarChar(20)
-  pixQRCodeURL  String?  @db.VarChar(255)
-  boletoURL     String?  @db.VarChar(255)
+  paymentMethod String        @db.VarChar(20)
+  status        String        @db.VarChar(20)
+  pixQRCodeURL  String?       @db.VarChar(255)
+  boletoURL     String?       @db.VarChar(255)
   amount        Int
-  timestamp     DateTime @default(now())
-  compra        compra?  @relation(fields: [compraId], references: [id], map: "Payment_compraId_fkey")
-  usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Payment_usuarioId_fkey")
+  timestamp     DateTime      @default(now())
+  compra        compra        @relation(fields: [compraId], references: [id]) // Remove o campo compraId
+  usuario       usuario       @relation(fields: [usuarioId], references: [id], map: "Payment_usuarioId_fkey")
+  compraId      Int
+  creditCardId  Int
+  creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
+  
+
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -93,7 +98,7 @@ model veiculo {
   foto          String   @db.VarChar(2000)
   usuarioId     Int
   cidade        String   @db.VarChar(30)
-  estado       String   @db.VarChar(30)
+  estado        String   @db.VarChar(30)
   cep           String
   complemento   String
   logradouro    String

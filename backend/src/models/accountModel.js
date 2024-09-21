@@ -62,6 +62,7 @@ export const deleteUsuarioById = async (id) => {
 };
 
 
+
 export const update = async (id, data) => {
     if (!id) {
         throw new Error('ID não fornecido');

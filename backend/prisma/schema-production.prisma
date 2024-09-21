@@ -79,22 +79,22 @@ model veiculo {
   id            Int      @id @default(autoincrement())
   modelo        String   @db.VarChar(50)
   anoFabricacao Int
-  cor           String   @db.VarChar(25)
+  cor           String   @db.VarChar(50)
   descricao     String   @db.VarChar(500)
-  valor         Int
+  valor         Int       
   km            Int
-  marca         String   @db.VarChar(20)
+  marca         String   @db.VarChar(100)
   foto          String   @db.VarChar(2000)
   usuarioId     Int
   cidade        String   @db.VarChar(30)
   estado       String   @db.VarChar(30)
-  Cep           String
-  Complemento   String
-  Logradouro    String
-  Numero        String
-  Cambio        String
-  Carroceria   String
-  Combustivel  String
+  cep           String
+  complemento   String
+  logradouro    String
+  numero        String
+  cambio        String
+  carroceria   String
+  combustivel  String
   compra        compra[]
   usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
 }

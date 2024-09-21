@@ -13,12 +13,20 @@ import messageRouter from './routers/messageRouter.js';
 import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
 import { exceptionHandler } from './utils/ajuda.js';
+import create  from './routers/shoppingRouter.js';
+import creditCard from './routers/typePaymentRouter.js'
+
+
+
+import 'dotenv/config'; 
 
 // Para garantir a compatibilidade com ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+
 
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d';
 
@@ -40,7 +48,10 @@ app.use('/usuarios', accountRouter);
 app.use('/auth', authRouter);
 app.use('/veiculos', vehicleRouter); 
 app.use('/message', messageRouter); 
-app.use('/payment', paymentRoutes); 
+app.use('/payment', paymentRoutes);
+app.use('/credit' , creditCard) 
+
+app.use('/compra', create)
 // app.use('/compras', shoppingRouter);
 
 app.use((req, res, next) => {

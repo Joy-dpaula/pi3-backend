@@ -3,24 +3,24 @@ import { exceptionHandler } from '../../utils/ajuda.js';
 
 const prisma = new PrismaClient();
 
-export default async function deleteShopping(req, res) {
+export default async function deletePayment(req, res) {
     try {
     
         const { id } = req.params;
 
      
-        const compra = await prisma.compra.findUnique({ where: { id: parseInt(id) } });
+        const payment = await prisma.payment.findUnique({ where: { id: parseInt(id) } });
 
   
-        if (!compra) {
+        if (!payment) {
             return res.status(404).json({ error: "Compra não encontrada." });
         }
 
 
-        await prisma.compra.delete({ where: { id: parseInt(id) } });
+        await prisma.payment.delete({ where: { id: parseInt(id) } });
 
    
-        res.status(200).end();
+        res.status(204).end();
 
     } catch (exception) {
         exceptionHandler(exception, res);
