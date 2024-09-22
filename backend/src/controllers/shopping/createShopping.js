@@ -1,48 +1,31 @@
-import { PrismaClient } from '@prisma/client';
 import { exceptionHandler } from '../../utils/ajuda.js';
 import { generateAccessToken } from '../../utils/auth.js';
-
-const prisma = new PrismaClient();
+import { newShopping } from '../../models/shoppingModel.js';
 
 export default async function createShopping(req, res) {
+
     const { usuarioId, veiculoId } = req.body;
+
+    console.log(usuarioId)
+    console.log(veiculoId)
 
     try {
      
-        const usuario = await prisma.usuario.findUnique({
-            where: { id: usuarioId }
-        });
-
-        if (!usuario) {
-            return res.status(404).json({ error: 'Usuário não encontrado.' });
+        if (!usuarioId) {
+            return res.status(400).json({ error: 'ID do usuário é necessário.' });
         }
 
-     
-        const veiculo = await prisma.veiculo.findUnique({
-            where: { id: veiculoId }
-        });
-
-        if (!veiculo) {
-            return res.status(404).json({ error: 'Veículo não encontrado.' });
+        if (!veiculoId) {
+            return res.status(400).json({ error: 'ID do veículo é necessário.' });
         }
-
-        const compra = await prisma.compra.create({
-            data: {
-                veiculoId: veiculoId,
-                usuarioId: usuarioId,
-                status: 'pendente' 
-            },
-            select: {
-                id: true,
-                status: true 
-            }
-        });
-
      
+        const { compra } = await newShopping({usuarioId, veiculoId});
+
         const jwt = generateAccessToken(compra);
         compra.accessToken = jwt;
 
         res.status(201).json(compra);
+        
     } catch (exception) {
         exceptionHandler(exception, res);
     }

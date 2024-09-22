@@ -7,4 +7,3 @@ router.get('/paginated', getPaginatedUsers);
 router.get('/summary', getUsersSummary);
 
 export default router;
-

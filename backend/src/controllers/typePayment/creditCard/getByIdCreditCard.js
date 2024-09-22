@@ -8,7 +8,7 @@ export default async function getCartaoCreditoById(req, res) {
   try {
     const cartaoCredito = await prisma.cartaocredito.findUnique({
       where: {
-        id: parseInt(id), // Certifique-se de que o ID seja um número inteiro
+        id: parseInt(id), 
       },
     });
 

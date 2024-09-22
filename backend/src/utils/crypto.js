@@ -1,10 +1,9 @@
 import crypto from 'crypto';
 
 const ALGORITHM = 'aes-256-cbc';
-const SECRET_KEY = Buffer.from('d4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d', 'hex'); // Deve ter 32 bytes
-const IV_LENGTH = 16; // Tamanho do vetor de inicialização
+const SECRET_KEY = Buffer.from('d4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d', 'hex'); 
+const IV_LENGTH = 16; 
 
-// Função para criptografar dados
 export function encrypt(text) {
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(ALGORITHM, SECRET_KEY, iv);
@@ -14,7 +13,6 @@ export function encrypt(text) {
 }
   
 
-// Função para descriptografar dados
 export function decrypt(text) {
   const textParts = text.split(':');
   const iv = Buffer.from(textParts.shift(), 'hex');

@@ -10,7 +10,6 @@ import { createNewUser } from '../../models/accountModel.js'
 export async function createAccount(req, res) {
     const { nome, email, senha, cpf, telefone, nascimento, isAdmin } = req.body;
 
-    // Validação básica dos dados
     if (!nome || !email || !senha || !cpf || !telefone) {
         return res.status(400).json({ error: "Nome, email, senha, CPF e telefone são obrigatórios." });
     }

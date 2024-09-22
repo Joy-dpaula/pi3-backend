@@ -6,23 +6,20 @@ export const deleteAccount = async (req, res) => {
     try {
         const id = Number(req.params.id);
         const token = req.accessToken;
-        // Verificar se o token está definido e contém a propriedade email
+
         if (!token || !token.email) {
-            return res.sendStatus(401); // Unauthorized
+            return res.sendStatus(401); 
         }
 
-        // Verificar se o usuário existe
         const checkUsuario = await getUsuarioById(id);
 
-        // Verificar se o usuário existe e se o token é válido para deletar o usuário
         if (!checkUsuario || (checkUsuario.email !== token.email && !token.isAdmin)) {
-            return res.sendStatus(403); // Forbidden
+            return res.sendStatus(403);
         }
 
-        // Deletar o usuário
         await deleteUsuarioById(id);
 
-        res.status(204).end(); // No Content
+        res.status(204).end();
     } catch (exception) {
         exceptionHandler(exception, res);
     }

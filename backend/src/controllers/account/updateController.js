@@ -8,17 +8,15 @@ const updateController = async (req, res, next) => {
     try {
         const usuario = req.body;
 
-        // Ensure id is included in the data
         usuario.id = Number(id);
 
-        // Validate the id
         if (isNaN(usuario.id)) {
             return res.status(400).json({
                 error: "ID inválido!"
             });
         }
 
-        const result = await update(usuario.id, usuario); // Pass both ID and user data
+        const result = await update(usuario.id, usuario); 
 
         if (!result) {
             return res.status(404).json({
@@ -31,13 +29,13 @@ const updateController = async (req, res, next) => {
             usuario: result
         });
     } catch (error) {
-        // Handle specific Prisma error
+
         if (error?.code === 'P2025') {
             return res.status(404).json({
                 error: `Conta com o id ${id} não encontrada!`
             });
         }
-        next(error); // Pass other errors to the next middleware
+        next(error); 
     }
 }
 

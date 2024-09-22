@@ -1,22 +1,15 @@
-import { PrismaClient } from '@prisma/client';
 import { exceptionHandler } from '../../utils/ajuda.js';
-
-const prisma = new PrismaClient();
+import { getShoppingById } from '../../models/shoppingModel.js';
 
 export default async function getByIdShopping(req, res) {
     try {
+
         const id = Number(req.params.id);
 
-        // Busca a compra com o ID e inclui o usuário e o veículo
-        const compra = await prisma.compra.findUniqueOrThrow({
-            where: { id },
-            include: {
-                usuario: { select: { id: true } },
-                veiculo: { select: { id: true } },
-            },
-        });
+        console.log(id)
 
-        // Formatação da resposta
+        const compra = await getShoppingById(id);
+
         const compraFormatted = {
             compraId: compra.id,
             detalhesUsuario: {
@@ -29,7 +22,8 @@ export default async function getByIdShopping(req, res) {
             status: "success",
         };
 
-        // Retorna a compra formatada
+        if(!compra) throw new Error('Compra não encontrada')
+
         res.status(200).json(compraFormatted);
     } catch (exception) {
         exceptionHandler(exception, res);

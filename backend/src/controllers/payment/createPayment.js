@@ -7,12 +7,11 @@ export default async function createPayment(req, res) {
     const { usuarioId, compraId, creditCardId } = req.body;
 
     try {
-        // Validação do creditCardId (opcional, mas recomendado)
+
         if (!creditCardId || isNaN(creditCardId)) {
             return res.status(400).json({ error: 'O ID do cartão de crédito é inválido.' });
         }
 
-        // Busca o cartão de crédito e a compra
         const cartaoCredito = await prisma.cartaocredito.findUnique({
             where: {
                 id: creditCardId
@@ -24,7 +23,6 @@ export default async function createPayment(req, res) {
             include: { veiculo: true }
         });
 
-        // Verifica se o cartão de crédito e a compra foram encontrados
         if (!cartaoCredito) {
             return res.status(404).json({ error: 'Cartão de crédito não encontrado.' });
         }
@@ -33,12 +31,10 @@ export default async function createPayment(req, res) {
             return res.status(404).json({ error: 'Compra não encontrada.' });
         }
 
-        // Verifica se o cartão pertence ao usuário
         if (cartaoCredito.usuarioId !== usuarioId) {
             return res.status(403).json({ error: 'Cartão de crédito não pertence ao usuário.' });
         }
 
-        // Cria o pagamento e atualiza a compra
         const pagamento = await prisma.payment.create({
             data: {
                 usuarioId,

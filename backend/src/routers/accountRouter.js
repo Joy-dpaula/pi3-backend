@@ -11,11 +11,11 @@ import { authenticateToken } from '../utils/auth.js';
 
 const router = express.Router();
 
-router.post('/', createAccount); // Criar conta
-router.get('/', getAccount); // Obter todas as contas
-router.get('/:id', getAccountById); // Obter conta por ID
-router.put('/:id', authenticateToken, updateAccount); // Atualizar conta por ID
-router.delete('/:id', authenticateToken, deleteAccount); // Excluir conta por ID
+router.post('/', createAccount); 
+router.get('/', getAccount); 
+router.get('/:id', getAccountById); 
+router.put('/:id', authenticateToken, updateAccount); 
+router.delete('/:id', authenticateToken, deleteAccount);
 router.post('/login', loginController);
 
 

@@ -3,10 +3,8 @@ import { sendMessage, getMessages } from '../controllers/message/messageControll
 
 const router = express.Router();
 
-// Enviar uma nova mensagem
 router.post('/send', sendMessage);
 
-// Obter todas as mensagens trocadas com um usuário específico
 router.get('/:recipientId', getMessages);
 
 export default router;

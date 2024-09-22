@@ -5,17 +5,15 @@ import bcrypt from 'bcryptjs';
 
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin }) {
-    // Verifica se o usuário já existe
+
     const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
 
     if (existingUsuario) {
         return null;
     }
 
-    // Hash da senha
     const hashedSenha = await bcrypt.hash(senha, 12);
 
-    // Criação do novo usuário no banco de dados
     const usuario = await prisma.usuario.create({
         data: {
             nome,
@@ -69,7 +67,7 @@ export const update = async (id, data) => {
     }
 
     const userId = Number(id);
-    console.log("Received ID:", userId); // Log the ID
+    console.log("Received ID:", userId); 
 
     if (isNaN(userId)) {
         throw new Error('ID inválido');
@@ -78,7 +76,7 @@ export const update = async (id, data) => {
     try {
         const updatedUsuario = await prisma.usuario.update({
             where: { id: userId },
-            data, // Ensure this is correctly formatted
+            data, 
             select: {
                 id: true,
                 nome: true,

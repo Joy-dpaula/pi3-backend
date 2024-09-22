@@ -15,7 +15,6 @@ router.get('/' , getCreditCard)
 router.delete('/:id', deleteCreditCard);
 router.patch('/:id', updateCreditCard);
 
-
 router.post('/pix', async (req, res) => {
     try {
         await generatePixPayment(req, res);
@@ -25,7 +24,6 @@ router.post('/pix', async (req, res) => {
     }
 });
 
-// Rota para gerar boleto
 router.post('/boleto', async (req, res) => {
     try {
         await generateBoleto(req, res);

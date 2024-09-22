@@ -15,7 +15,4 @@ router.delete('/:id' , deleteShopping)
 router.get('/:id' , getByIdShopping)
 router.get('/' , getShopping)
 
-
-
-
 export default router

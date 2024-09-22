@@ -20,7 +20,6 @@ import creditCard from './routers/typePaymentRouter.js'
 
 import 'dotenv/config'; 
 
-// Para garantir a compatibilidade com ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -30,14 +29,11 @@ const app = express();
 
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d';
 
-// Configuração da visualização
-app.use(express.json()); // Adiciona esse middleware para interpretar o corpo das requisições JSON
+app.use(express.json());
 
-// Configuração do middleware
 app.use(cors({}));
 
-// Habilita CORS para permitir requisições de diferentes origens
-app.use(logger('dev')); // Configura o logger de requisições HTTP
+app.use(logger('dev')); 
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: false })); 
 app.use(cookieParser(COOKIE_SECRET)); 

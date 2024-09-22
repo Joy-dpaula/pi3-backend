@@ -1,16 +1,14 @@
-import { PrismaClient } from '@prisma/client';
 import { exceptionHandler } from '../../utils/ajuda.js';
-
-const prisma = new PrismaClient();
+import { deleteShoppingModel } from '../../models/shoppingModel.js';
 
 export default async function deleteShopping(req, res) {
     try {
-    
+
         const { id } = req.params;
 
-     
-        const compra = await prisma.compra.findUnique({ where: { id: parseInt(id) } });
+        const compra = await deleteShoppingModel(id);
 
+        return res.status(200).json('Compra excluída com sucesso!');
   
         if (!compra) {
             return res.status(404).json({ error: "Compra não encontrada." });
@@ -21,7 +19,6 @@ export default async function deleteShopping(req, res) {
 
    
         res.status(200).json({ message: 'Compra deletada com sucesso'});
-
 
     } catch (exception) {
         exceptionHandler(exception, res);

@@ -16,8 +16,4 @@ router.get('/' , paymentGet )
 router.get('/:id' , paymentGetById)
 router.patch('/:id' , paymentUpdate)
 
-
-
-
-
 export default router
