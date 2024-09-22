@@ -23,7 +23,8 @@ export default async function creditCardDelete(req, res) {
         await prisma.cartaocredito.delete({ where: { id: parseInt(id) } });
 
    
-        res.status(204).end();
+        res.status(200).json({ message: 'Cartão de crédito deletado com sucesso', credit });
+
 
     } catch (exception) {
         exceptionHandler(exception, res);

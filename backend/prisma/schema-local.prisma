@@ -38,15 +38,12 @@ model compra {
 
 model message {
   id                                   Int      @id @default(autoincrement())
-  senderId                             Int
   recipientId                          Int
   content                              String
   timestamp                            DateTime @default(now())
   usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id], map: "Message_recipientId_fkey")
-  usuario_message_senderIdTousuario    usuario  @relation("message_senderIdTousuario", fields: [senderId], references: [id], map: "Message_senderId_fkey")
 
   @@index([recipientId], map: "Message_recipientId_fkey")
-  @@index([senderId], map: "Message_senderId_fkey")
 }
 
 model payment {
@@ -81,7 +78,6 @@ model usuario {
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
-  message_message_senderIdTousuario    message[]       @relation("message_senderIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
 }

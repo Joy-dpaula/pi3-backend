@@ -20,7 +20,8 @@ export default async function deletePayment(req, res) {
         await prisma.payment.delete({ where: { id: parseInt(id) } });
 
    
-        res.status(204).end();
+        res.status(200).json({ message: 'Pagamento deletada com sucesso'});
+
 
     } catch (exception) {
         exceptionHandler(exception, res);
