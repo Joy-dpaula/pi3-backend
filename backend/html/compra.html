@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro</title>
+</head>
+<body>
+    <h1>Realizar Cadastro</h1>
+
+    <form id="cadastroForm">
+        <label for="usuarioId">ID do Usuário:</label>
+        <input type="number" id="usuarioId" name="usuarioId" required>
+
+        <label for="veiculoId">ID do Veículo:</label>
+        <input type="text" id="veiculoId" name="veiculoId" required>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <script>
+        const forma = document.getElementById('cadastroForm');
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+           
+    const formData = new FormData(form);
+    const usuarioId = parseInt(formData.get('usuarioId'));
+    const veiculoId = parseInt(formData.get('veiculoId'));
+
+
+    if (!Number.isInteger(usuarioId)) {
+        alert('Invalid user ID. Please enter a valid integer.');
+        return;
+    }
+
+    const data = {
+        usuarioId,
+        veiculoId
+    };
+
+
+            fetch('http://localhost:5000/compra', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao realizar o cadastro');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Cadastro realizado com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro ao realizar o cadastro:', error);
+                alert('Ocorreu um erro ao processar seu cadastro. Por favor, tente novamente mais tarde.');
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro de Cartão de Crédito</title>
+    <style>
+        /* Adicione seus estilos CSS aqui */
+    </style>
+</head>
+<body>
+    <h1>Cadastro de Cartão de Crédito</h1>
+    <form id="cartaoCreditoForm">
+        <label for="numero">Número do Cartão:</label>
+        <input type="text" id="numero" name="numero" required>
+
+        <label for="validade">Validade:</label>
+        <input type="text" id="validade" name="validade" required placeholder="MM/AA">
+
+        <label for="cvv">CVV:</label>
+        <input type="password" id="cvv" name="cvv" required>
+
+        <label for="nomeTitular">Nome do Titular:</label>
+        <input type="text" id="nomeTitular" name="nomeTitular" required>
+
+        <label for="bandeira">Bandeira:</label>
+        <select id="bandeira" name="bandeira" required>
+            <option value="visa">Visa</option>
+            <option value="mastercard">Mastercard</option>
+            <option value="amex">American Express</option>
+            </select>
+
+        <label for="usuarioId">ID do Usuário:</label>
+        <input type="number" id="usuarioId" name="usuarioId" required>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <div id="resultado"></div>
+
+    <script>
+     const form = document.getElementById('cartaoCreditoForm');
+const resultado = document.getElementById('resultado');
+
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // Construindo a estrutura de dados para enviar ao backend
+    const cartao = {
+        numero: data.numero,
+        validade: data.validade,
+        cvv: data.cvv,
+        nomeTitular: data.nomeTitular,
+        bandeira: data.bandeira,
+        usuarioId: parseInt(data.usuarioId), // Certifique-se que o usuarioId seja um número
+    };
+
+    fetch('http://localhost:5000/credit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cartao)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'Erro ao cadastrar cartão de crédito');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        resultadoDiv.textContent = 'Cartão cadastrado com sucesso!';
+    })
+    .catch(error => {
+        console.error('Erro ao cadastrar cartão de crédito:', error);
+        resultadoDiv.textContent = `Ocorreu um erro: ${error.message}`;
+    });
+});
+    </script>
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Realizar Pagamento</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Realizar Pagamento</h1>
+
+    <form id="pagamentoForm">
+        <label for="compraId">ID da Compra:</label>
+        <input type="number" id="compraId" name="compraId" required>
+
+        <label for="creditCardId">ID do Cartão de Crédito:</label>
+        <input type="number" id="creditCardId" name="creditCardId" required>
+
+        <label for="usuarioId">ID do Usuário:</label>
+        <input type="number" id="usuarioId" name="usuarioId" required>
+
+        <button type="submit">Realizar Pagamento</button>
+    </form>
+
+    <div id="resultado"></div>
+
+    <script>
+        const pagamentoForm = document.getElementById('pagamentoForm');
+const resultadoDiv = document.getElementById('resultado');
+
+pagamentoForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const compraId = parseInt(document.getElementById('compraId').value)
+    const creditCardId = parseInt(document.getElementById('creditCardId').value)
+    const usuarioId = parseInt(document.getElementById('usuarioId').value)
+
+
+    const data = {
+        compraId,
+        creditCardId, 
+        usuarioId
+    };
+
+    fetch('http://localhost:5000/payment', { // Substitua pela URL correta do seu backend
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'Erro ao realizar o pagamento');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        resultadoDiv.textContent = 'Pagamento realizado com sucesso!';
+    })
+    .catch(error => {
+        console.error('Erro ao realizar o pagamento:', error);
+        resultadoDiv.textContent = `Ocorreu um erro: ${error.message}`;
+    });
+});
+    </script>
+</body>
+</html>
+
+
+
+<style>
+    /* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    width: 400px;
+    margin: 0 auto;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #3e8e41;
+}
+
+/* Specific styles for each form */
+
+#cadastroForm, #cartaoCreditoForm, #pagamentoForm {
+    background-color: #f2f2f2;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#cadastroForm input[type="number"],
+#pagamentoForm input[type="number"] {
+    width: 150px;
+}
+
+#cartaoCreditoForm input[type="text"] {
+    width: 200px;
+}
+
+#cartaoCreditoForm select {
+    width: 250px;
+}
+
+#resultado {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+</style>

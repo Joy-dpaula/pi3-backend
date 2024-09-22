@@ -3,26 +3,41 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Enviar uma nova mensagem
+// ... (resto do código)
+
 export const sendMessage = async (req, res) => {
     const { recipientId, content } = req.body;
-    const { userId } = req.user; // Supondo que você tenha um middleware que adiciona userId ao req
 
     try {
+        // Verificar se o usuário existe
+      
+        // Verificar se o destinatário existe
+        const user = await prisma.usuario.findUnique({
+            where: { id: recipientId }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User não encontrado' });
+        }
+
+        // Criar a mensagem
         const message = await prisma.message.create({
             data: {
-                senderId: userId,
-                recipientId: parseInt(recipientId),
+                recipientId: user,
                 content: content,
             },
         });
 
-        // Aqui você pode adicionar uma lógica para notificar o destinatário
+        // Enviar notificação para o destinatário (implementar aqui)
+        // ...
+
         res.status(201).json({ message: 'Mensagem enviada com sucesso.', data: message });
     } catch (error) {
-        res.status(500).json({ message: 'Erro ao enviar a mensagem.', error: error.message });
+        console.error('Erro ao enviar a mensagem:', error);
+        res.status(500).json({ message: 'Erro interno do servidor' });
     }
 };
-
+// ... (resto do código)
 // Obter mensagens trocadas entre dois usuários
 export const getMessages = async (req, res) => {
     const { userId } = req.user;
