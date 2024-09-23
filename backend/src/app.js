@@ -1,11 +1,11 @@
 
 import express from 'express';
 import path from 'path';
+
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
-
 import accountRouter from './routers/accountRouter.js';
 import authRouter from './routers/authRouter.js';
 import vehicleRouter from './routers/vehicleRouter.js';
@@ -24,7 +24,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-
 
 
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d';
