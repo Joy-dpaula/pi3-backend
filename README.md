@@ -42,45 +42,4 @@ HOST=http://localhost
 SECRET_KEY=myChavesecreta12345!@#
 CLIENT_ORIGIN_URL="*"
 
-export async function newShopping({ usuarioId, veiculoId }) {
 
-    const usuario = await prisma.usuario.findUnique({
-        where: { id: usuarioId }
-    });
-
-    if (!usuario) {
-        throw new Error('Usuário não encontrado.');
-    }
-
-    const veiculo = await prisma.veiculo.findUnique({
-        where: { id: veiculoId }
-    });
-
-    if (!veiculo) {
-        throw new Error('Veículo não encontrado.');
-    }
-    const existingPurchase = await prisma.compra.findFirst({
-        where: {
-            veiculoId: veiculoId
-        }
-    });
-
-    if (existingPurchase) {
-        throw new Error('Veículo já comprado');
-    }
-
-    const compra = await prisma.compra.create({
-        data: {
-            veiculoId: veiculoId,
-            usuarioId: usuarioId,
-            status: 'pendente'
-        },
-        select: {
-            id: true,
-            status: true
-        }
-    });
-
-    return { compra }
-
-}
