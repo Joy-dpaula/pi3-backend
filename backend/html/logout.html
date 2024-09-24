@@ -100,6 +100,8 @@
     </div>
 
     <script>
+        let userToken; // Variável para armazenar o token do usuário
+
         document.getElementById('loginForm').addEventListener('submit', async function (event) {
             event.preventDefault();
 
@@ -108,17 +110,17 @@
             const messageDiv = document.getElementById('message');
 
             try {
-                const response = await fetch('https://pi3-backend-i9l3.onrender.com/auth/login', {
+                const response = await fetch('http://localhost:5000/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ email, senha }),
-                    credentials: 'include' // Incluir cookies ou credenciais na requisição
                 });
 
                 if (response.ok) {
                     const data = await response.json();
+                    userToken = data.token; // Armazena o token do usuário
                     messageDiv.textContent = 'Login realizado com sucesso!';
                     messageDiv.className = 'message success';
 
@@ -138,15 +140,16 @@
         });
 
         document.getElementById('logoutButton').addEventListener('click', async function () {
+            const email = document.getElementById('email').value; // Obtém o email
             const messageDiv = document.getElementById('message');
 
             try {
-                const response = await fetch('https://pi3-backend-i9l3.onrender.com/auth/logout', {
+                const response = await fetch('http://localhost:5000/auth/logout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    credentials: 'include' // Incluir cookies ou credenciais na requisição
+                    body: JSON.stringify({ email, token: userToken }) // Envia email e token no logout
                 });
 
                 if (response.ok) {
@@ -155,9 +158,6 @@
                     
                     // Ocultar botão de logout
                     document.getElementById('logoutContainer').style.display = 'none';
-
-                    // Redirecionar para a página de login ou outra
-                    window.location.href = './login.html'; // Atualize para o caminho do arquivo HTML
                 } else {
                     const data = await response.json();
                     throw new Error(data.message || 'Erro ao realizar logout');
