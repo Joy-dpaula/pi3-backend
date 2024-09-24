@@ -31,7 +31,9 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7
 
 app.use(express.json());
 
+
 app.use(cors({}));
+
 
 app.use(logger('dev')); 
 app.use(express.json()); 
