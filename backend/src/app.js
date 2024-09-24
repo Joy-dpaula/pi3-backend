@@ -31,14 +31,7 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7
 
 app.use(express.json());
 
-
-const corsOptions = {
-    origin: 'http://localhost:3000', // Substitua pelo domínio do seu frontend
-    credentials: true, // Habilita o envio de cookies
-};
-
-app.use(cors(corsOptions));
-
+app.use(cors({}));
 
 app.use(logger('dev')); 
 app.use(express.json()); 
