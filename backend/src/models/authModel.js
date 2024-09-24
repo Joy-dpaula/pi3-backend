@@ -30,6 +30,15 @@ export const loginModel = async (email, senha, res) => {
         isAdmin: usuario.isAdmin
     });
 
+
+
+    await prisma.sessions.create({
+      data: {
+          id_user: usuario.id,
+          session: accessToken,
+      }
+  });
+
     const isProduction = process.env.NODE_ENV === 'production';
 
     const sameSiteOption = isProduction ? 'None' : 'Lax';
@@ -51,3 +60,28 @@ export const loginModel = async (email, senha, res) => {
 
     return { usuario, accessToken };
 }
+
+
+export const logoutModel = async (email, token) => {
+  const usuario = await prisma.usuario.findUnique({ where: { email } });
+
+  if (!usuario) {
+      throw new Error("Usuário não encontrado.");
+  }
+
+ 
+  const deletedSession = await prisma.sessions.deleteMany({
+      where: {
+          id_user: usuario.id,
+          session: token
+      }
+  });
+
+  if (deletedSession.count === 0) {
+      throw new Error("Sessão não encontrada.");
+  }
+
+  return { message: "Logout bem-sucedido, sessão removida." };
+}
+
+

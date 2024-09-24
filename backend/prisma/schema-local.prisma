@@ -25,7 +25,7 @@ model cartaocredito {
 
 model compra {
   id        Int       @id @default(autoincrement())
-  veiculoId Int
+  veiculoId Int       
   usuarioId Int
   status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
   usuario   usuario   @relation(fields: [usuarioId], references: [id], map: "Compra_usuarioId_fkey")
@@ -60,8 +60,6 @@ model payment {
   compraId      Int
   creditCardId  Int
   creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
-  
-
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -80,7 +78,17 @@ model usuario {
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
+  sessions                             sessions[]
 }
+
+model sessions {
+  id        Int      @id @default(autoincrement())
+  id_user   Int
+  session   String   @db.VarChar(600) // Exemplo, pode estar com um limite baixo
+  usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
 
 model veiculo {
   id            Int      @id @default(autoincrement())
@@ -100,8 +108,8 @@ model veiculo {
   logradouro    String
   numero        String
   cambio        String
-  carroceria   String
-  combustivel  String
+  carroceria    String
+  combustivel   String
   compra        compra[]
   usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
 
