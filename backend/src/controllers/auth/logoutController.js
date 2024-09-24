@@ -19,7 +19,7 @@ export default async function logout(req, res) {
         res.clearCookie('userData', {
             httpOnly: true,
             secure: secureOption,
-            sameSite: sameSiteOption === 'None' ? 'None' : 'Lax' 
+            sameSite: sameSiteOption === 'None' ? 'None' : 'Lax'    
         });
 
         return res.status(200).json(result); 
