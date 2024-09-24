@@ -25,7 +25,7 @@ model cartaocredito {
 
 model compra {
   id        Int       @id @default(autoincrement())
-  veiculoId Int       @unique
+  veiculoId Int       
   usuarioId Int
   status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
   usuario   usuario   @relation(fields: [usuarioId], references: [id])

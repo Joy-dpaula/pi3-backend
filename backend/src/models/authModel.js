@@ -30,6 +30,15 @@ export const loginModel = async (email, senha, res) => {
         isAdmin: usuario.isAdmin
     });
 
+
+
+    await prisma.sessions.create({
+      data: {
+          id_user: usuario.id,
+          session: accessToken,
+      }
+  });
+
     const isProduction = process.env.NODE_ENV === 'production';
 
     const sameSiteOption = isProduction ? 'None' : 'Lax';
@@ -53,49 +62,26 @@ export const loginModel = async (email, senha, res) => {
 }
 
 
-export const createSession = (userId, token, callback) => {
-    const sql = 'INSERT INTO sessions (id_user, session) VALUES (?, ?);'
-    const values = [userId, token]
-    con.query(sql, values, (err, result) => {
-      if (err) {
-        callback(err, null)
-        console.log(`DB Error: ${err.sqlMessage}`)
-      } else {
-        callback(null, result)
-      }
-    })
-  }
-  
+export const logoutModel = async (email, token) => {
+  const usuario = await prisma.usuario.findUnique({ where: { email } });
 
-  export const checkSession = (token, callback) => {
-    const sql = `
-      SELECT s.id_user, u.roles
-      FROM sessions as s
-      INNER JOIN users as u
-      ON s.id_user = u.id
-      WHERE s.session = ?;
-      `
-    const values = [token]
-    con.query(sql, values, (err, result) => {
-      if (err) {
-        callback(err, null)
-        console.log(`DB Error: ${err.sqlMessage}`)
-      } else {
-        callback(null, result)
-      }
-    })
+  if (!usuario) {
+      throw new Error("Usuário não encontrado.");
   }
 
-  export const deleteSession = (email, token, callback) => {
-    const sql = 'DELETE FROM sessions WHERE id_user = (SELECT id FROM users WHERE email = ?) AND session = ?;'
-    const value = [email, token]
-    con.query(sql, value, (err, result) => {
-      if (err) {
-        callback(err, null)
-        console.log(`DB Error: ${err.sqlMessage}`)
-      } else {
-        callback(null, result)
+ 
+  const deletedSession = await prisma.sessions.deleteMany({
+      where: {
+          id_user: usuario.id,
+          session: token
       }
-    })
+  });
+
+  if (deletedSession.count === 0) {
+      throw new Error("Sessão não encontrada.");
   }
-   
+
+  return { message: "Logout bem-sucedido, sessão removida." };
+}
+
+
