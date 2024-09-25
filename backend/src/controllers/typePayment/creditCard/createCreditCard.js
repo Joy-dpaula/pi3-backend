@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { createCartao } from "../../../models/creditCardModel.js";
 
 async function createCartaoCredito(req, res) {
   const { numero, validade, cvv, nomeTitular, bandeira, usuarioId } = req.body;
@@ -15,19 +13,10 @@ async function createCartaoCredito(req, res) {
       return res.status(400).json({ message: 'Dados inválidos' });
     }
 
-    const cartaoCredito = await prisma.cartaocredito.create({
-      data: {
-        numero,
-        validade,
-        cvv,
-        nomeTitular,
-        bandeira,
-        usuarioId,
-        atualizadoEm: new Date(),
-      },
-    });
+    const cartaoCredito = await createCartao(numero, validade, cvv, nomeTitular, bandeira, usuarioId);
 
-    res.status(201).json({ message: 'Cartão de crédito criado com sucesso', cartaoCredito });
+    res.status(201).json({ message: 'Cartão de crédito criado com sucesso'});
+
   } catch (error) {
     console.error('Erro ao criar cartão de crédito:', error);
     res.status(500).json({ message: 'Erro interno do servidor' });
