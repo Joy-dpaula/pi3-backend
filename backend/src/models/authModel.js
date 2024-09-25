@@ -12,13 +12,13 @@ export const loginModel = async (email, senha, res) => {
 
     
     if (!usuario) {
-        return res.status(404).json({ error: "Usuário não encontrado." });
+        throw new Error( "Usuário não encontrado.");
     }
     
     const validsenha = await bcrypt.compare(senha, usuario.senha);
 
     if (!validsenha) {
-        return res.status(401).json({ error: "Senha inválida." });
+        throw new Error("Senha inválida.");
     }
 
     const accessToken = generateAccessToken({
