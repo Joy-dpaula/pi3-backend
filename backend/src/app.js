@@ -37,13 +37,13 @@ app.use(cors({}));
 app.use(logger('dev')); // Configura o logger de requisições HTTP
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: false })); 
-app.use(cookieParser(COOKIE_SECRET)); 
+app.use(cookieParser(COOKIE_SECRET)); // Configuração do cookie parser
 
-app.use(express.static(path.join(__dirname, 'public'))); 
+app.use(express.static(path.join(__dirname, 'public'))); // Para servir arquivos estáticos
 
 // Adicionando os routers
 app.use('/usuarios', accountRouter);
-app.use('/auth', authRouter);
+app.use('/auth', authRouter); // Adiciona as rotas de login e logout
 app.use('/veiculos', vehicleRouter); 
 app.use('/message', messageRouter); 
 app.use('/payment', paymentRoutes); 

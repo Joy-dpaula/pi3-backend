@@ -108,3 +108,11 @@ model CompraVeiculo {
 
   @@map("compra_veiculo")
 }
+
+model Admin {
+    id      Int    @id @default(autoincrement())
+    nome    String
+    email   String @unique
+    senha   String
+    isAdmin Boolean @default(false)
+}
