@@ -6,11 +6,12 @@ import getVeiculos from '../controllers/vehicle/getVeiculo.js';
 import uploadSingle from '../utils/uploadSingle.js'; 
 import handleCreateVeiculo from '../controllers/vehicle/createVeiculo.js';
 
+
 const router = express.Router();
 
 // Rota para criar um veículo
-router.post('/', handleCreateVeiculo, uploadSingle);
-
+router.post('/', handleCreateVeiculo);
+//https://youtu.be/o5JoNi8z6q0?si=cD7oKsVswIWCUEib
 router.get('/', getVeiculos)
 
 // Rota para obter um veículo específico por ID
