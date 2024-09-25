@@ -15,7 +15,9 @@ import paymentRoutes from './routers/paymentRouter.js';
 import { exceptionHandler } from './utils/ajuda.js';
 import create  from './routers/shoppingRouter.js';
 import creditCard from './routers/typePaymentRouter.js'
-
+import multer from 'multer'
+import {storage} from './multerConfig.js'
+const upload = multer({storage: storage});
 
 
 import 'dotenv/config'; 
@@ -38,7 +40,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(COOKIE_SECRET)); 
 
 app.use(express.static(path.join(__dirname, 'public'))); 
-
+app.use('/uploads',  upload.single('file'), (req, res)=>{return res.json(req.file.filename);})
 app.use('/usuarios', accountRouter);
 app.use('/auth', authRouter);
 app.use('/veiculos', vehicleRouter); 
