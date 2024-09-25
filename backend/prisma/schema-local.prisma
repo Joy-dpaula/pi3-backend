@@ -9,9 +9,9 @@ datasource db {
 
 model cartaocredito {
   id           Int       @id @default(autoincrement())
-  numero       String    @db.VarChar(16)
+  numero       String    @unique @db.VarChar(16)
   validade     String    @db.VarChar(5)
-  cvv          String    @db.VarChar(100)
+  cvv          String    @unique @db.VarChar(100)
   nomeTitular  String    @db.VarChar(100)
   bandeira     String    @db.VarChar(20)
   usuarioId    Int
