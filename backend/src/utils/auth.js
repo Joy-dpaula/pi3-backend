@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 
-// Função para gerar um token de acesso JWT
 export function generateAccessToken(usuario, options = { expiresIn: '1800s' }) {
     try {
         if (!usuario || typeof usuario !== 'object') {
@@ -26,7 +25,6 @@ export function generateAccessToken(usuario, options = { expiresIn: '1800s' }) {
     }
 }
 
-// Middleware para autenticar o token JWT
 export function authenticateToken(req, res, next) {
     try {
         const authHeader = req.headers['authorization'];

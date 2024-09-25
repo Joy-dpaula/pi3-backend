@@ -93,9 +93,15 @@
             </div>
             <div id="message" class="message"></div>
         </form>
+
+        <div class="form-group" id="logoutContainer" style="display: none;">
+            <button id="logoutButton">Sair</button>
+        </div>
     </div>
 
     <script>
+        let userToken; // Variável para armazenar o token do usuário
+
         document.getElementById('loginForm').addEventListener('submit', async function (event) {
             event.preventDefault();
 
@@ -104,7 +110,7 @@
             const messageDiv = document.getElementById('message');
 
             try {
-                const response = await fetch('http://localhost:5000/usuarios/login', {
+                const response = await fetch('http://localhost:5000/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -114,13 +120,47 @@
 
                 if (response.ok) {
                     const data = await response.json();
+                    userToken = data.token; // Armazena o token do usuário
                     messageDiv.textContent = 'Login realizado com sucesso!';
                     messageDiv.className = 'message success';
+
+                    // Exibir botão de logout
+                    document.getElementById('logoutContainer').style.display = 'block';
+
                     // Redirecionar para a página desejada
                     window.location.href = './veiculos.html'; // Atualize para o caminho do arquivo HTML
                 } else {
                     const data = await response.json();
                     throw new Error(data.message || 'Erro ao realizar login');
+                }
+            } catch (error) {
+                messageDiv.textContent = error.message;
+                messageDiv.className = 'message error';
+            }
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', async function () {
+            const email = document.getElementById('email').value; // Obtém o email
+            const messageDiv = document.getElementById('message');
+
+            try {
+                const response = await fetch('http://localhost:5000/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, token: userToken }) // Envia email e token no logout
+                });
+
+                if (response.ok) {
+                    messageDiv.textContent = 'Logout realizado com sucesso!';
+                    messageDiv.className = 'message success';
+                    
+                    // Ocultar botão de logout
+                    document.getElementById('logoutContainer').style.display = 'none';
+                } else {
+                    const data = await response.json();
+                    throw new Error(data.message || 'Erro ao realizar logout');
                 }
             } catch (error) {
                 messageDiv.textContent = error.message;

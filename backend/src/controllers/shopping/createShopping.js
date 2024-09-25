@@ -1,46 +1,33 @@
-import { PrismaClient } from '@prisma/client';
-import exceptionHandler from '../../utils/ajuda.js';
+
+import { exceptionHandler } from '../../utils/ajuda.js';
 import { generateAccessToken } from '../../utils/auth.js';
-
-const prisma = new PrismaClient()
-
+import { newShopping } from '../../models/shoppingModel.js';
 
 export default async function createShopping(req, res) {
 
-    const { usuarioId, veiculoId } = req.body
+    const { usuarioId, veiculoId } = req.body;
+
+    console.log(usuarioId)
+    console.log(veiculoId)
 
     try {
-        const compra = await prisma.compra.create({
-            data: {
-                veiculoId: {
-                    connect: { id: veiculoId }
-                },
-                usuarioId: {
-                    connect: { id: usuarioId }
-                }
-            },
-            select: {
-                id: true,
-                usuario: {
-                    select: {
-                        id: true,
-                    },
-                    veiculo: {
-                        select: {
-                            id: true,
-                        }
-                    }
-                }
-            }
+     
+        if (!usuarioId) {
+            return res.status(400).json({ error: 'ID do usuário é necessário.' });
+        }
 
-        })
+        if (!veiculoId) {
+            return res.status(400).json({ error: 'ID do veículo é necessário.' });
+        }
+     
+        const { compra } = await newShopping({usuarioId, veiculoId});
 
         const jwt = generateAccessToken(compra);
         compra.accessToken = jwt;
-        res.status(201).json(compra);
 
+        res.status(201).json(compra);
+        
     } catch (exception) {
         exceptionHandler(exception, res);
     }
-
 }

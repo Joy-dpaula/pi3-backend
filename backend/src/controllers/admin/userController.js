@@ -1,8 +1,6 @@
-// Importando Prisma Client
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-// Função para obter usuários paginados
 export const getPaginatedUsers = async (req, res) => {
     const pageNumber = parseInt(req.query.page) || 0;
 
@@ -17,7 +15,6 @@ export const getPaginatedUsers = async (req, res) => {
     }
 };
 
-// Função para obter um resumo de usuários
 export const getUsersSummary = async (req, res) => {
     try {
         const users = await prisma.usuario.findMany({

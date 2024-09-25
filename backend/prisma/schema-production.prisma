@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js" // Define o gerador que cria o cliente Prisma para JavaScript
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,53 +8,59 @@ datasource db {
 }
 
 model cartaocredito {
-  id           Int      @id @default(autoincrement())
-  numero       String   @db.VarChar(16)
-  validade     String   @db.VarChar(5)
-  cvv          String   @db.VarChar(3)
-  nomeTitular  String   @db.VarChar(100)
-  bandeira     String   @db.VarChar(20)
+  id           Int       @id @default(autoincrement())
+  numero       String    @unique @db.VarChar(16)
+  validade     String    @db.VarChar(5)
+  cvv          String    @unique  @db.VarChar(100)
+  nomeTitular  String    @db.VarChar(100)
+  bandeira     String    @db.VarChar(20)
   usuarioId    Int
-  criadoEm     DateTime @default(now())
+  criadoEm     DateTime  @default(now())
   atualizadoEm DateTime
-  usuario      usuario  @relation(fields: [usuarioId], references: [id])
+  usuario      usuario   @relation(fields: [usuarioId], references: [id])
+  payment      payment[]
+
+  @@index([usuarioId], map: "CartaoCredito_usuarioId_fkey")
 }
 
 model compra {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   veiculoId Int
   usuarioId Int
-  paymentId Int?
-  usuario   usuario  @relation(fields: [usuarioId], references: [id])
-  veiculo   veiculo  @relation(fields: [veiculoId], references: [id])
-  payment   payment?
+  status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
+  usuario   usuario   @relation(fields: [usuarioId], references: [id])
+  veiculo   veiculo   @relation(fields: [veiculoId], references: [id])
+  payment   payment[]
 
-  @@index([usuarioId])
-  @@index([veiculoId])
+  @@index([usuarioId], map: "Compra_usuarioId_fkey")
+  @@index([veiculoId], map: "Compra_veiculoId_fkey")
 }
 
 model message {
   id                                   Int      @id @default(autoincrement())
-  senderId                             Int
   recipientId                          Int
   content                              String
   timestamp                            DateTime @default(now())
   usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id])
-  usuario_message_senderIdTousuario    usuario  @relation("message_senderIdTousuario", fields: [senderId], references: [id])
+ 
 }
 
 model payment {
-  id            Int      @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   usuarioId     Int
-  compraId      Int?     @unique
-  paymentMethod String   @db.VarChar(20)
-  status        String   @db.VarChar(20)
-  pixQRCodeURL  String?  @db.VarChar(255)
-  boletoURL     String?  @db.VarChar(255)
+  paymentMethod String        @db.VarChar(20)
+  status        String        @db.VarChar(20)
+  pixQRCodeURL  String?       @db.VarChar(255)
+  boletoURL     String?       @db.VarChar(255)
   amount        Int
-  timestamp     DateTime @default(now())
-  compra        compra?  @relation(fields: [compraId], references: [id])
-  usuario       usuario  @relation(fields: [usuarioId], references: [id])
+  timestamp     DateTime      @default(now())
+  compra        compra        @relation(fields: [compraId], references: [id]) // Remove o campo compraId
+  usuario       usuario       @relation(fields: [usuarioId], references: [id])
+  compraId      Int
+  creditCardId  Int
+  creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
+
+  @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
 
 model usuario {
@@ -69,45 +75,43 @@ model usuario {
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
-  message_message_senderIdTousuario    message[]       @relation("message_senderIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
-  CompraVeiculo                        CompraVeiculo[]
+  sessions                             sessions[]
+}
+
+model sessions {
+  id        Int      @id @default(autoincrement())
+  id_user   Int
+  session   String   @db.VarChar(600) // Exemplo, pode estar com um limite baixo
+  usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model veiculo {
   id            Int              @id @default(autoincrement())
   modelo        String           @db.VarChar(50)
   anoFabricacao Int
-  cor           String           @db.VarChar(25)
-  descricao     String           @db.VarChar(500)
+  cor           String   @db.VarChar(50)
+  descricao     String   @db.VarChar(500)
   valor         Int
   km            Int
-  marca         String           @db.VarChar(20)
-  foto          String
+  marca         String   @db.VarChar(100)
+  foto          String   @db.VarChar(2000)
   usuarioId     Int
-  cidade        String           @db.VarChar(30)
-  estado        String           @db.VarChar(30)
-  compra        compra[]         // Adicionando o campo de relação para o modelo 'compra'
-  compraVeiculo CompraVeiculo[]  // Campo existente
-  usuario       usuario          @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
-
-  @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
+  cidade        String   @db.VarChar(30)
+  estado        String   @db.VarChar(30)
+  cep           String
+  complemento   String
+  logradouro    String
+  numero        String
+  cambio        String
+  carroceria    String
+  combustivel   String
+  compra        compra[]
+  usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
 }
 
-model CompraVeiculo {
-  id           Int      @id @default(autoincrement())
-  veiculoId    Int
-  usuarioId    Int
-  dataCompra   DateTime @default(now())
-  valor        Float
-  veiculo      veiculo  @relation(fields: [veiculoId], references: [id])
-  usuario      usuario  @relation(fields: [usuarioId], references: [id])
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
-
-  @@map("compra_veiculo")
-}
 
 model Admin {
     id      Int    @id @default(autoincrement())

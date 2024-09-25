@@ -1,15 +1,26 @@
-// backend/src/controllers/auth/logoutController.js
 
-const logoutController = (req, res) => {
-    // Limpa o cookie de sessão
-    res.clearCookie('sessionId', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-    });
 
-    // Retorna uma resposta indicando que o logout foi realizado com sucesso
-    return res.status(200).json({ message: 'Logout realizado com sucesso.' });
-};
+import { logoutModel } from '../../models/authModel.js';
 
-export default logoutController;
+export default async function logout(req, res) {
+    const { email, token } = req.body; 
+
+    try {
+        const result = await logoutModel(email, token);
+
+        const isProduction = process.env.NODE_ENV === 'production';
+        const secureOption = isProduction;
+
+        res.clearCookie('userData', {
+            httpOnly: true,
+            secure: secureOption,
+            sameSite: 'Lax' 
+        });
+        
+
+        return res.status(200).json(result); 
+    } catch (error) {
+        return res.status(401).json({ error: error.message });
+    }
+}
+

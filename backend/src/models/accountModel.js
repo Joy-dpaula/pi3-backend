@@ -5,17 +5,15 @@ import bcrypt from 'bcryptjs';
 
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin }) {
-    // Verifica se o usuário já existe
+
     const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
 
     if (existingUsuario) {
         return null;
     }
 
-    // Hash da senha
     const hashedSenha = await bcrypt.hash(senha, 12);
 
-    // Criação do novo usuário no banco de dados
     const usuario = await prisma.usuario.create({
         data: {
             nome,
@@ -62,25 +60,34 @@ export const deleteUsuarioById = async (id) => {
 };
 
 
+
 export const update = async (id, data) => {
-    // Certifique-se de que o id está sendo usado corretamente
     if (!id) {
         throw new Error('ID não fornecido');
     }
 
-    // Atualize o usuário no banco de dados usando o Prisma
-    return await prisma.usuario.update({
-        where: { id: Number(id) }, // Certifique-se de que o ID está sendo passado corretamente
-        data, // Dados a serem atualizados
-        select: {
-            id: true,
-            nome: true,
-            email: true,
-            isAdmin: true,
-        },
-    });
-}
+    const userId = Number(id);
+    console.log("Received ID:", userId); 
 
+    if (isNaN(userId)) {
+        throw new Error('ID inválido');
+    }
 
+    try {
+        const updatedUsuario = await prisma.usuario.update({
+            where: { id: userId },
+            data, 
+            select: {
+                id: true,
+                nome: true,
+                email: true,
+                isAdmin: true,
+            },
+        });
 
-
+        return updatedUsuario;
+    } catch (error) {
+        console.error('Update failed:', error);
+        throw new Error('Failed to update user');
+    }
+};

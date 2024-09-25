@@ -1,37 +1,43 @@
 import bcrypt from 'bcryptjs';
-import exceptionHandler from '../../utils/ajuda.js';
-import { update } from '../../models/accountModel.js';
 
-export default async function updateAccount(req, res) {
-    try {
-        const id = Number(req.params.id);
+import { exceptionHandler } from '../../utils/ajuda.js';
+import { update } from "../../models/accountModel.js";
 
-        if (!id) {
-            return res.status(400).json({ error: 'ID não fornecido ou inválido' });
-        }
-
-        const { nome, email, senha, cpf, telefone, nascimento, isAdmin } = req.body;
-       
-        const token = req.accessToken;
-
-        const checkUsuario = await del(id);
-
-        if (!checkUsuario || (checkUsuario.email !== token.email && !token.isAdmin)) {
-            return res.sendStatus(403);
-        }
+const updateController = async (req, res, next) => {
+    const { id } = req.params;
     
-        const usuario =  await update(id,{
-            nome,
-            email,
-            senha: senha ? await bcrypt.hash(senha, 12) : undefined,
-            cpf: cpf ? cpf.toString() : undefined,
-            telefone: telefone ? telefone.toString() : undefined,
-            nascimento: nascimento ? new Date(nascimento) : undefined,
-            isAdmin: isAdmin !== undefined ? isAdmin : undefined,
-        });
+    try {
+        const usuario = req.body;
 
-      return  res.json(usuario);
-    } catch (exception) {
-        exceptionHandler(exception, res);
+        usuario.id = Number(id);
+
+        if (isNaN(usuario.id)) {
+            return res.status(400).json({
+                error: "ID inválido!"
+            });
+        }
+
+        const result = await update(usuario.id, usuario); 
+
+        if (!result) {
+            return res.status(404).json({
+                error: "Erro ao atualizar a conta!"
+            });
+        }
+
+        return res.json({
+            success: "Conta atualizada com sucesso!",
+            usuario: result
+        });
+    } catch (error) {
+
+        if (error?.code === 'P2025') {
+            return res.status(404).json({
+                error: `Conta com o id ${id} não encontrada!`
+            });
+        }
+        next(error); 
     }
 }
+
+export default updateController;
