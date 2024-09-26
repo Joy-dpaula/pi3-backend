@@ -27,7 +27,7 @@ model compra {
   id        Int       @id @default(autoincrement())
   veiculoId Int       
   usuarioId Int
-  status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
+  status    String    @default("pendente") 
   usuario   usuario   @relation(fields: [usuarioId], references: [id], map: "Compra_usuarioId_fkey")
   veiculo   veiculo   @relation(fields: [veiculoId], references: [id], map: "Compra_veiculoId_fkey")
   payment   payment[]
@@ -48,14 +48,14 @@ model message {
 model payment {
   id            Int           @id @default(autoincrement())
   usuarioId     Int
-  compraId      Int?     @unique
+  compraId      Int      @unique
   paymentMethod String   @db.VarChar(20)
   status        String   @db.VarChar(20)
   pixQRCodeURL  String?  @db.VarChar(255)
   boletoURL     String?  @db.VarChar(255)
   amount        Int
   timestamp     DateTime @default(now())
-  compra        compra?  @relation(fields: [compraId], references: [id])
+  compra        compra  @relation(fields: [compraId], references: [id])
   usuario       usuario  @relation(fields: [usuarioId], references: [id])
   creditCardId  Int
   creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
@@ -83,7 +83,7 @@ model usuario {
 model sessions {
   id        Int      @id @default(autoincrement())
   id_user   Int
-  session   String   @db.VarChar(600) // Exemplo, pode estar com um limite baixo
+  session   String   @db.VarChar(600)
   usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }

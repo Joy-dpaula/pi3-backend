@@ -1,5 +1,6 @@
 
-import { exceptionHandler } from '../../utils/ajuda.js';
+import exceptionHandler from '../../utils/ajuda.js';
+
 import { getShoppingModel } from '../../models/shoppingModel.js';
 
 export default async function getShopping(req, res) {

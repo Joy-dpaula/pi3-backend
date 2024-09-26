@@ -1,4 +1,5 @@
-import { exceptionHandler } from '../../utils/ajuda.js';
+import exceptionHandler from '../../utils/ajuda.js';
+
 import { deletePaymentModel } from '../../models/paymentModel.js';
 
 export default async function deletePayment(req, res) {
