@@ -12,7 +12,7 @@ import vehicleRouter from './routers/vehicleRouter.js';
 import messageRouter from './routers/messageRouter.js';
 import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
-import { exceptionHandler } from './utils/ajuda.js';
+import exceptionHandler  from './utils/ajuda.js';
 import create  from './routers/shoppingRouter.js';
 import creditCard from './routers/typePaymentRouter.js'
 import multer from 'multer'
@@ -51,7 +51,6 @@ app.use('/payment', paymentRoutes);
 app.use('/credit' , creditCard) 
 
 app.use('/compra', create)
-// app.use('/compras', shoppingRouter);
 
 app.use((req, res, next) => {
     res.status(404).json({ message: 'Not Found' });

@@ -1,4 +1,5 @@
 
+
 import { logoutModel } from '../../models/authModel.js';
 
 export default async function logout(req, res) {

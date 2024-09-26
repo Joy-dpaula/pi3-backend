@@ -1,5 +1,9 @@
 // src/controllers/account/profileController.js
+<<<<<<< HEAD:backend/src/controllers/account/profileController.js
+// função para atualizar o perfil do usuario
+=======
 
+>>>>>>> master:backend/src/controllers/fraud/profileController.js
 export const updateUserProfile = (req, res) => {
     const { userId } = req.user;  
     const { name, email, phone, address } = req.body;

@@ -1,5 +1,9 @@
 // src/controllers/account/preferencesController.js
+<<<<<<< HEAD:backend/src/controllers/account/preferencesController.js
+// Função para atualizar as preferências do usuário
+=======
 
+>>>>>>> master:backend/src/controllers/fraud/preferencesController.js
 export const updateUserPreferences = (req, res) => {
     const { userId } = req.user;
     const { emailNotifications, smsNotifications, preferredLanguage } = req.body;  

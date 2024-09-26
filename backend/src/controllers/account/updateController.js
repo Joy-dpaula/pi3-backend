@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { exceptionHandler } from '../../utils/ajuda.js';
+
 import { update } from "../../models/accountModel.js";
 
 const updateController = async (req, res, next) => {

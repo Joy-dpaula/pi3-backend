@@ -1,7 +1,5 @@
-
-import { exceptionHandler } from '../../utils/ajuda.js';
+import exceptionHandler from '../../utils/ajuda.js';
 import { getUsuarioById } from '../../models/accountModel.js';
-
 
 export default async function getAccountById(req, res) {
     try {

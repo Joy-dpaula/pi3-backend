@@ -1,6 +1,6 @@
 import { deleteCartaoModel } from '../../../models/creditCardModel.js';
+import exceptionHandler from '../../../utils/ajuda.js';
 
-import { exceptionHandler } from '../../../utils/ajuda.js';
 
 export default async function creditCardDelete(req, res) {
     try {

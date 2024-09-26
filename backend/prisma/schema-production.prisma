@@ -42,6 +42,7 @@ model message {
   content                              String
   timestamp                            DateTime @default(now())
   usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id])
+ 
 }
 
 model payment {
@@ -88,8 +89,8 @@ model sessions {
 }
 
 model veiculo {
-  id            Int      @id @default(autoincrement())
-  modelo        String   @db.VarChar(50)
+  id            Int              @id @default(autoincrement())
+  modelo        String           @db.VarChar(50)
   anoFabricacao Int
   cor           String   @db.VarChar(50)
   descricao     String   @db.VarChar(500)
@@ -109,4 +110,13 @@ model veiculo {
   combustivel   String
   compra        compra[]
   usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
+}
+
+
+model Admin {
+    id      Int    @id @default(autoincrement())
+    nome    String
+    email   String @unique
+    senha   String
+    isAdmin Boolean @default(false)
 }
