@@ -1,10 +1,10 @@
 ````
 ### Repositório criado para o backend do Projeto Integrador do 
-3° semestre de 2024 so os loucos sabem 🎶🎵
+3° semestre de 2024
 
 ````
-
- ### Comandos do prisma 
+### Comandos do prisma 
+````
 
 npm run prisma:local:push
 
@@ -16,9 +16,8 @@ npm run prisma:local:migrate
 
 
 
-´´´´´
+````
 ### Para puxar os códigos da branch master para a sua branch atual, siga os seguintes passos:
-
 `````
 git checkout sua-branch
 
@@ -47,4 +46,4 @@ CLIENT_ORIGIN_URL="*"
 ### tudo que precisa ser instalado:
 ````
 
-```npm install boleto-bancario ```
+npm install boleto-bancario 
