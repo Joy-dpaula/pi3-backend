@@ -39,10 +39,12 @@ DATABASE_URL="mysql://root:aluno@localhost:3306/backend_db"
 PORT=5000
 ENVIRONMENT=local
 HOST=http://localhost
+NODE_ENV=development
 SECRET_KEY=myChavesecreta12345!@#
 CLIENT_ORIGIN_URL="*"
 
-``` 
+`````
 ### tudo que precisa ser instalado:
+````
 
 ```npm install boleto-bancario ```
