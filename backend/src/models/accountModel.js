@@ -2,6 +2,11 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 import bcrypt from 'bcryptjs';
 
+const date = new Date();
+const gmt3Offset = -3 * 60; // GMT-3 in minutes
+const gmt3Date = new Date(date.getTime() + (date.getTimezoneOffset() + gmt3Offset) * 60000);
+
+console.log("Current time in GMT-3:", gmt3Date.toISOString());
 
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado,foto_perfil }) {
