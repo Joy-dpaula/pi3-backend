@@ -9,9 +9,9 @@ datasource db {
 
 model cartaocredito {
   id           Int       @id @default(autoincrement())
-  numero       String    @db.VarChar(16)
+  numero       String    @unique @db.VarChar(16)
   validade     String    @db.VarChar(5)
-  cvv          String    @db.VarChar(100)
+  cvv          String    @unique  @db.VarChar(100)
   nomeTitular  String    @db.VarChar(100)
   bandeira     String    @db.VarChar(20)
   usuarioId    Int
@@ -44,6 +44,7 @@ model message {
   usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id], map: "Message_recipientId_fkey")
 
   @@index([recipientId], map: "Message_recipientId_fkey")
+
 }
 
 model payment {
@@ -84,11 +85,20 @@ model usuario {
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
+  sessions                             sessions[]
+}
+
+model sessions {
+  id        Int      @id @default(autoincrement())
+  id_user   Int
+  session   String   @db.VarChar(600) // Exemplo, pode estar com um limite baixo
+  usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model veiculo {
-  id            Int      @id @default(autoincrement())
-  modelo        String   @db.VarChar(50)
+  id            Int              @id @default(autoincrement())
+  modelo        String           @db.VarChar(50)
   anoFabricacao Int
   cor           String   @db.VarChar(25)
   descricao     String   @db.VarChar(500)
@@ -110,4 +120,13 @@ model veiculo {
   usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
 
   @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
+}
+
+
+model Admin {
+    id      Int    @id @default(autoincrement())
+    nome    String
+    email   String @unique
+    senha   String
+    isAdmin Boolean @default(false)
 }

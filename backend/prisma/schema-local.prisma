@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client-js" // Define o gerador que cria o cliente Prisma para JavaScript
 }
 
 datasource db {
@@ -9,15 +9,15 @@ datasource db {
 
 model cartaocredito {
   id           Int       @id @default(autoincrement())
-  numero       String    @db.VarChar(16)
+  numero       String    @unique @db.VarChar(16)
   validade     String    @db.VarChar(5)
-  cvv          String    @db.VarChar(100)
+  cvv          String    @unique @db.VarChar(100)
   nomeTitular  String    @db.VarChar(100)
   bandeira     String    @db.VarChar(20)
   usuarioId    Int
   criadoEm     DateTime  @default(now())
   atualizadoEm DateTime
-  usuario      usuario   @relation(fields: [usuarioId], references: [id], map: "CartaoCredito_usuarioId_fkey")
+  usuario      usuario  @relation(fields: [usuarioId], references: [id])
   payment      payment[]
 
   @@index([usuarioId], map: "CartaoCredito_usuarioId_fkey")
@@ -25,15 +25,15 @@ model cartaocredito {
 
 model compra {
   id        Int       @id @default(autoincrement())
-  veiculoId Int
+  veiculoId Int       
   usuarioId Int
-  status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
+  status    String    @default("pendente") 
   usuario   usuario   @relation(fields: [usuarioId], references: [id], map: "Compra_usuarioId_fkey")
   veiculo   veiculo   @relation(fields: [veiculoId], references: [id], map: "Compra_veiculoId_fkey")
   payment   payment[]
 
-  @@index([usuarioId], map: "Compra_usuarioId_fkey")
-  @@index([veiculoId], map: "Compra_veiculoId_fkey")
+  @@index([usuarioId])
+  @@index([veiculoId])
 }
 
 model message {
@@ -41,27 +41,24 @@ model message {
   recipientId                          Int
   content                              String
   timestamp                            DateTime @default(now())
-  usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id], map: "Message_recipientId_fkey")
-
+  usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id])
   @@index([recipientId], map: "Message_recipientId_fkey")
 }
 
 model payment {
   id            Int           @id @default(autoincrement())
   usuarioId     Int
-  paymentMethod String        @db.VarChar(20)
-  status        String        @db.VarChar(20)
-  pixQRCodeURL  String?       @db.VarChar(255)
-  boletoURL     String?       @db.VarChar(255)
+  compraId      Int      @unique
+  paymentMethod String   @db.VarChar(20)
+  status        String   @db.VarChar(20)
+  pixQRCodeURL  String?  @db.VarChar(255)
+  boletoURL     String?  @db.VarChar(255)
   amount        Int
-  timestamp     DateTime      @default(now())
-  compra        compra        @relation(fields: [compraId], references: [id]) // Remove o campo compraId
-  usuario       usuario       @relation(fields: [usuarioId], references: [id], map: "Payment_usuarioId_fkey")
-  compraId      Int
+  timestamp     DateTime @default(now())
+  compra        compra  @relation(fields: [compraId], references: [id])
+  usuario       usuario  @relation(fields: [usuarioId], references: [id])
   creditCardId  Int
   creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
-  
-
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -84,14 +81,24 @@ model usuario {
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
+  sessions                             sessions[]
 }
 
+model sessions {
+  id        Int      @id @default(autoincrement())
+  id_user   Int
+  session   String   @db.VarChar(600)
+  usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+
 model veiculo {
-  id            Int      @id @default(autoincrement())
-  modelo        String   @db.VarChar(50)
+  id            Int              @id @default(autoincrement())
+  modelo        String           @db.VarChar(50)
   anoFabricacao Int
-  cor           String   @db.VarChar(25)
-  descricao     String   @db.VarChar(500)
+  cor           String           @db.VarChar(25)
+  descricao     String           @db.VarChar(500)
   valor         Int
   km            Int
   marca         String   @db.VarChar(20)
@@ -104,10 +111,20 @@ model veiculo {
   logradouro    String
   numero        String
   cambio        String
-  carroceria   String
-  combustivel  String
+  carroceria    String
+  combustivel   String
   compra        compra[]
   usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
 
   @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
+}
+
+
+
+model Admin {
+    id      Int    @id @default(autoincrement())
+    nome    String
+    email   String @unique
+    senha   String
+    isAdmin Boolean @default(false)
 }

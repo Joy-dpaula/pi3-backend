@@ -60,3 +60,4 @@ router.post('/', upload.single('foto'), async (req, res) => {
 });
 
 export default router;
+

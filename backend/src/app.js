@@ -7,13 +7,15 @@ import { fileURLToPath } from 'url';
 import accountRouter from './routers/accountRouter.js';
 import authRouter from './routers/authRouter.js';
 import vehicleRouter from './routers/vehicleRouter.js';
-import messageRouter from './routers/messageRouter.js';
 import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
-import { exceptionHandler } from './utils/ajuda.js';
-import create from './routers/shoppingRouter.js';
-import creditCard from './routers/typePaymentRouter.js';
-import multer from 'multer';
+
+import exceptionHandler  from './utils/ajuda.js';
+import create  from './routers/shoppingRouter.js';
+import creditCard from './routers/typePaymentRouter.js'
+import multer from 'multer'
+import {storage} from './multerConfig.js'
+
 
 // Configuração do multer
 const storage = multer.diskStorage({
@@ -39,7 +41,9 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7
 
 app.use(express.json());
 
+
 app.use(cors({}));
+
 
 app.use(logger('dev')); 
 app.use(express.json()); 
@@ -52,11 +56,11 @@ app.use('/usuarios', accountRouter);
 app.use('/auth', authRouter);
 app.use('/veiculos', vehicleRouter, upload.single('file'), (req, res)=>{return res.json(req.file.filename);}); 
 app.use('/message', messageRouter); 
+
 app.use('/payment', paymentRoutes);
 app.use('/credit' , creditCard) 
 
 app.use('/compra', create)
-// app.use('/compras', shoppingRouter);
 
 app.use((req, res, next) => {
     res.status(404).json({ message: 'Not Found' });

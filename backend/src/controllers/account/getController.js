@@ -1,6 +1,6 @@
 // controllers/accountController.js
 import { getUsuarios } from '../../models/accountModel.js';
-import { exceptionHandler } from '../../utils/ajuda.js';
+import exceptionHandler from '../../utils/ajuda.js';
 
 export const getAccount = async (req, res) => {
     try {

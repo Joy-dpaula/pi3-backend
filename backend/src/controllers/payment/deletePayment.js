@@ -1,27 +1,15 @@
-import { PrismaClient } from '@prisma/client';
-import { exceptionHandler } from '../../utils/ajuda.js';
+import exceptionHandler from '../../utils/ajuda.js';
 
-const prisma = new PrismaClient();
+import { deletePaymentModel } from '../../models/paymentModel.js';
 
 export default async function deletePayment(req, res) {
+    const { id } = req.params;
+
     try {
-    
-        const { id } = req.params;
+      
+        const pagamentoDeletado = await deletePaymentModel(id);
 
-     
-        const payment = await prisma.payment.findUnique({ where: { id: parseInt(id) } });
-
-  
-        if (!payment) {
-            return res.status(404).json({ error: "Compra não encontrada." });
-        }
-
-
-        await prisma.payment.delete({ where: { id: parseInt(id) } });
-
-   
-        res.status(200).json({ message: 'Pagamento deletada com sucesso'});
-
+        res.status(200).json({message: 'Pagamento deletado com sucesso!'});
 
     } catch (exception) {
         exceptionHandler(exception, res);

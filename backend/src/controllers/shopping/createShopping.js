@@ -1,4 +1,6 @@
-import { exceptionHandler } from '../../utils/ajuda.js';
+
+import exceptionHandler from '../../utils/ajuda.js';
+
 import { generateAccessToken } from '../../utils/auth.js';
 import { newShopping } from '../../models/shoppingModel.js';
 

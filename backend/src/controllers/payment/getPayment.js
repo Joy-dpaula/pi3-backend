@@ -1,14 +1,14 @@
-import { PrismaClient } from '@prisma/client';
-import { exceptionHandler } from '../../utils/ajuda.js';
+import exceptionHandler from '../../utils/ajuda.js';
 
-const prisma = new PrismaClient();
+import { getPaymentModel } from '../../models/paymentModel.js';
 
 export default async function getPayments(req, res) {
     try {
 
-        const pagamentos = await prisma.payment.findMany();
+        const pagamentos = await getPaymentModel();
 
         res.status(200).json(pagamentos);
+
     } catch (exception) {
 
         exceptionHandler(exception, res);

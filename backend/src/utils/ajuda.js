@@ -1,7 +1,7 @@
 import pkg from '@prisma/client';
 const { PrismaClientValidationError } = pkg;
 
-export function exceptionHandler(exception, res) {
+export default function exceptionHandler(exception, res) { // Usando export default
     console.error(exception);
 
     if (exception instanceof PrismaClientValidationError) {

@@ -12,13 +12,13 @@ export const loginModel = async (email, senha, res) => {
 
     
     if (!usuario) {
-        return res.status(404).json({ error: "Usuário não encontrado." });
+        throw new Error( "Usuário não encontrado.");
     }
     
     const validsenha = await bcrypt.compare(senha, usuario.senha);
 
     if (!validsenha) {
-        return res.status(401).json({ error: "Senha inválida." });
+        throw new Error("Senha inválida.");
     }
 
     const accessToken = generateAccessToken({
@@ -29,6 +29,15 @@ export const loginModel = async (email, senha, res) => {
         telefone: usuario.telefone ? usuario.telefone.toString() : null,
         isAdmin: usuario.isAdmin
     });
+
+
+
+    await prisma.sessions.create({
+      data: {
+          id_user: usuario.id,
+          session: accessToken,
+      }
+  });
 
     const isProduction = process.env.NODE_ENV === 'production';
 
@@ -51,3 +60,28 @@ export const loginModel = async (email, senha, res) => {
 
     return { usuario, accessToken };
 }
+
+
+export const logoutModel = async (email, token) => {
+  const usuario = await prisma.usuario.findUnique({ where: { email } });
+
+  if (!usuario) {
+      throw new Error("Usuário não encontrado.");
+  }
+
+ 
+  const deletedSession = await prisma.sessions.deleteMany({
+      where: {
+          id_user: usuario.id,
+          session: token
+      }
+  });
+
+  if (deletedSession.count === 0) {
+      throw new Error("Sessão não encontrada.");
+  }
+
+  return { message: "Logout bem-sucedido, sessão removida." };
+}
+
+
