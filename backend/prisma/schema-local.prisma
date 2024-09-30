@@ -75,6 +75,10 @@ model usuario {
   nascimento                           DateTime
   senha                                String          @db.VarChar(200)
   isAdmin                              Boolean         @default(false)
+  cidade        String   @db.VarChar(30)
+  estado        String   @db.VarChar(30)
+  foto_perfil   String
+  data_registro DateTime
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")

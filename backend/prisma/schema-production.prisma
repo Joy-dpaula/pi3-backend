@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,7 +17,7 @@ model cartaocredito {
   usuarioId    Int
   criadoEm     DateTime  @default(now())
   atualizadoEm DateTime
-  usuario      usuario   @relation(fields: [usuarioId], references: [id])
+  usuario      usuario   @relation(fields: [usuarioId], references: [id], map: "CartaoCredito_usuarioId_fkey")
   payment      payment[]
 
   @@index([usuarioId], map: "CartaoCredito_usuarioId_fkey")
@@ -28,8 +28,8 @@ model compra {
   veiculoId Int
   usuarioId Int
   status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
-  usuario   usuario   @relation(fields: [usuarioId], references: [id])
-  veiculo   veiculo   @relation(fields: [veiculoId], references: [id])
+  usuario   usuario   @relation(fields: [usuarioId], references: [id], map: "Compra_usuarioId_fkey")
+  veiculo   veiculo   @relation(fields: [veiculoId], references: [id], map: "Compra_veiculoId_fkey")
   payment   payment[]
 
   @@index([usuarioId], map: "Compra_usuarioId_fkey")
@@ -41,7 +41,9 @@ model message {
   recipientId                          Int
   content                              String
   timestamp                            DateTime @default(now())
-  usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id])
+  usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id], map: "Message_recipientId_fkey")
+
+  @@index([recipientId], map: "Message_recipientId_fkey")
 }
 
 model payment {
@@ -54,10 +56,12 @@ model payment {
   amount        Int
   timestamp     DateTime      @default(now())
   compra        compra        @relation(fields: [compraId], references: [id]) // Remove o campo compraId
-  usuario       usuario       @relation(fields: [usuarioId], references: [id])
+  usuario       usuario       @relation(fields: [usuarioId], references: [id], map: "Payment_usuarioId_fkey")
   compraId      Int
   creditCardId  Int
   creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
+  
+
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -71,6 +75,10 @@ model usuario {
   nascimento                           DateTime
   senha                                String          @db.VarChar(200)
   isAdmin                              Boolean         @default(false)
+  cidade        String   @db.VarChar(30)
+  estado        String   @db.VarChar(30)
+  foto_perfil   String
+  data_registro DateTime
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
@@ -82,11 +90,11 @@ model veiculo {
   id            Int      @id @default(autoincrement())
   modelo        String   @db.VarChar(50)
   anoFabricacao Int
-  cor           String   @db.VarChar(50)
+  cor           String   @db.VarChar(25)
   descricao     String   @db.VarChar(500)
   valor         Int
   km            Int
-  marca         String   @db.VarChar(100)
+  marca         String   @db.VarChar(20)
   foto          String   @db.VarChar(2000)
   usuarioId     Int
   cidade        String   @db.VarChar(30)
@@ -96,8 +104,10 @@ model veiculo {
   logradouro    String
   numero        String
   cambio        String
-  carroceria    String
-  combustivel   String
+  carroceria   String
+  combustivel  String
   compra        compra[]
   usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
+
+  @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
 }
