@@ -1,5 +1,7 @@
+
 import express from 'express';
 import path from 'path';
+
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
@@ -9,25 +11,13 @@ import authRouter from './routers/authRouter.js';
 import vehicleRouter from './routers/vehicleRouter.js';
 import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
-
 import exceptionHandler  from './utils/ajuda.js';
 import create  from './routers/shoppingRouter.js';
 import creditCard from './routers/typePaymentRouter.js'
 import multer from 'multer'
 import {storage} from './multerConfig.js'
+const upload = multer({storage: storage});
 
-
-// Configuração do multer
-const storage = multer.diskStorage({
-    destination: (req, file, callback) => {
-        callback(null, path.resolve("uploads")); // Pasta onde as fotos serão salvas
-    },
-    filename: (req, file, callback) => {
-        const time = Date.now();
-        callback(null, `${time}_${file.originalname}`);
-    }
-});
-const upload = multer({ storage: storage });
 
 import 'dotenv/config'; 
 
@@ -51,12 +41,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(COOKIE_SECRET)); 
 
 app.use(express.static(path.join(__dirname, 'public'))); 
-//app.use('/uploads',  upload.single('file'), (req, res)=>{return res.json(req.file.filename);})
+app.use('/uploads',  upload.single('file'), (req, res)=>{return res.json(req.file.filename);})
 app.use('/usuarios', accountRouter);
 app.use('/auth', authRouter);
-app.use('/veiculos', vehicleRouter, upload.single('file'), (req, res)=>{return res.json(req.file.filename);}); 
-app.use('/message', messageRouter); 
-
+app.use('/veiculos', vehicleRouter); 
 app.use('/payment', paymentRoutes);
 app.use('/credit' , creditCard) 
 
