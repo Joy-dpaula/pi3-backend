@@ -78,7 +78,7 @@ model usuario {
   cidade        String   @db.VarChar(30)
   estado        String   @db.VarChar(30)
   foto_perfil   String
-  data_registro DateTime
+  data_registro                        DateTime        @default(now())  
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")

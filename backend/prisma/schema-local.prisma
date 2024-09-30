@@ -74,11 +74,11 @@ model usuario {
   email                                String          @unique(map: "Usuario_email_key") @db.VarChar(200)
   nascimento                           DateTime
   senha                                String          @db.VarChar(200)
-  isAdmin                              Boolean         @default(false)
-  cidade        String   @db.VarChar(30)
+   cidade       String   @db.VarChar(30)
   estado        String   @db.VarChar(30)
   foto_perfil   String
-  data_registro DateTime
+  data_registro                        DateTime        @default(now())  
+  isAdmin                              Boolean         @default(false)
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")

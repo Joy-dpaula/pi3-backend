@@ -8,7 +8,7 @@ import { createNewUser } from '../../models/accountModel.js'
 
 
 export async function createAccount(req, res) {
-    const { nome, email, senha, cpf, telefone, nascimento, isAdmin } = req.body;
+    const { nome, email, senha, cpf, telefone, nascimento,  cidade, estado,foto_perfil,isAdmin } = req.body;
 
     if (!nome || !email || !senha || !cpf || !telefone) {
         return res.status(400).json({ error: "Nome, email, senha, CPF e telefone são obrigatórios." });
@@ -23,7 +23,7 @@ export async function createAccount(req, res) {
     }
 
     try {
-        const usuario = await createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin });
+        const usuario = await createNewUser({ nome, email, senha, cpf, telefone, nascimento, cidade, estado,foto_perfil, isAdmin });
 
         if (!usuario) {
             return res.status(409).json({ error: "Email já está em uso." });

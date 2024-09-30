@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 
 
-export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin }) {
+export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado,foto_perfil }) {
 
     const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
 
@@ -23,12 +23,21 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
             telefone: telefone.toString(),
             nascimento: nascimento ? new Date(nascimento) : null,
             isAdmin: isAdmin || false,
+            cidade,
+            estado,
+            foto_perfil,
+            data_registro: new Date()
+
         },
         select: {
             id: true,
             nome: true,
             email: true,
             isAdmin: true,
+            data_registro: true,
+            cidade: true,
+            estado: true,
+            foto_perfil: true
         }
     });
 
