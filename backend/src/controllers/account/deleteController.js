@@ -20,6 +20,8 @@ export const deleteAccount = async (req, res) => {
         await deleteUsuarioById(id);
 
         res.status(204).end();
+        
+        
     } catch (exception) {
         exceptionHandler(exception, res);
     }
