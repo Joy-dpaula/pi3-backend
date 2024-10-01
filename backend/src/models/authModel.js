@@ -85,3 +85,10 @@ export const logoutModel = async (email, token) => {
 }
 
 
+export const sessionsModel = async () => {
+    const sessions = await prisma.sessions.findMany();
+
+    return sessions;
+}
+
+
