@@ -18,7 +18,7 @@
 <h1>Administração de Veículos</h1>
 
 <h2>Cadastrar Veículo</h2>
-<form id="vehicleForm">
+<form id="vehicleForm" enctype="multipart/form-data">
     <input type="text" id="marca" placeholder="Marca" required>
     <input type="text" id="modelo" placeholder="Modelo" required>
     <input type="text" id="anoFabricacao" placeholder="Ano de Fabricação" required>
@@ -26,7 +26,7 @@
     <input type="text" id="descricao" placeholder="Descrição">
     <input type="text" id="valor" placeholder="Valor" required>
     <input type="text" id="km" placeholder="Quilometragem">
-    <input type="text" id="foto" placeholder="URL da Foto">
+    <input type="file" id="foto" accept="image/*" required>
     <input type="text" id="cidade" placeholder="Cidade">
     <input type="text" id="estado" placeholder="Estado">
     <input type="text" id="cep" placeholder="CEP">
@@ -36,7 +36,7 @@
     <input type="text" id="cambio" placeholder="Tipo de Câmbio">
     <input type="text" id="carroceria" placeholder="Carroceria">
     <input type="text" id="combustivel" placeholder="Combustível">
-    <input type="number" id="usuarioId" placeholder="UsuarioId">
+    <input type="number" id="usuarioId" placeholder="UsuarioId" required>
     <button type="submit">Adicionar Veículo</button>
 </form>
 
@@ -45,6 +45,7 @@
     <thead>
         <tr>
             <th>ID</th>
+            <th>foto</th>
             <th>Marca</th>
             <th>Modelo</th>
             <th>Ano</th>
@@ -61,34 +62,30 @@
     document.getElementById('vehicleForm').addEventListener('submit', async (event) => {
         event.preventDefault();
         
-        const marca = document.getElementById('marca').value;
-        const modelo = document.getElementById('modelo').value;
-        const anoFabricacao = document.getElementById('anoFabricacao').value;
-        const cor = document.getElementById('cor').value;
-        const descricao = document.getElementById('descricao').value;
-        const valor = document.getElementById('valor').value;
-        const km = document.getElementById('km').value;
-        const foto = document.getElementById('foto').value;
-        const cidade = document.getElementById('cidade').value;
-        const estado = document.getElementById('estado').value;
-        const cep = document.getElementById('cep').value;
-        const complemento = document.getElementById('complemento').value;
-        const logradouro = document.getElementById('logradouro').value;
-        const numero = document.getElementById('numero').value;
-        const cambio = document.getElementById('cambio').value;
-        const carroceria = document.getElementById('carroceria').value;
-        const combustivel = document.getElementById('combustivel').value;
-        const usuarioId = document.getElementById('usuarioId').value;
+        const formData = new FormData();
+        formData.append('marca', document.getElementById('marca').value);
+        formData.append('modelo', document.getElementById('modelo').value);
+        formData.append('anoFabricacao', document.getElementById('anoFabricacao').value);
+        formData.append('cor', document.getElementById('cor').value);
+        formData.append('descricao', document.getElementById('descricao').value);
+        formData.append('valor', document.getElementById('valor').value);
+        formData.append('km', document.getElementById('km').value);
+        formData.append('foto', document.getElementById('foto').files[0]); // Pega o arquivo da foto
+        formData.append('cidade', document.getElementById('cidade').value);
+        formData.append('estado', document.getElementById('estado').value);
+        formData.append('cep', document.getElementById('cep').value);
+        formData.append('complemento', document.getElementById('complemento').value);
+        formData.append('logradouro', document.getElementById('logradouro').value);
+        formData.append('numero', document.getElementById('numero').value);
+        formData.append('cambio', document.getElementById('cambio').value);
+        formData.append('carroceria', document.getElementById('carroceria').value);
+        formData.append('combustivel', document.getElementById('combustivel').value);
+        formData.append('usuarioId', document.getElementById('usuarioId').value);
 
         try {
-            const response = await fetch('http://127.0.1:5000/veiculos', {
+            const response = await fetch(apiUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    marca, modelo, anoFabricacao, cor, descricao, valor, km, foto, 
-                    cidade, estado, cep, complemento, logradouro, numero, 
-                    cambio, carroceria, combustivel, usuarioId 
-                })
+                body: formData // Envia os dados com o FormData
             });
 
             const result = await response.json();
@@ -110,6 +107,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${veiculo.id}</td>
+                    <td><img src="../uploads/${veiculo.foto}" alt="Foto do Veículo" width="100"></td>
                     <td>${veiculo.marca}</td>
                     <td>${veiculo.modelo}</td>
                     <td>${veiculo.anoFabricacao}</td>
@@ -128,7 +126,7 @@
 
     const deleteVeiculo = async (id) => {
         try {
-            const response = await fetch(`http://127.0.1:5000/veiculos/${id}`, { method: 'DELETE' });
+            const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
             const result = await response.json();
             alert(result.success || result.error);
             loadVeiculos();
@@ -144,7 +142,7 @@
 
         if (marca && modelo && anoFabricacao) {
             try {
-                const response = await fetch(`http://127.0.1:5000/veiculos/${id}`, {
+                const response = await fetch(`${apiUrl}/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id, marca, modelo, anoFabricacao })
