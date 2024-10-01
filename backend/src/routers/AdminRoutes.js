@@ -3,10 +3,9 @@ import { createNewAdmin, getAllAdmins, getAdmin, updateAdminById, deleteAdmin } 
 
 const router = express.Router();
 
-router.post('/', createNewAdmin); // Cria um novo administrador
-router.get('/', getAllAdmins); // Pega todos os administradores
-router.get('/:id', getAdmin); // Pega um administrador pelo ID
-router.put('/:id', updateAdminById); // Atualiza um administrador
-router.delete('/:id', deleteAdmin); // Deleta um administrador
-
+router.post('/', createNewAdmin); 
+router.get('/', getAllAdmins); 
+router.get('/:id', getAdmin); 
+router.put('/:id', updateAdminById); 
+router.delete('/:id', deleteAdmin); 
 export default router;
