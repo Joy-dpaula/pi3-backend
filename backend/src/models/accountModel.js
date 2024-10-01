@@ -1,23 +1,24 @@
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
+import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcryptjs';
+import { DateTime } from 'luxon';
 
-const date = new Date();
-const gmt3Offset = -3 * 60; // GMT-3 in minutes
-const gmt3Date = new Date(date.getTime() + (date.getTimezoneOffset() + gmt3Offset) * 60000);
+const prisma = new PrismaClient();
 
-console.log("Current time in GMT-3:", gmt3Date.toISOString());
+const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
+console.log("Current time in GMT-3:", gmt3Date.toString());
 
-export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado,foto_perfil }) {
-
+export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
     const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
 
     if (existingUsuario) {
-        return null;
+        return null; // Usuário já existe
     }
 
     const hashedSenha = await bcrypt.hash(senha, 12);
+
+    // Converte a data de registro para UTC
+    const dataRegistroUTC = gmt3Date.toUTC().toJSDate();
 
     const usuario = await prisma.usuario.create({
         data: {
@@ -31,8 +32,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
             cidade,
             estado,
             foto_perfil,
-            data_registro: new Date()
-
+            data_registro: dataRegistroUTC // Armazena a data em UTC
         },
         select: {
             id: true,
@@ -50,22 +50,16 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
 }
 
 export async function getUsuarios() {
-
     const usuarios = await prisma.usuario.findMany();
-
-    return usuarios
-    
+    return usuarios;
 }
 
 export async function getUsuarioById(id) {
-    const account= await prisma.usuario.findUnique({
+    const account = await prisma.usuario.findUnique({
         where: { id: Number(id) },
     });
-    return account
-};
-
-
-
+    return account;
+}
 
 export const deleteUsuarioById = async (id) => {
     return await prisma.usuario.delete({
@@ -73,15 +67,13 @@ export const deleteUsuarioById = async (id) => {
     });
 };
 
-
-
 export const update = async (id, data) => {
     if (!id) {
         throw new Error('ID não fornecido');
     }
 
     const userId = Number(id);
-    console.log("Received ID:", userId); 
+    console.log("Received ID:", userId);
 
     if (isNaN(userId)) {
         throw new Error('ID inválido');
@@ -90,7 +82,7 @@ export const update = async (id, data) => {
     try {
         const updatedUsuario = await prisma.usuario.update({
             where: { id: userId },
-            data, 
+            data,
             select: {
                 id: true,
                 nome: true,
