@@ -80,12 +80,21 @@ model usuario {
   foto_perfil   String
   data_registro                        DateTime        @default(now())  
   isAdmin                              Boolean         @default(false)
+    sessions                             sessions[]
+
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
   
+}
+model sessions {
+  id        Int      @id @default(autoincrement())
+  id_user   Int
+  session   String   @db.VarChar(600)
+  usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model veiculo {
