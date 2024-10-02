@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function newShopping({ usuarioId, veiculoId }) {
+export async function newShopping({ usuarioId, veiculoId, paymentMethod }) {
 
     const usuario = await prisma.usuario.findUnique({
         where: { id: usuarioId }
@@ -19,6 +19,7 @@ export async function newShopping({ usuarioId, veiculoId }) {
     if (!veiculo) {
         throw new Error('Veículo não encontrado.');
     }
+
     const existingShopping = await prisma.compra.findFirst({
         where: {
             veiculoId: veiculoId
@@ -29,21 +30,24 @@ export async function newShopping({ usuarioId, veiculoId }) {
         throw new Error('Compra de veículo já efetuada!');
     }
 
+    // Cria a compra com o método de pagamento
     const compra = await prisma.compra.create({
         data: {
             veiculoId: veiculoId,
             usuarioId: usuarioId,
-            status: 'pendente'
+            status: 'pendente',
+            paymentMethod: paymentMethod // Armazena o método de pagamento escolhido
         },
         select: {
             id: true,
-            status: true
+            status: true,
+            paymentMethod: true // Retorna o método de pagamento
         }
     });
 
     return { compra }
-
 }
+
 
 export async function getShoppingModel() {
 

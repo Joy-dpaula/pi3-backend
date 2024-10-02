@@ -2,69 +2,12 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-import { v4 as uuid } from 'uuid'; 
+import { v4 as uuid } from 'uuid'; // Para gerar UUIDs
 
+export async function createPaymentModel(compraId, creditCardId = null) {
 
-
-export async function createPaymentModel(usuarioId, compraId, method, creditCardId) {
-
-    let status = 'pendente'; 
-
-    let pixQRCodeURL = null;
-    
-    let boletoURL = null;
-
-    let paymentMethodId = null; 
-
-  
-    const paymentId = uuid();
-
-    if (method === 'creditCard') {
-
-        const cartaoCredito = await prisma.cartaocredito.findUnique({
-
-            where: { id: creditCardId }
-
-        });
-
-        if (!cartaoCredito) {
-            throw new Error('Cartão não encontrado!');
-        }
-
-        if (cartaoCredito.usuarioId !== usuarioId) {
-
-            throw new Error('Cartão de crédito não pertencente ao usuário!');
-
-        }
-
-        const paymentResponse = await paymentApi.processPayment(cartaoCredito, amount);
-
-        status = 'Aprovado';
-
-        paymentMethodId = cartaoCredito.id; // Armazena o ID do cartão de crédito
-
-    } else if (method === 'pix') {
-   
-        const pixId = uuid(); // Gera um UUID para o pagamento Pix
-
-
-        status = 'Aguardando';
-
-        paymentMethodId = pixId; 
-
-    } else if (method === 'boleto') {
-        
-        const boletoId = uuid(); 
-                
-        status = 'Aguardando';
-        paymentMethodId = boletoId;
-        
-    } else {
-        throw new Error('Método de pagamento inválido!');
-    }
-
-
-     const compra = await prisma.compra.findUnique({
+    // Busca a compra e inclui o método de pagamento
+    const compra = await prisma.compra.findUnique({
         where: { id: compraId },
         include: { veiculo: true }
     });
@@ -73,31 +16,81 @@ export async function createPaymentModel(usuarioId, compraId, method, creditCard
         throw new Error('Compra não encontrada!');
     }
 
+    // Verifica o método de pagamento armazenado na compra
+    const method = compra.paymentMethod;
 
+    let status = 'pendente';
+    let pixQRCodeURL = null;
+    let boletoURL = null;
+    let paymentMethodId = null; // ID do método de pagamento específico
+    const paymentId = uuid(); // Gera o ID do pagamento
+
+    // Processamento com base no método de pagamento
+    if (method === 'creditCard') {
+        if (!creditCardId) {
+            throw new Error('Cartão de crédito não informado!');
+        }
+
+        // Verifica se o cartão de crédito existe e pertence ao usuário
+        const cartaoCredito = await prisma.cartaocredito.findUnique({
+            where: { id: creditCardId }
+        });
+
+        if (!cartaoCredito) {
+            throw new Error('Cartão não encontrado!');
+        }
+
+        if (cartaoCredito.usuarioId !== compra.usuarioId) {
+            throw new Error('Cartão de crédito não pertencente ao usuário!');
+        }
+
+    
+        status = 'Aprovado';
+        paymentMethodId = cartaoCredito.id; // ID do cartão de crédito
+
+    } else if (method === 'pix') {
+       
+        paymentMethodId = uuid();
+        status = 'Aguardando';
+
+    } else if (method === 'boleto') {
+        // Gera um UUID para o pagamento Boleto
+        paymentMethodId = uuid();
+        status = 'Aguardando';
+
+    } else {
+        throw new Error('Método de pagamento inválido!');
+    }
+
+    // Cria o pagamento no banco de dados
     const payment = await prisma.payment.create({
         data: {
             id: paymentId,
-            usuarioId,
-            paymentMethod: method, 
+            usuarioId: compra.usuarioId,
+            paymentMethodId, // Armazena o ID do método de pagamento (cartão, pix ou boleto)
+            method, // Armazena o tipo do método de pagamento (creditCard, pix, boleto)
             status,
             amount: compra.veiculo.valor,
             compraId,
             timestamp: new Date(),
             pixQRCodeURL,
             boletoURL,
-            creditCardId: method === 'creditCard' ? creditCardId : null, // Armazena o ID do cartão de crédito se o método for cartão
+            creditCardId: method === 'creditCard' ? creditCardId : null, // Armazena o ID do cartão de crédito se for o método
         }
     });
 
+    // Atualiza o status da compra
     await prisma.compra.update({
         where: { id: compraId },
         data: {
-            status: 'aceita',
+            status: 'aceita', // O status da compra é atualizado para "aceita"
         }
     });
 
     return { payment, pixQRCodeURL, boletoURL, paymentMethodId };
 }
+
+
 
 
 
