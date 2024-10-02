@@ -79,7 +79,19 @@ model usuario {
   data_registro DateTime   @default(now())
   isAdmin       Boolean    @default(false)
   sessions      sessions[]
-
+  id                                   Int             @id @default(autoincrement())
+  nome                                 String          @db.VarChar(50)
+  cpf                                  String          @unique(map: "Usuario_cpf_key") @db.VarChar(15)
+  telefone                             String          @db.VarChar(15)
+  email                                String          @unique(map: "Usuario_email_key") @db.VarChar(200)
+  nascimento                           DateTime
+  senha                                String          @db.VarChar(200)
+   cidade       String   @db.VarChar(30)
+  estado        String   @db.VarChar(30)
+  foto_perfil   String @default("padrão") 
+  data_registro                        DateTime        @default(now())  
+  isAdmin                              Boolean         @default(false)
+    sessions                             sessions[]
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
