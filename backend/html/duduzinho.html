@@ -3,189 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD de Usuários</title>
+    <title>Administração de Usuários</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        .error {
-            color: red;
-            font-size: 0.9em;
-        }
-        .success {
-            color: green;
-            font-size: 0.9em;
-        }
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+        th { background-color: #f4f4f4; }
+        form { margin: 20px 0; }
+        input, button { padding: 10px; margin: 5px; }
+        .error-message { color: red; }
+        .loading { display: none; }
     </style>
 </head>
 <body>
-    <h1>CRUD de Usuários</h1>
 
-    <form id="userForm">
-        <input type="hidden" id="userId">
-        <label for="nome">Nome:</label><br>
-        <input type="text" id="nome" required><br>
-        <label for="cpf">CPF:</label><br>
-        <input type="text" id="cpf" pattern="\d{11}" title="CPF deve conter 11 dígitos" required><br>
-        <label for="telefone">Telefone:</label><br>
-        <input type="text" id="telefone" pattern="\d{10,11}" title="Telefone deve conter 10 ou 11 dígitos" required><br>
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" required><br>
-        <label for="nascimento">Data de Nascimento:</label><br>
-        <input type="date" id="nascimento" required><br>
-        <label for="senha">Senha:</label><br>
-        <input type="password" id="senha" minlength="8" required><br><br>
-        <button type="submit">Salvar Usuário</button>
-        <button type="button" onclick="clearForm()">Cancelar</button>
-        <div id="formFeedback" class="error"></div>
-    </form>
+<h1>Administração de Usuários</h1>
+<div class="error-message" id="errorMessage"></div>
 
-    <h2>Lista de Usuários</h2>
-    <table id="userTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>CPF</th>
-                <th>Telefone</th>
-                <th>Email</th>
-                <th>Nascimento</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+<h2>Cadastrar Usuário</h2>
+<form id="userForm">
+    <input type="text" id="nome" placeholder="Nome" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="senha" placeholder="Senha" required>
+    <input type="text" id="cpf" placeholder="CPF" required pattern="\d{11}" title="Digite um CPF válido (11 dígitos)">
+    <input type="tel" id="telefone" placeholder="Telefone">
+    <input type="date" id="nascimento" placeholder="Data de Nascimento">
+    <input type="text" id="cidade" placeholder="Cidade">
+    <input type="text" id="estado" placeholder="Estado">
+    <input type="file" id="foto_perfil" accept="image/*">
 
-    <script>
-        document.addEventListener('DOMContentLoaded', fetchUsers);
+    <button type="submit">Adicionar Usuário</button>
+    <div class="loading" id="loading">Carregando...</div>
+</form>
 
-        const userForm = document.getElementById('userForm');
-        userForm.addEventListener('submit', saveUser);
+<h2>Lista de Usuários</h2>
+<table id="userTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Foto</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>CPF</th>
+            <th>Cidade</th>
+            <th>Estado</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
-        function fetchUsers() {
-            fetch('http://localhost:5000/usuarios')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(users => {
-                    const userTableBody = document.querySelector('#userTable tbody');
-                    userTableBody.innerHTML = '';
-                    users.forEach(user => {
-                        userTableBody.innerHTML += `
-                            <tr>
-                                <td>${user.id}</td>
-                                <td>${user.nome}</td>
-                                <td>${user.cpf}</td>
-                                <td>${user.telefone}</td>
-                                <td>${user.email}</td>
-                                <td>${user.nascimento.split('T')[0]}</td> <!-- Corrigido para exibir apenas a data -->
-                                <td>
-                                    <button onclick="editUser(${user.id})">Editar</button>
-                                    <button onclick="deleteUser(${user.id})">Excluir</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                })
-                .catch(error => console.error('Erro ao buscar usuários:', error));
-        }
+<script>
+    const apiUrl = 'http://127.0.0.1:5000/usuarios'; 
+    const errorMessage = document.getElementById('errorMessage');
+    const loadingIndicator = document.getElementById('loading');
 
-        function saveUser(event) {
-            event.preventDefault();
-            const userId = document.getElementById('userId').value;
-            const url = userId ? `http://localhost:5000/usuarios/${userId}` : 'http://localhost:5000/usuarios';
-            const method = userId ? 'PUT' : 'POST';
+    document.getElementById('userForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        loadingIndicator.style.display = 'block';
+        errorMessage.textContent = '';
 
-            const nascimento = document.getElementById('nascimento').value;
-            const dateTime = nascimento ? new Date(nascimento).toISOString() : null;
+        const formData = new FormData();
+        formData.append('nome', document.getElementById('nome').value);
+        formData.append('email', document.getElementById('email').value);
+        formData.append('senha', document.getElementById('senha').value);
+        formData.append('cpf', document.getElementById('cpf').value);
+        formData.append('telefone', document.getElementById('telefone').value);
+        formData.append('nascimento', document.getElementById('nascimento').value);
+        formData.append('cidade', document.getElementById('cidade').value);
+        formData.append('estado', document.getElementById('estado').value);
+        formData.append('foto_perfil', document.getElementById('foto_perfil').files[0]);
 
-            const userData = {
-                nome: document.getElementById('nome').value,
-                cpf: document.getElementById('cpf').value,
-                telefone: document.getElementById('telefone').value,
-                email: document.getElementById('email').value,
-                nascimento: dateTime,
-                senha: document.getElementById('senha').value
-            };
-
-            fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(() => {
-                userForm.reset();
-                fetchUsers();
-                document.getElementById('formFeedback').textContent = 'Usuário salvo com sucesso!';
-                document.getElementById('formFeedback').className = 'success';
-            })
-            .catch(error => {
-                console.error('Erro ao salvar usuário:', error);
-                document.getElementById('formFeedback').textContent = 'Erro ao salvar usuário.';
-                document.getElementById('formFeedback').className = 'error';
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                body: formData
             });
-        }
 
-        function editUser(id) {
-            fetch(`http://localhost:5000/usuarios/${id}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(user => {
-                    document.getElementById('userId').value = user.id;
-                    document.getElementById('nome').value = user.nome;
-                    document.getElementById('cpf').value = user.cpf;
-                    document.getElementById('telefone').value = user.telefone;
-                    document.getElementById('email').value = user.email;
-                    document.getElementById('nascimento').value = user.nascimento.split('T')[0]; // Apenas a data para o campo de input
-                    document.getElementById('formFeedback').textContent = '';
-                })
-                .catch(error => console.error('Erro ao buscar usuário:', error));
+            const result = await response.json();
+            if (result.error) {
+                errorMessage.textContent = result.error;
+            } else {
+                alert(result.success);
+                loadUsuarios();
+            }
+        } catch (error) {
+            errorMessage.textContent = 'Erro ao adicionar usuário. Tente novamente.';
+        } finally {
+            loadingIndicator.style.display = 'none';
         }
+    });
 
-        function deleteUser(id) {
-            if (confirm('Tem certeza que deseja excluir este usuário?')) {
-                fetch(`http://localhost:5000/usuarios/${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    fetchUsers();
-                })
-                .catch(error => console.error('Erro ao excluir usuário:', error));
+    const loadUsuarios = async () => {
+        loadingIndicator.style.display = 'block';
+        try {
+            const response = await fetch(apiUrl);
+            const usuarios = await response.json();
+            const userTableBody = document.querySelector('#userTable tbody');
+            userTableBody.innerHTML = '';
+
+            if (Array.isArray(usuarios)) {
+                usuarios.forEach(usuario => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${usuario.id}</td>
+                        <td><img src="../perfil/${usuario.foto_perfil || 'default_profile.png'}" alt="Foto do Usuário" width="100"></td>
+                        <td>${usuario.nome}</td>
+                        <td>${usuario.email}</td>
+                        <td>${usuario.cpf}</td>
+                        <td>${usuario.cidade}</td>
+                        <td>${usuario.estado}</td>
+                        <td>
+                            <button onclick="editUsuario(${usuario.id})">Editar</button>
+                            <button onclick="deleteUsuario(${usuario.id})">Remover</button>
+                        </td>
+                    `;
+                    userTableBody.appendChild(row);
+                });
+            } else {
+                errorMessage.textContent = 'Erro ao carregar usuários. Tente novamente.';
+            }
+        } catch (error) {
+            errorMessage.textContent = 'Erro ao carregar usuários. Tente novamente.';
+        } finally {
+            loadingIndicator.style.display = 'none';
+        }
+    };
+
+    const deleteUsuario = async (id) => {
+        if (confirm('Tem certeza que deseja remover este usuário?')) {
+            try {
+                const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                alert(result.success || result.error);
+                loadUsuarios();
+            } catch (error) {
+                errorMessage.textContent = 'Erro ao remover usuário.';
             }
         }
+    };
 
-        function clearForm() {
-            userForm.reset();
-            document.getElementById('userId').value = '';
-            document.getElementById('formFeedback').textContent = '';
+    const editUsuario = async (id) => {
+        const nome = prompt("Novo Nome:");
+        const email = prompt("Novo Email:");
+        const cpf = prompt("Novo CPF:");
+        const telefone = prompt("Novo Telefone:");
+        const cidade = prompt("Nova Cidade:");
+        const estado = prompt("Novo Estado:");
+
+        if (nome && email && cpf) {
+            try {
+                const response = await fetch(`${apiUrl}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, nome, email, cpf, telefone, cidade, estado })
+                });
+
+                const result = await response.json();
+                alert(result.success || result.error);
+                loadUsuarios();
+            } catch (error) {
+                errorMessage.textContent = 'Erro ao editar usuário.';
+            }
+        } else {
+            alert("Todos os campos obrigatórios devem ser preenchidos!");
         }
-    </script>
+    };
+
+    loadUsuarios();
+</script>
+
 </body>
 </html>
