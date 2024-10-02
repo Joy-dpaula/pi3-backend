@@ -2,23 +2,69 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function createPaymentModel(usuarioId, compraId, creditCardId) {
+import { v4 as uuid } from 'uuid'; 
 
-    const cartaoCredito = await prisma.cartaocredito.findUnique({
-        where: {
-            id: creditCardId
+
+
+export async function createPaymentModel(usuarioId, compraId, method, creditCardId) {
+
+    let status = 'pendente'; 
+
+    let pixQRCodeURL = null;
+    
+    let boletoURL = null;
+
+    let paymentMethodId = null; 
+
+  
+    const paymentId = uuid();
+
+    if (method === 'creditCard') {
+
+        const cartaoCredito = await prisma.cartaocredito.findUnique({
+
+            where: { id: creditCardId }
+
+        });
+
+        if (!cartaoCredito) {
+            throw new Error('Cartão não encontrado!');
         }
-    });
 
-    if (!cartaoCredito) {
-        throw new Error('Cartão não encontrado!')
+        if (cartaoCredito.usuarioId !== usuarioId) {
+
+            throw new Error('Cartão de crédito não pertencente ao usuário!');
+
+        }
+
+        const paymentResponse = await paymentApi.processPayment(cartaoCredito, amount);
+
+        status = 'Aprovado';
+
+        paymentMethodId = cartaoCredito.id; // Armazena o ID do cartão de crédito
+
+    } else if (method === 'pix') {
+   
+        const pixId = uuid(); // Gera um UUID para o pagamento Pix
+
+
+        status = 'Aguardando';
+
+        paymentMethodId = pixId; 
+
+    } else if (method === 'boleto') {
+        
+        const boletoId = uuid(); 
+                
+        status = 'Aguardando';
+        paymentMethodId = boletoId;
+        
+    } else {
+        throw new Error('Método de pagamento inválido!');
     }
 
-    if (cartaoCredito.usuarioId !== usuarioId) {
-        throw new Error('Cartão de crédito não pertencente ao usuário!');
-    }
 
-    const compra = await prisma.compra.findUnique({
+     const compra = await prisma.compra.findUnique({
         where: { id: compraId },
         include: { veiculo: true }
     });
@@ -27,15 +73,19 @@ export async function createPaymentModel(usuarioId, compraId, creditCardId) {
         throw new Error('Compra não encontrada!');
     }
 
-    const pagamento = await prisma.payment.create({
+
+    const payment = await prisma.payment.create({
         data: {
+            id: paymentId,
             usuarioId,
-            compraId,
-            creditCardId: cartaoCredito.id,
-            paymentMethod: 'Cartão de Crédito',
-            status: 'Aprovado',
+            paymentMethod: method, 
+            status,
             amount: compra.veiculo.valor,
-            timestamp: new Date()
+            compraId,
+            timestamp: new Date(),
+            pixQRCodeURL,
+            boletoURL,
+            creditCardId: method === 'creditCard' ? creditCardId : null, // Armazena o ID do cartão de crédito se o método for cartão
         }
     });
 
@@ -46,8 +96,12 @@ export async function createPaymentModel(usuarioId, compraId, creditCardId) {
         }
     });
 
-    return pagamento;
+    return { payment, pixQRCodeURL, boletoURL, paymentMethodId };
 }
+
+
+
+
 
 export async function getPaymentModel() {
 
