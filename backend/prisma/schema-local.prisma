@@ -54,6 +54,7 @@ model payment {
   pixQRCodeURL  String?        @db.VarChar(255)
   boletoURL     String?        @db.VarChar(255)
   amount        Int
+<<<<<<< HEAD
   timestamp     DateTime       @default(now())
   compra        compra         @relation(fields: [compraId], references: [id])
   usuario       usuario        @relation(fields: [usuarioId], references: [id])
@@ -61,6 +62,14 @@ model payment {
   creditCardId  String?
  
   creditCard    cartaocredito? @relation(fields: [creditCardId], references: [id])
+=======
+  timestamp     DateTime      @default(now())
+  compra        compra        @relation(fields: [compraId], references: [id]) // Remove o campo compraId
+  usuario       usuario       @relation(fields: [usuarioId], references: [id], map: "Payment_usuarioId_fkey")
+  compraId      Int
+  creditCardId  Int
+  creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
+>>>>>>> master
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -73,12 +82,13 @@ model usuario {
   email                                String          @unique(map: "Usuario_email_key") @db.VarChar(200)
   nascimento                           DateTime
   senha                                String          @db.VarChar(200)
-   cidade       String   @db.VarChar(30)
-  estado        String   @db.VarChar(30)
-  foto_perfil   String @default("padrão") 
-  data_registro                        DateTime        @default(now())  
+  cidade                               String          @db.VarChar(30)
+  estado                               String          @db.VarChar(30)
+  foto_perfil                          String          @default("padrão")
+  data_registro                        DateTime        @default(now())
   isAdmin                              Boolean         @default(false)
     sessions                             sessions[]
+
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")

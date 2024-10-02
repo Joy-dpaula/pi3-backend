@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
-console.log("Current time in GMT-3:", gmt3Date.toString());
+// console.log("Current time in GMT-3:", gmt3Date.toString());
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
     const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
