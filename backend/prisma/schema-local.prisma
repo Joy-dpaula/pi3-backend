@@ -77,7 +77,7 @@ model usuario {
   senha                                String          @db.VarChar(200)
    cidade       String   @db.VarChar(30)
   estado        String   @db.VarChar(30)
-  foto_perfil   String
+  foto_perfil   String @default("padrão") 
   data_registro                        DateTime        @default(now())  
   isAdmin                              Boolean         @default(false)
     sessions                             sessions[]

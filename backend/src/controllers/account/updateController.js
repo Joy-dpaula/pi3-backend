@@ -4,10 +4,9 @@ import multer from 'multer';
 import path from 'path';
 import { Router } from 'express';
 
-// Configuração do Multer
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, path.resolve("perfil")); // Pasta onde as fotos serão salvas
+        callback(null, path.resolve("perfil"));
     },
     filename: (req, file, callback) => {
         const time = Date.now();
@@ -18,7 +17,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 const router = Router();
 
-// Middleware para lidar com uploads de imagem
 const uploadImage = upload.single('foto_perfil');
 
 const updateController = async (req, res, next) => {
@@ -32,20 +30,18 @@ const updateController = async (req, res, next) => {
             return res.status(400).json({ error: "ID inválido!" });
         }
 
-        // Convert isAdmin to a boolean
         if (typeof usuario.isAdmin === 'string') {
             usuario.isAdmin = usuario.isAdmin.toLowerCase() === 'true';
         }
 
-        // Se uma nova imagem foi enviada, atualize o caminho da imagem no objeto usuário
         if (req.file) {
-            usuario.imagePath = req.file.path; // Adicione a nova propriedade com o caminho da imagem
+            usuario.imagePath = req.file.path; 
         }
 
         const result = await update(usuario.id, usuario);
 
         if (!result) {
-            console.error("Update failed for user ID:", usuario.id); // Log for debugging
+            console.error("Update failed for user ID:", usuario.id); 
             return res.status(404).json({ error: "Erro ao atualizar a conta!" });
         }
 
@@ -54,7 +50,7 @@ const updateController = async (req, res, next) => {
             usuario: result
         });
     } catch (error) {
-        console.error("Error during user update:", error); // Log the actual error
+        console.error("Error during user update:", error); 
         if (error?.code === 'P2025') {
             return res.status(404).json({ error: `Conta com o id ${id} não encontrada!` });
         }
@@ -65,7 +61,6 @@ const updateController = async (req, res, next) => {
     }
 };
 
-// Adicione a rota para o endpoint de atualização de conta com imagem
 router.put('/:id', uploadImage, updateController);
 
 export default router;
