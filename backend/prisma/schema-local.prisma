@@ -5,17 +5,16 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-  
 }
 
 model cartaocredito {
-  id           Int       @id @default(autoincrement())
+  id            String        @id @default(uuid()) 
   numero       String    @db.VarChar(16)
   validade     String    @db.VarChar(5)
   cvv          String    @db.VarChar(100)
   nomeTitular  String    @db.VarChar(100)
   bandeira     String    @db.VarChar(20)
-  usuarioId    Int
+  usuarioId    String
   criadoEm     DateTime  @default(now())
   atualizadoEm DateTime
   usuario      usuario   @relation(fields: [usuarioId], references: [id], map: "CartaoCredito_usuarioId_fkey")
@@ -25,9 +24,9 @@ model cartaocredito {
 }
 
 model compra {
-  id        Int       @id @default(autoincrement())
-  veiculoId Int
-  usuarioId Int
+  id            String        @id @default(uuid()) 
+  veiculoId String
+  usuarioId String
   status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
   usuario   usuario   @relation(fields: [usuarioId], references: [id], map: "Compra_usuarioId_fkey")
   veiculo   veiculo   @relation(fields: [veiculoId], references: [id], map: "Compra_veiculoId_fkey")
@@ -38,8 +37,8 @@ model compra {
 }
 
 model message {
-  id                                   Int      @id @default(autoincrement())
-  recipientId                          Int
+  id                                   String   @id @default(uuid())
+  recipientId                          String
   content                              String
   timestamp                            DateTime @default(now())
   usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id], map: "Message_recipientId_fkey")
@@ -48,8 +47,8 @@ model message {
 }
 
 model payment {
-  id            Int           @id @default(autoincrement())
-  usuarioId     Int
+  id            String        @id @default(uuid())
+  usuarioId     String
   paymentMethod String        @db.VarChar(20)
   status        String        @db.VarChar(20)
   pixQRCodeURL  String?       @db.VarChar(255)
@@ -58,47 +57,45 @@ model payment {
   timestamp     DateTime      @default(now())
   compra        compra        @relation(fields: [compraId], references: [id]) // Remove o campo compraId
   usuario       usuario       @relation(fields: [usuarioId], references: [id], map: "Payment_usuarioId_fkey")
-  compraId      Int
-  creditCardId  Int
+  compraId      String
+  creditCardId  String
   creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
-  
-
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
 
 model usuario {
-  id                                   Int             @id @default(autoincrement())
-  nome                                 String          @db.VarChar(50)
-  cpf                                  String          @unique(map: "Usuario_cpf_key") @db.VarChar(15)
-  telefone                             String          @db.VarChar(15)
-  email                                String          @unique(map: "Usuario_email_key") @db.VarChar(200)
-  nascimento                           DateTime
-  senha                                String          @db.VarChar(200)
-   cidade       String   @db.VarChar(30)
-  estado        String   @db.VarChar(30)
+  id            String     @id @default(uuid())
+  nome          String     @db.VarChar(50)
+  cpf           String     @unique(map: "Usuario_cpf_key") @db.VarChar(15)
+  telefone      String     @db.VarChar(15)
+  email         String     @unique(map: "Usuario_email_key") @db.VarChar(200)
+  nascimento    DateTime
+  senha         String     @db.VarChar(200)
+  cidade        String     @db.VarChar(30)
+  estado        String     @db.VarChar(30)
   foto_perfil   String
-  data_registro                        DateTime        @default(now())  
-  isAdmin                              Boolean         @default(false)
-    sessions                             sessions[]
+  data_registro DateTime   @default(now())
+  isAdmin       Boolean    @default(false)
+  sessions      sessions[]
 
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
-  
 }
+
 model sessions {
-  id        Int      @id @default(autoincrement())
-  id_user   Int
+  id        String   @id @default(uuid())
+  id_user   String
   session   String   @db.VarChar(600)
   usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
 
 model veiculo {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(uuid())
   modelo        String   @db.VarChar(50)
   anoFabricacao Int
   cor           String   @db.VarChar(25)
@@ -107,7 +104,7 @@ model veiculo {
   km            Int
   marca         String   @db.VarChar(20)
   foto          String   @db.VarChar(2000)
-  usuarioId     Int
+  usuarioId     String
   cidade        String   @db.VarChar(30)
   estado        String   @db.VarChar(30)
   cep           String
@@ -115,8 +112,8 @@ model veiculo {
   logradouro    String
   numero        String
   cambio        String
-  carroceria   String
-  combustivel  String
+  carroceria    String
+  combustivel   String
   compra        compra[]
   usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
 
