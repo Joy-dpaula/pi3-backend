@@ -30,6 +30,11 @@ export async function newShopping({ usuarioId, veiculoId, method }) {
         throw new Error('Compra de veículo já efetuada!');
     }
 
+    if (!method) {
+        throw new Error('Método de pagamento não informado.');
+    }
+
+
     // Cria a compra com o método de pagamento
     const compra = await prisma.compra.create({
         data: {
