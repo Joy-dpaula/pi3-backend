@@ -116,7 +116,7 @@
                     const data = await response.json();
                     messageDiv.textContent = 'Login realizado com sucesso!';
                     messageDiv.className = 'message success';
-                    window.location.href = './veiculos.html';
+                   
                 } else {
                     const data = await response.json();
                     throw new Error(data.message || 'Erro ao realizar login');

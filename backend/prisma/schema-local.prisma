@@ -8,7 +8,7 @@ datasource db {
 }
 
 model cartaocredito {
-  id            String        @id @default(uuid()) 
+  id           String    @id @default(uuid())
   numero       String    @db.VarChar(16)
   validade     String    @db.VarChar(5)
   cvv          String    @db.VarChar(100)
@@ -24,7 +24,7 @@ model cartaocredito {
 }
 
 model compra {
-  id            String        @id @default(uuid()) 
+  id        String    @id @default(uuid())
   veiculoId String
   usuarioId String
   status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
@@ -47,19 +47,20 @@ model message {
 }
 
 model payment {
-  id            String        @id @default(uuid())
+  id            String         @id @default(uuid())
   usuarioId     String
-  paymentMethod String        @db.VarChar(20)
-  status        String        @db.VarChar(20)
-  pixQRCodeURL  String?       @db.VarChar(255)
-  boletoURL     String?       @db.VarChar(255)
+  paymentMethod String         @db.VarChar(20)
+  status        String         @db.VarChar(20)
+  pixQRCodeURL  String?        @db.VarChar(255)
+  boletoURL     String?        @db.VarChar(255)
   amount        Int
-  timestamp     DateTime      @default(now())
-  compra        compra        @relation(fields: [compraId], references: [id]) // Remove o campo compraId
-  usuario       usuario       @relation(fields: [usuarioId], references: [id], map: "Payment_usuarioId_fkey")
+  timestamp     DateTime       @default(now())
+  compra        compra         @relation(fields: [compraId], references: [id])
+  usuario       usuario        @relation(fields: [usuarioId], references: [id])
   compraId      String
-  creditCardId  String
-  creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
+  creditCardId  String?
+ 
+  creditCard    cartaocredito? @relation(fields: [creditCardId], references: [id])
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -95,18 +96,18 @@ model sessions {
 }
 
 model veiculo {
-  id            String   @id @default(uuid())
-  modelo        String   @db.VarChar(50)
+  id            String    @id @default(uuid())
+  modelo        String    @db.VarChar(50)
   anoFabricacao Int
-  cor           String   @db.VarChar(25)
-  descricao     String   @db.VarChar(500)
+  cor           String    @db.VarChar(25)
+  descricao     String    @db.VarChar(500)
   valor         Int
   km            Int
-  marca         String   @db.VarChar(20)
-  foto          String   @db.VarChar(2000)
+  marca         String    @db.VarChar(20)
+  foto          String    @db.VarChar(2000)
   usuarioId     String
-  cidade        String   @db.VarChar(30)
-  estado        String   @db.VarChar(30)
+  cidade        String    @db.VarChar(30)
+  estado        String    @db.VarChar(30)
   cep           String
   complemento   String
   logradouro    String
@@ -115,7 +116,7 @@ model veiculo {
   carroceria    String
   combustivel   String
   compra        compra[]
-  usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
+  usuario       usuario   @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
 
   @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
 }
