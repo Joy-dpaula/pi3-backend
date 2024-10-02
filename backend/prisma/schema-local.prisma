@@ -5,7 +5,6 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-  
 }
 
 model cartaocredito {
@@ -61,8 +60,6 @@ model payment {
   compraId      Int
   creditCardId  Int
   creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
-  
-
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -75,20 +72,19 @@ model usuario {
   email                                String          @unique(map: "Usuario_email_key") @db.VarChar(200)
   nascimento                           DateTime
   senha                                String          @db.VarChar(200)
-   cidade       String   @db.VarChar(30)
-  estado        String   @db.VarChar(30)
-  foto_perfil   String @default("padrão") 
-  data_registro                        DateTime        @default(now())  
+  cidade                               String          @db.VarChar(30)
+  estado                               String          @db.VarChar(30)
+  foto_perfil                          String          @default("padrão")
+  data_registro                        DateTime        @default(now())
   isAdmin                              Boolean         @default(false)
-    sessions                             sessions[]
-
+  sessions                             sessions[]
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
-  
 }
+
 model sessions {
   id        Int      @id @default(autoincrement())
   id_user   Int
@@ -115,8 +111,8 @@ model veiculo {
   logradouro    String
   numero        String
   cambio        String
-  carroceria   String
-  combustivel  String
+  carroceria    String
+  combustivel   String
   compra        compra[]
   usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
 
