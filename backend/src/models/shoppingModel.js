@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function newShopping({ usuarioId, veiculoId, paymentMethod }) {
+export async function newShopping({ usuarioId, veiculoId, method }) {
 
     const usuario = await prisma.usuario.findUnique({
         where: { id: usuarioId }
@@ -36,12 +36,12 @@ export async function newShopping({ usuarioId, veiculoId, paymentMethod }) {
             veiculoId: veiculoId,
             usuarioId: usuarioId,
             status: 'pendente',
-            paymentMethod: paymentMethod // Armazena o método de pagamento escolhido
+            method: method // Armazena o método de pagamento escolhido
         },
         select: {
             id: true,
             status: true,
-            paymentMethod: true // Retorna o método de pagamento
+            method: true // Retorna o método de pagamento
         }
     });
 

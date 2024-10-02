@@ -27,6 +27,7 @@ model compra {
   id        String    @id @default(uuid())
   veiculoId String
   usuarioId String
+  method    String
   status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
   usuario   usuario   @relation(fields: [usuarioId], references: [id], map: "Compra_usuarioId_fkey")
   veiculo   veiculo   @relation(fields: [veiculoId], references: [id], map: "Compra_veiculoId_fkey")
