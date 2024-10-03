@@ -55,7 +55,7 @@ model payment {
   boletoURL     String?       @db.VarChar(255)
   amount        Int
   timestamp     DateTime      @default(now())
-  compra        compra        @relation(fields: [compraId], references: [id]) // Remove o campo compraId
+  compra        compra        @relation(fields: [compraId], references: [id])
   usuario       usuario       @relation(fields: [usuarioId], references: [id], map: "Payment_usuarioId_fkey")
   compraId      Int
   creditCardId  Int
