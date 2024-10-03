@@ -2,22 +2,11 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function createPaymentModel(usuarioId, compraId, creditCardId) {
+import { v4 as uuid } from 'uuid'; // Para gerar UUIDs
 
-    const cartaoCredito = await prisma.cartaocredito.findUnique({
-        where: {
-            id: creditCardId
-        }
-    });
+export async function createPaymentModel(compraId, creditCardId = null) {
 
-    if (!cartaoCredito) {
-        throw new Error('Cartão não encontrado!')
-    }
-
-    if (cartaoCredito.usuarioId !== usuarioId) {
-        throw new Error('Cartão de crédito não pertencente ao usuário!');
-    }
-
+    // Busca a compra e inclui o método de pagamento
     const compra = await prisma.compra.findUnique({
         where: { id: compraId },
         include: { veiculo: true }
@@ -27,27 +16,85 @@ export async function createPaymentModel(usuarioId, compraId, creditCardId) {
         throw new Error('Compra não encontrada!');
     }
 
-    const pagamento = await prisma.payment.create({
+    // Verifica o método de pagamento armazenado na compra
+    const method = compra.paymentMethod;
+
+    let status = 'pendente';
+    let pixQRCodeURL = null;
+    let boletoURL = null;
+    let paymentMethodId = null; // ID do método de pagamento específico
+    const paymentId = uuid(); // Gera o ID do pagamento
+
+    // Processamento com base no método de pagamento
+    if (method === 'creditCard') {
+        if (!creditCardId) {
+            throw new Error('Cartão de crédito não informado!');
+        }
+
+        // Verifica se o cartão de crédito existe e pertence ao usuário
+        const cartaoCredito = await prisma.cartaocredito.findUnique({
+            where: { id: creditCardId }
+        });
+
+        if (!cartaoCredito) {
+            throw new Error('Cartão não encontrado!');
+        }
+
+        if (cartaoCredito.usuarioId !== compra.usuarioId) {
+            throw new Error('Cartão de crédito não pertencente ao usuário!');
+        }
+
+    
+        status = 'Aprovado';
+        paymentMethodId = cartaoCredito.id; // ID do cartão de crédito
+
+    } else if (method === 'pix') {
+       
+        paymentMethodId = uuid();
+        status = 'Aguardando';
+
+    } else if (method === 'boleto') {
+        // Gera um UUID para o pagamento Boleto
+        paymentMethodId = uuid();
+        status = 'Aguardando';
+
+    } else {
+        throw new Error('Método de pagamento inválido!');
+    }
+
+    // Cria o pagamento no banco de dados
+    const payment = await prisma.payment.create({
         data: {
-            usuarioId,
-            compraId,
-            creditCardId: cartaoCredito.id,
-            paymentMethod: 'Cartão de Crédito',
-            status: 'Aprovado',
+            id: paymentId,
+            usuarioId: compra.usuarioId,
+            paymentMethodId, // Armazena o ID do método de pagamento (cartão, pix ou boleto)
+            method, // Armazena o tipo do método de pagamento (creditCard, pix, boleto)
+            status,
             amount: compra.veiculo.valor,
-            timestamp: new Date()
+            compraId,
+            timestamp: new Date(),
+            pixQRCodeURL,
+            boletoURL,
+            creditCardId: method === 'creditCard' ? creditCardId : null, // Armazena o ID do cartão de crédito se for o método
         }
     });
 
+    // Atualiza o status da compra
     await prisma.compra.update({
         where: { id: compraId },
         data: {
-            status: 'aceita',
+            status: 'aceita', // O status da compra é atualizado para "aceita"
         }
     });
 
-    return pagamento;
+    return { payment, pixQRCodeURL, boletoURL, paymentMethodId };
 }
+
+
+
+
+
+
 
 export async function getPaymentModel() {
 
