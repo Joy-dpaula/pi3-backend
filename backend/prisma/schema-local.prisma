@@ -60,10 +60,7 @@ model payment {
   creditCardId  String?
  
   creditCard    cartaocredito? @relation(fields: [creditCardId], references: [id])
-<<<<<<< HEAD
 
-=======
->>>>>>> 250085ee87d32dbe001ad7b360f8612b24da7a3c
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -82,10 +79,6 @@ model usuario {
   data_registro                        DateTime        @default(now())
   isAdmin                              Boolean         @default(false)
     sessions                             sessions[]
-<<<<<<< HEAD
-=======
-
->>>>>>> 250085ee87d32dbe001ad7b360f8612b24da7a3c
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
