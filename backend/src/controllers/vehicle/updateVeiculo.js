@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { updateVeiculo } from '../../models/vehicleModel.js'; // Ajuste o caminho conforme necessário
+import { updateVeiculo } from '../../models/vehicleModel.js'; 
 import multer from 'multer';
 import path from 'path';
 
-// Configuração do Multer
+
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, path.resolve("uploads")); // Pasta onde as fotos serão salvas
+        callback(null, path.resolve("uploads")); 
     },
     filename: (req, file, callback) => {
         const time = Date.now();
@@ -18,7 +18,7 @@ const upload = multer({ storage: storage });
 
 const router = Router();
 
-// Endpoint para atualizar veículo com upload de nova foto (opcional)
+
 router.put('/:id', upload.single('foto'), async (req, res) => {
     const { id } = req.params;
     const {
@@ -41,12 +41,10 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
         combustivel
     } = req.body;
 
-    // Verifica se o ID é válido
     if (isNaN(id)) {
         return res.status(400).json({ message: 'ID deve ser um número válido.' });
     }
 
-    // Cria um objeto de atualização
     const veiculoData = {
         modelo,
         anoFabricacao: parseInt(anoFabricacao, 10),
@@ -67,9 +65,8 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
         combustivel
     };
 
-    // Adiciona a foto apenas se foi enviada
     if (req.file) {
-        veiculoData.foto = req.file.filename; // Atualiza a foto apenas se a nova for enviada
+        veiculoData.foto = req.file.filename; 
     }
 
     try {

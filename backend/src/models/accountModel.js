@@ -80,33 +80,12 @@ export const deleteUsuarioById = async (id) => {
     });
 };
 
-export const update = async (id, data) => {
-    if (!id) {
-        throw new Error('ID não fornecido');
-    }
-
-    const userId = Number(id);
-    console.log("Received ID:", userId);
-
-    if (isNaN(userId)) {
-        throw new Error('ID inválido');
-    }
-
-    try {
-        const updatedUsuario = await prisma.usuario.update({
-            where: { id: userId },
-            data,
-            select: {
-                id: true,
-                nome: true,
-                email: true,
-                isAdmin: true,
-            },
-        });
-
-        return updatedUsuario;
-    } catch (error) {
-        console.error('Update failed:', error);
-        throw new Error('Failed to update user');
-    }
-};
+export const update = async (usuario) => {
+    const result = await prisma.usuario.update({
+        data: usuario,
+        where:{
+           id: usuario.id 
+        }
+    })
+    return result
+}
