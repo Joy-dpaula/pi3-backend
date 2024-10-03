@@ -28,6 +28,7 @@ export default async function loginController(req, res) {
             admin: usuario.isAdmin,
             nascimento: usuario.nascimento,
             senha: usuario.senha,
+            foto_perfil: usuario.foto_perfil,
             accessToken
         });
 
