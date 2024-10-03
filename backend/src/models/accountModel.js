@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 
 const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
-// console.log("Current time in GMT-3:", gmt3Date.toString());
 const userSchema = z.object({
     nome: z.string().min(1, { message: "Nome deve ser obrigatório!" }),
     cpf: z.string().length(11, { message: "CPF deve ter 11 dígitos!" }),
