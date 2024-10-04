@@ -1,75 +1,43 @@
-import { createAdmin, getAdmins, getAdminById, deleteAdminById, updateAdmin, getAdminByEmail } from '../services/AdminService.js';
+import User from '../../models/'; // Verifique o caminho correto
 
-export async function createNewAdmin(req, res) {
-    const { nome, email, senha, isAdmin } = req.body;
-
+// Criar um novo usuário admin
+export const createAdminUser = async (req, res) => {
+    const { name, email, password } = req.body;
     try {
-        // Verifica se o administrador já existe
-        const existingAdmin = await getAdminByEmail(email);
-
-        if (existingAdmin) {
-            return res.status(400).json({ error: 'Administrador já existe.' });
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            return res.status(400).json({ message: 'Usuário já existe.' });
         }
+        
+        const newUser = new User({ name, email, password, isAdmin: true }); // Defina como admin
+        await newUser.save();
+        
+        res.status(201).json({ message: 'Usuário criado com sucesso.' });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao criar usuário.' });
+    }
+};
 
-        const admin = await createAdmin({ nome, email, senha, isAdmin });
-
-        if (!admin) {
-            return res.status(500).json({ error: 'Erro ao criar administrador.' });
+// Deletar um usuário
+export const deleteUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const user = await User.findByIdAndDelete(id);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
-
-        res.status(201).json(admin); // Retorna o administrador criado
+        res.status(200).json({ message: 'Usuário deletado com sucesso.' });
     } catch (error) {
-        console.error('Erro ao criar novo administrador:', error);
-        res.status(500).json({ error: 'Erro ao criar novo administrador.' });
+        res.status(500).json({ error: 'Erro ao deletar usuário.' });
     }
-}
+};
 
-export async function getAllAdmins(req, res) {
+// Obter todos os usuários
+export const getUsers = async (req, res) => {
     try {
-        const admins = await getAdmins();
-        res.status(200).json(admins); // Retorna a lista de administradores
+        const users = await User.find(); // Retorne todos os usuários
+        res.status(200).json(users);
     } catch (error) {
-        console.error('Erro ao buscar todos os administradores:', error);
-        res.status(500).json({ error: 'Erro ao buscar administradores.' });
+        res.status(500).json({ error: 'Erro ao buscar usuários.' });
     }
-}
-
-export async function getAdmin(req, res) {
-    try {
-        const admin = await getAdminById(req.params.id);
-
-        if (!admin) {
-            return res.status(404).json({ error: 'Administrador não encontrado.' });
-        }
-
-        res.status(200).json(admin); // Retorna o administrador encontrado
-    } catch (error) {
-        console.error('Erro ao buscar administrador:', error);
-        res.status(500).json({ error: 'Erro ao buscar administrador.' });
-    }
-}
-
-export async function updateAdminById(req, res) {
-    try {
-        const admin = await updateAdmin(req.params.id, req.body);
-
-        if (!admin) {
-            return res.status(404).json({ error: 'Administrador não encontrado.' });
-        }
-
-        res.status(200).json(admin); // Retorna o administrador atualizado
-    } catch (error) {
-        console.error('Erro ao atualizar administrador:', error);
-        res.status(500).json({ error: 'Erro ao atualizar administrador.' });
-    }
-}
-
-export async function deleteAdmin(req, res) {
-    try {
-        await deleteAdminById(req.params.id);
-        res.sendStatus(204); // Retorna status 204 (Sem Conteúdo)
-    } catch (error) {
-        console.error('Erro ao deletar administrador:', error);
-        res.status(500).json({ error: 'Erro ao deletar administrador.' });
-    }
-}
+};
