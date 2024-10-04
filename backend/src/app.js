@@ -9,7 +9,6 @@ import { fileURLToPath } from 'url';
 import accountRouter from './routers/accountRouter.js';
 import authRouter from './routers/authRouter.js';
 import vehicleRouter from './routers/vehicleRouter.js';
-import messageRouter from './routers/messageRouter.js';
 import { ENVIRONMENT, PORT, HOST } from './config.js';
 import paymentRoutes from './routers/paymentRouter.js';
 import exceptionHandler  from './utils/ajuda.js';
@@ -47,7 +46,6 @@ app.use('/uploads',  upload.single('file'), (req, res)=>{return res.json(req.fil
 app.use('/usuarios', accountRouter);
 app.use('/auth', authRouter);
 app.use('/veiculos', vehicleRouter); 
-app.use('/message', messageRouter); 
 app.use('/payment', paymentRoutes);
 app.use('/credit' , creditCard) 
 app.use('/admin', AdminRouter);

@@ -25,6 +25,8 @@ export const deleteAccount = async (req, res) => {
 
         // Retornar resposta de sucesso
         res.status(204).end();
+        
+        
     } catch (exception) {
         exceptionHandler(exception, res);
     }

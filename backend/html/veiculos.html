@@ -3,210 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD de Veículos</title>
+    <title>Administração de Veículos</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        .error {
-            color: red;
-            font-size: 0.9em;
-        }
-        .success {
-            color: green;
-            font-size: 0.9em;
-        }
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+        th { background-color: #f4f4f4; }
+        form { margin: 20px 0; }
+        input, button { padding: 10px; margin: 5px; }
     </style>
 </head>
 <body>
-    <h1>CRUD de Veículos</h1>
 
-    <form id="vehicleForm">
-        <input type="hidden" id="vehicleId">
-        <label for="modelo">Modelo:</label><br>
-        <input type="text" id="modelo" required><br>
-        <label for="anoFabricacao">Ano de Fabricação:</label><br>
-        <input type="date" id="anoFabricacao" required><br>
-        <label for="cor">Cor:</label><br>
-        <input type="text" id="cor" maxlength="5" required><br>
-        <label for="descricao">Descrição:</label><br>
-        <textarea id="descricao" rows="4" cols="50" required></textarea><br>
-        <label for="valor">Valor:</label><br>
-        <input type="number" id="valor" required><br>
-        <label for="km">Quilometragem:</label><br>
-        <input type="number" id="km" required><br>
-        <label for="marca">Marca:</label><br>
-        <input type="text" id="marca" maxlength="20" required><br>
-        <label for="foto">Foto URL:</label><br>
-        <input type="text" id="foto"><br>
-        <label for="usuarioId">ID do Usuário:</label><br>
-        <input type="number" id="usuarioId" required><br><br>
-        <button type="submit">Salvar Veículo</button>
-        <button type="button" onclick="clearForm()">Cancelar</button>
-        <div id="formFeedback" class="error"></div>
-    </form>
+<h1>Administração de Veículos</h1>
 
-    <h2>Lista de Veículos</h2>
-    <table id="vehicleTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Modelo</th>
-                <th>Ano de Fabricação</th>
-                <th>Cor</th>
-                <th>Descrição</th>
-                <th>Valor</th>
-                <th>Quilometragem</th>
-                <th>Marca</th>
-                <th>Foto</th>
-                <th>Usuário ID</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+<h2>Cadastrar Veículo</h2>
+<form id="vehicleForm" enctype="multipart/form-data">
+    <input type="text" id="marca" placeholder="Marca" required>
+    <input type="text" id="modelo" placeholder="Modelo" required>
+    <input type="text" id="anoFabricacao" placeholder="Ano de Fabricação" required>
+    <input type="text" id="cor" placeholder="Cor">
+    <input type="text" id="descricao" placeholder="Descrição">
+    <input type="text" id="valor" placeholder="Valor" required>
+    <input type="text" id="km" placeholder="Quilometragem">
+    <input type="file" id="foto" accept="image/*" required>
+    <input type="text" id="cidade" placeholder="Cidade">
+    <input type="text" id="estado" placeholder="Estado">
+    <input type="text" id="cep" placeholder="CEP">
+    <input type="text" id="complemento" placeholder="Complemento">
+    <input type="text" id="logradouro" placeholder="Logradouro">
+    <input type="text" id="numero" placeholder="Número">
+    <input type="text" id="cambio" placeholder="Tipo de Câmbio">
+    <input type="text" id="carroceria" placeholder="Carroceria">
+    <input type="text" id="combustivel" placeholder="Combustível">
+    <input type="number" id="usuarioId" placeholder="UsuarioId" required>
+    <button type="submit">Adicionar Veículo</button>
+</form>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', fetchVehicles);
+<h2>Lista de Veículos</h2>
+<table id="vehicleTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>foto</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Ano</th>
+            <th>UsuarioId</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
-        const vehicleForm = document.getElementById('vehicleForm');
-        vehicleForm.addEventListener('submit', saveVehicle);
+<script>
+    const apiUrl = 'http://127.0.1:5000/veiculos'; 
 
-        function fetchVehicles() {
-            fetch('http://localhost:5000/veiculos')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(vehicles => {
-                    const vehicleTableBody = document.querySelector('#vehicleTable tbody');
-                    vehicleTableBody.innerHTML = '';
-                    vehicles.forEach(vehicle => {
-                        vehicleTableBody.innerHTML += `
-                            <tr>
-                                <td>${vehicle.id}</td>
-                                <td>${vehicle.modelo}</td>
-                                <td>${vehicle.anoFabricacao.split('T')[0]}</td>
-                                <td>${vehicle.cor}</td>
-                                <td>${vehicle.descricao}</td>
-                                <td>${vehicle.valor}</td>
-                                <td>${vehicle.km}</td>
-                                <td>${vehicle.marca}</td>
-                                <td><img src="${vehicle.foto}" alt="Foto do veículo" width="100"></td>
-                                <td>${vehicle.usuarioId}</td>
-                                <td>
-                                    <button onclick="editVehicle(${vehicle.id})">Editar</button>
-                                    <button onclick="deleteVehicle(${vehicle.id})">Excluir</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                })
-                .catch(error => console.error('Erro ao buscar veículos:', error));
-        }
+    document.getElementById('vehicleForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        const formData = new FormData();
+        formData.append('marca', document.getElementById('marca').value);
+        formData.append('modelo', document.getElementById('modelo').value);
+        formData.append('anoFabricacao', document.getElementById('anoFabricacao').value);
+        formData.append('cor', document.getElementById('cor').value);
+        formData.append('descricao', document.getElementById('descricao').value);
+        formData.append('valor', document.getElementById('valor').value);
+        formData.append('km', document.getElementById('km').value);
+        formData.append('foto', document.getElementById('foto').files[0]); // Pega o arquivo da foto
+        formData.append('cidade', document.getElementById('cidade').value);
+        formData.append('estado', document.getElementById('estado').value);
+        formData.append('cep', document.getElementById('cep').value);
+        formData.append('complemento', document.getElementById('complemento').value);
+        formData.append('logradouro', document.getElementById('logradouro').value);
+        formData.append('numero', document.getElementById('numero').value);
+        formData.append('cambio', document.getElementById('cambio').value);
+        formData.append('carroceria', document.getElementById('carroceria').value);
+        formData.append('combustivel', document.getElementById('combustivel').value);
+        formData.append('usuarioId', document.getElementById('usuarioId').value);
 
-        function saveVehicle(event) {
-            event.preventDefault();
-            const vehicleId = document.getElementById('vehicleId').value;
-            const url = vehicleId ? `http://localhost:5000/veiculos/${vehicleId}` : 'http://localhost:5000/veiculos';
-            const method = vehicleId ? 'PUT' : 'POST';
-
-            const anoFabricacao = document.getElementById('anoFabricacao').value;
-            const dateTime = anoFabricacao ? new Date(anoFabricacao).toISOString() : null;
-
-            const vehicleData = {
-                modelo: document.getElementById('modelo').value,
-                anoFabricacao: dateTime,
-                cor: document.getElementById('cor').value,
-                descricao: document.getElementById('descricao').value,
-                valor: parseInt(document.getElementById('valor').value),
-                km: parseInt(document.getElementById('km').value),
-                marca: document.getElementById('marca').value,
-                foto: document.getElementById('foto').value || '',
-                usuarioId: parseInt(document.getElementById('usuarioId').value)
-            };
-
-            fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(vehicleData)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(() => {
-                vehicleForm.reset();
-                fetchVehicles();
-                document.getElementById('formFeedback').textContent = 'Veículo salvo com sucesso!';
-                document.getElementById('formFeedback').className = 'success';
-            })
-            .catch(error => {
-                console.error('Erro ao salvar veículo:', error);
-                document.getElementById('formFeedback').textContent = 'Erro ao salvar veículo.';
-                document.getElementById('formFeedback').className = 'error';
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                body: formData // Envia os dados com o FormData
             });
-        }
 
-        function editVehicle(id) {
-            fetch(`http://localhost:5000/veiculos/${id}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(vehicle => {
-                    document.getElementById('vehicleId').value = vehicle.id;
-                    document.getElementById('modelo').value = vehicle.modelo;
-                    document.getElementById('anoFabricacao').value = vehicle.anoFabricacao.split('T')[0];
-                    document.getElementById('cor').value = vehicle.cor;
-                    document.getElementById('descricao').value = vehicle.descricao;
-                    document.getElementById('valor').value = vehicle.valor;
-                    document.getElementById('km').value = vehicle.km;
-                    document.getElementById('marca').value = vehicle.marca;
-                    document.getElementById('foto').value = vehicle.foto;
-                    document.getElementById('usuarioId').value = vehicle.usuarioId;
-                    document.getElementById('formFeedback').textContent = '';
-                })
-                .catch(error => console.error('Erro ao buscar veículo:', error));
+            const result = await response.json();
+            alert(result.success || result.error);
+            loadVeiculos();
+        } catch (error) {
+            console.error('Erro ao adicionar veículo:', error);
         }
+    });
 
-        function deleteVehicle(id) {
-            if (confirm('Tem certeza que deseja excluir este veículo?')) {
-                fetch(`http://localhost:5000/veiculos/${id}`, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    fetchVehicles();
-                })
-                .catch(error => console.error('Erro ao excluir veículo:', error));
+    const loadVeiculos = async () => {
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            const vehicleTableBody = document.querySelector('#vehicleTable tbody');
+            vehicleTableBody.innerHTML = '';
+
+            data.veiculos.forEach(veiculo => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${veiculo.id}</td>
+                    <td><img src="../uploads/${veiculo.foto}" alt="Foto do Veículo" width="100"></td>
+                    <td>${veiculo.marca}</td>
+                    <td>${veiculo.modelo}</td>
+                    <td>${veiculo.anoFabricacao}</td>
+                    <td>${veiculo.usuarioId}</td>
+                    <td>
+                        <button onclick="editVeiculo(${veiculo.id})">Editar</button>
+                        <button onclick="deleteVeiculo(${veiculo.id})">Remover</button>
+                    </td>
+                `;
+                vehicleTableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar veículos:', error);
+        }
+    };
+
+    const deleteVeiculo = async (id) => {
+        try {
+            const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+            const result = await response.json();
+            alert(result.success || result.error);
+            loadVeiculos();
+        } catch (error) {
+            console.error('Erro ao remover veículo:', error);
+        }
+    };
+
+    const editVeiculo = async (id) => {
+        const marca = prompt("Nova Marca:");
+        const modelo = prompt("Novo Modelo:");
+        const anoFabricacao = prompt("Novo Ano de Fabricação:");
+
+        if (marca && modelo && anoFabricacao) {
+            try {
+                const response = await fetch(`${apiUrl}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, marca, modelo, anoFabricacao })
+                });
+
+                const result = await response.json();
+                alert(result.success || result.error);
+                loadVeiculos();
+            } catch (error) {
+                console.error('Erro ao editar veículo:', error);
             }
+        } else {
+            alert("Todos os campos devem ser preenchidos!");
         }
+    };
 
-        function clearForm() {
-            vehicleForm.reset();
-            document.getElementById('vehicleId').value = '';
-            document.getElementById('formFeedback').textContent = '';
-        }
-    </script>
+    loadVeiculos();
+</script>
+
 </body>
 </html>

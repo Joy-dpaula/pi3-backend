@@ -27,7 +27,7 @@ model compra {
   id        Int       @id @default(autoincrement())
   veiculoId Int
   usuarioId Int
-  status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
+  status    String    @default("pendente") 
   usuario   usuario   @relation(fields: [usuarioId], references: [id])
   veiculo   veiculo   @relation(fields: [veiculoId], references: [id])
   payment   payment[]
@@ -42,7 +42,9 @@ model message {
   content                              String
   timestamp                            DateTime @default(now())
   usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id])
- 
+
+  @@index([recipientId], map: "Message_recipientId_fkey")
+
 }
 
 model payment {
@@ -54,11 +56,13 @@ model payment {
   boletoURL     String?       @db.VarChar(255)
   amount        Int
   timestamp     DateTime      @default(now())
-  compra        compra        @relation(fields: [compraId], references: [id]) // Remove o campo compraId
+  compra        compra        @relation(fields: [compraId], references: [id]) 
   usuario       usuario       @relation(fields: [usuarioId], references: [id])
   compraId      Int
   creditCardId  Int
   creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
+  
+
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -72,6 +76,10 @@ model usuario {
   nascimento                           DateTime
   senha                                String          @db.VarChar(200)
   isAdmin                              Boolean         @default(false)
+  cidade        String   @db.VarChar(30)
+  estado        String   @db.VarChar(30)
+  foto_perfil   String
+  data_registro                        DateTime        @default(now())  
   cartaocredito                        cartaocredito[]
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
@@ -92,11 +100,11 @@ model veiculo {
   id            Int              @id @default(autoincrement())
   modelo        String           @db.VarChar(50)
   anoFabricacao Int
-  cor           String   @db.VarChar(50)
+  cor           String   @db.VarChar(25)
   descricao     String   @db.VarChar(500)
   valor         Int
   km            Int
-  marca         String   @db.VarChar(100)
+  marca         String   @db.VarChar(20)
   foto          String   @db.VarChar(2000)
   usuarioId     Int
   cidade        String   @db.VarChar(30)
@@ -106,10 +114,12 @@ model veiculo {
   logradouro    String
   numero        String
   cambio        String
-  carroceria    String
-  combustivel   String
+  carroceria   String
+  combustivel  String
   compra        compra[]
-  usuario       usuario  @relation(fields: [usuarioId], references: [id], map: "Veiculo_usuarioId_fkey")
+  usuario       usuario  @relation(fields: [usuarioId], references: [id])
+
+  @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
 }
 
 

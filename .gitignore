@@ -4,6 +4,8 @@ node_modules
 /node_modules
 /.pnp
 .pnp.js
+uploads/
+perfil/
 
 # testing
 /coverage

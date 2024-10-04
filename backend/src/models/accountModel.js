@@ -1,18 +1,18 @@
-// models/accountModel.js
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient()
 import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
+export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin }) {
 
-// Cria uma nova conta
-export const createNewAccount = async ({ nome, email, senha, cpf, telefone, nascimento, isAdmin }) => {
-    const existingAccount = await prisma.usuario.findUnique({ where: { email } });
-    if (existingAccount) {
+    const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
+
+    if (existingUsuario) {
         return null;
     }
 
     const hashedSenha = await bcrypt.hash(senha, 12);
-    const account = await prisma.usuario.create({
+
+    const usuario = await prisma.usuario.create({
         data: {
             nome,
             email,
@@ -21,48 +21,64 @@ export const createNewAccount = async ({ nome, email, senha, cpf, telefone, nasc
             telefone: telefone.toString(),
             nascimento: nascimento ? new Date(nascimento) : null,
             isAdmin: isAdmin || false,
+            cidade,
+            estado,
+            foto_perfil,
+            data_registro: dataRegistroUTC 
         },
         select: {
             id: true,
             nome: true,
             email: true,
             isAdmin: true,
-        },
+        }
     });
 
-    return account;
+    return usuario;
+}
+
+export async function getUsuarios() {
+
+    const usuarios = await prisma.usuario.findMany();
+
+    return usuarios
+    
+}
+
+export async function getUsuarioById(id) {
+    const account= await prisma.usuario.findUnique({
+        where: { id: Number(id) },
+    });
+    return account
 };
 
-// Recupera todas as contas
-export const getAccounts = async () => {
-    return await prisma.usuario.findMany();
+
+
+
+export const deleteUsuarioById = async (id) => {
+    return await prisma.usuario.delete({
+        where: { id: Number(id) },
+    });
 };
 
-// Recupera uma conta pelo ID
-export const getAccountById = async (id) => {
-    return await prisma.usuario.findUnique({ where: { id: Number(id) } });
-};
 
-// Deleta uma conta pelo ID
-export const deleteAccountById = async (id) => {
-    return await prisma.usuario.delete({ where: { id: Number(id) } });
-};
 
-// Atualiza uma conta
-export const updateAccount = async (id, data) => {
+export const update = async (id, data) => {
     if (!id) {
         throw new Error('ID não fornecido');
     }
 
     const userId = Number(id);
+    console.log("Received ID:", userId); 
+
     if (isNaN(userId)) {
         throw new Error('ID inválido');
     }
 
     try {
-        return await prisma.usuario.update({
+        const updatedUsuario = await prisma.usuario.update({
             where: { id: userId },
-            data,
+            data, 
             select: {
                 id: true,
                 nome: true,
@@ -70,7 +86,10 @@ export const updateAccount = async (id, data) => {
                 isAdmin: true,
             },
         });
+
+        return updatedUsuario;
     } catch (error) {
-        throw new Error('Falha ao atualizar a conta');
+        console.error('Update failed:', error);
+        throw new Error('Failed to update user');
     }
 };
