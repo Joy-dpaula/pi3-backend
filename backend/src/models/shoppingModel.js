@@ -4,6 +4,11 @@ const prisma = new PrismaClient();
 
 export async function newShopping({ usuarioId, veiculoId, method }) {
 
+
+    if (!method) {
+        throw new Error('Método de pagamento não informado.');
+    }
+
     const usuario = await prisma.usuario.findUnique({
         where: { id: usuarioId }
     });
@@ -30,23 +35,20 @@ export async function newShopping({ usuarioId, veiculoId, method }) {
         throw new Error('Compra de veículo já efetuada!');
     }
 
-    if (!method) {
-        throw new Error('Método de pagamento não informado.');
-    }
+ 
 
 
-    // Cria a compra com o método de pagamento
     const compra = await prisma.compra.create({
         data: {
             veiculoId: veiculoId,
             usuarioId: usuarioId,
             status: 'pendente',
-            method: method // Armazena o método de pagamento escolhido
+            method: method 
         },
         select: {
             id: true,
             status: true,
-            method: true // Retorna o método de pagamento
+            method: true 
         }
     });
 
