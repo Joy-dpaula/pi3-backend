@@ -1,20 +1,32 @@
-import User from '../../models/'; // Verifique o caminho correto
+// controllers/admin/adminController.js
 
-// Criar um novo usuário admin
+import Account from '../../models/accountModel.js'; // Ajuste o caminho conforme necessário
+import exceptionHandler from '../../utils/ajuda.js';
+
+// Cria um novo usuário admin
 export const createAdminUser = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { nome, email, senha } = req.body;
+
     try {
-        const userExists = await User.findOne({ email });
+        // Verifica se o usuário já existe
+        const userExists = await Account.findUnique({ where: { email } });
         if (userExists) {
-            return res.status(400).json({ message: 'Usuário já existe.' });
+            return res.status(400).json({ error: 'Usuário já existe' });
         }
-        
-        const newUser = new User({ name, email, password, isAdmin: true }); // Defina como admin
-        await newUser.save();
-        
-        res.status(201).json({ message: 'Usuário criado com sucesso.' });
+
+        // Cria um novo usuário
+        const newUser = await Account.create({
+            data: {
+                nome,
+                email,
+                senha,
+                isAdmin: true,
+            },
+        });
+
+        res.status(201).json({ message: 'Usuário criado com sucesso', user: newUser });
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao criar usuário.' });
+        exceptionHandler(error, res);
     }
 };
 
@@ -22,22 +34,22 @@ export const createAdminUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
     try {
-        const user = await User.findByIdAndDelete(id);
+        const user = await Account.delete({ where: { id: Number(id) } });
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
         res.status(200).json({ message: 'Usuário deletado com sucesso.' });
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao deletar usuário.' });
+        exceptionHandler(error, res);
     }
 };
 
 // Obter todos os usuários
 export const getUsers = async (req, res) => {
     try {
-        const users = await User.find(); // Retorne todos os usuários
+        const users = await Account.findMany();
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar usuários.' });
+        exceptionHandler(error, res);
     }
 };

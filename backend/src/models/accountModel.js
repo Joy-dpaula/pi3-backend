@@ -1,20 +1,18 @@
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
+// models/accountModel.js
+import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcryptjs';
 
+const prisma = new PrismaClient();
 
-
-export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin }) {
-
-    const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
-
-    if (existingUsuario) {
+// Cria uma nova conta
+export const createNewAccount = async ({ nome, email, senha, cpf, telefone, nascimento, isAdmin }) => {
+    const existingAccount = await prisma.usuario.findUnique({ where: { email } });
+    if (existingAccount) {
         return null;
     }
 
     const hashedSenha = await bcrypt.hash(senha, 12);
-
-    const usuario = await prisma.usuario.create({
+    const account = await prisma.usuario.create({
         data: {
             nome,
             email,
@@ -29,54 +27,42 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
             nome: true,
             email: true,
             isAdmin: true,
-        }
+        },
     });
 
-    return usuario;
-}
-
-export async function getUsuarios() {
-
-    const usuarios = await prisma.usuario.findMany();
-
-    return usuarios
-    
-}
-
-export async function getUsuarioById(id) {
-    const account= await prisma.usuario.findUnique({
-        where: { id: Number(id) },
-    });
-    return account
+    return account;
 };
 
-
-
-
-export const deleteUsuarioById = async (id) => {
-    return await prisma.usuario.delete({
-        where: { id: Number(id) },
-    });
+// Recupera todas as contas
+export const getAccounts = async () => {
+    return await prisma.usuario.findMany();
 };
 
+// Recupera uma conta pelo ID
+export const getAccountById = async (id) => {
+    return await prisma.usuario.findUnique({ where: { id: Number(id) } });
+};
 
+// Deleta uma conta pelo ID
+export const deleteAccountById = async (id) => {
+    return await prisma.usuario.delete({ where: { id: Number(id) } });
+};
 
-export const update = async (id, data) => {
+// Atualiza uma conta
+export const updateAccount = async (id, data) => {
     if (!id) {
         throw new Error('ID não fornecido');
     }
 
     const userId = Number(id);
-    console.log("Received ID:", userId); 
-
     if (isNaN(userId)) {
         throw new Error('ID inválido');
     }
 
     try {
-        const updatedUsuario = await prisma.usuario.update({
+        return await prisma.usuario.update({
             where: { id: userId },
-            data, 
+            data,
             select: {
                 id: true,
                 nome: true,
@@ -84,10 +70,7 @@ export const update = async (id, data) => {
                 isAdmin: true,
             },
         });
-
-        return updatedUsuario;
     } catch (error) {
-        console.error('Update failed:', error);
-        throw new Error('Failed to update user');
+        throw new Error('Falha ao atualizar a conta');
     }
 };

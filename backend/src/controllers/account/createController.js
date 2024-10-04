@@ -1,10 +1,11 @@
 import exceptionHandler from '../../utils/ajuda.js';
 import { generateAccessToken } from '../../utils/auth.js';
-import { createNewUser } from '../../models/accountModel.js'
+import { createNewAccount } from '../../models/accountModel.js'; // Atualizado para usar createNewAccount
 
 export async function createAccount(req, res) {
     const { nome, email, senha, cpf, telefone, nascimento, isAdmin } = req.body;
 
+    // Validações de entrada
     if (!nome || !email || !senha || !cpf || !telefone) {
         return res.status(400).json({ error: "Nome, email, senha, CPF e telefone são obrigatórios." });
     }
@@ -18,7 +19,7 @@ export async function createAccount(req, res) {
     }
 
     try {
-        const usuario = await createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin });
+        const usuario = await createNewAccount({ nome, email, senha, cpf, telefone, nascimento, isAdmin });
 
         if (!usuario) {
             return res.status(409).json({ error: "Email já está em uso." });

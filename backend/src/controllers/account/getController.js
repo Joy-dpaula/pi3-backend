@@ -1,21 +1,19 @@
-// controllers/accountController.js
-import { getUsuarios } from '../../models/accountModel.js';
+// controllers/account/getController.js
+import { getAccounts } from '../../models/accountModel.js'; // Atualize para a função correta
 import exceptionHandler from '../../utils/ajuda.js';
 
 export const getAccount = async (req, res) => {
     try {
+        const accounts = await getAccounts(); // Chame a função correta
 
-        const usuarios = await getUsuarios();
-
-        const usuariosFormatted = usuarios.map(usuario => ({
-            ...usuario,
-            cpf: usuario.cpf.toString(),
-            telefone: usuario.telefone ? usuario.telefone.toString() : null,
+        const accountsFormatted = accounts.map(account => ({
+            ...account,
+            cpf: account.cpf.toString(),
+            telefone: account.telefone ? account.telefone.toString() : null,
         }));
 
-        res.json(usuariosFormatted);
+        res.json(accountsFormatted); // Retorna as contas formatadas
     } catch (exception) {
-
-        exceptionHandler(exception, res);
+        exceptionHandler(exception, res); // Trata exceções
     }
 };
