@@ -1,10 +1,8 @@
 // controllers/account/updateController.js
 
-import { updateAccount } from "../../models/accountModel.js"; // Altere para o nome correto
-import bcrypt from 'bcryptjs';
-import { update } from "../../models/accountModel.js";
 import multer from 'multer';
 import path from 'path';
+import { updateUsuario } from "../../models/accountModel.js"; // Este nome deve corresponder exatamente ao exportado
 import { Router } from 'express';
 
 const storage = multer.diskStorage({
@@ -23,32 +21,28 @@ const router = Router();
 const uploadImage = upload.single('foto_perfil');
 
 const updateController = async (req, res, next) => {
-    const { id } = req.params; // O ID da conta a ser atualizada
+    const { id } = req.params;
 
     try {
-        const usuario = req.body; // Os dados da conta a serem atualizados
-        usuario.id = Number(id); // Adicionando o ID aos dados do usuário
+        const usuario = req.body;
+        usuario.id = Number(id);
 
         if (isNaN(usuario.id)) {
             return res.status(400).json({ error: "ID inválido!" });
         }
 
-        // Convertendo isAdmin para booleano se necessário
         if (typeof usuario.isAdmin === 'string') {
             usuario.isAdmin = usuario.isAdmin.toLowerCase() === 'true';
         }
 
-        // Verifica se uma nova foto de perfil foi enviada
         if (req.file) {
-            usuario.foto_perfil = req.file.filename; 
+            usuario.foto_perfil = req.file.filename;
         }
-
-        // Converte a data de nascimento para um objeto Date se estiver presente
         if (usuario.nascimento) {
             usuario.nascimento = new Date(usuario.nascimento);
         }
 
-        const result = await update(usuario); // Chamar a função de atualização
+        const result = await updateUsuario(usuario.id, usuario); // Chama a função de atualização
 
         if (!result) {
             console.error("Update failed for user ID:", usuario.id);

@@ -1,33 +1,23 @@
-// controllers/accountController.js
-import { getAccountById, deleteAccountById } from '../../models/accountModel.js';
+// controllers/account/deleteController.js
+
+import { getUsuarioById, deleteAccountById } from '../../models/accountModel.js';
 import exceptionHandler from '../../utils/ajuda.js';
 
-export const deleteAccount = async (req, res) => {
+export const deleteController = async (req, res) => {
+    const { id } = req.params; // Obtém o ID do usuário a ser deletado
+
     try {
-        const id = Number(req.params.id);
-        const token = req.accessToken;
+        const usuario = await getUsuarioById(id); // Verifica se o usuário existe
 
-        // Verificar se o token está presente e se o email é válido
-        if (!token || !token.email) {
-            return res.sendStatus(401); 
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuário não encontrado!" });
         }
 
-        // Obter informações do usuário
-        const checkAccount = await getAccountById(id);
+        await deleteAccountById(id); // Deleta o usuário
 
-        // Verificar se a conta existe e se o usuário tem permissão para excluí-la
-        if (!checkAccount || (checkAccount.email !== token.email && !token.isAdmin)) {
-            return res.sendStatus(403);
-        }
-
-        // Deletar a conta
-        await deleteAccountById(id);
-
-        // Retornar resposta de sucesso
-        res.status(204).end();
-        
-        
-    } catch (exception) {
-        exceptionHandler(exception, res);
+        return res.status(200).json({ message: "Usuário deletado com sucesso!" });
+    } catch (error) {
+        console.error("Erro ao deletar usuário:", error);
+        exceptionHandler(error, res);
     }
 };

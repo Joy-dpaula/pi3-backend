@@ -1,19 +1,19 @@
-// controllers/account/getAccountByIdController.js
+// controllers/account/getByIdController.js
+import { getAccountById } from '../../models/accountModel.js'; // Certifique-se de que o nome está correto
+import exceptionHandler from '../../utils/ajuda.js';
 
-import exceptionHandler from '../../utils/ajuda.js'; // Importa a função de tratamento de exceções
-import { getAccountById } from '../../models/accountModel.js'; // Atualize para a função correta
+export const getAccountByIdController = async (req, res) => {
+    const { id } = req.params; // ID da conta a ser recuperada
 
-export default async function getAccountByIdController(req, res) {
     try {
-        const id = Number(req.params.id); // Obtém o ID da conta da URL
-        const account = await getAccountById(id); // Chama a função correta
+        const account = await getAccountById(id); // Chama a função para obter a conta
 
         if (!account) {
-            return res.status(404).json({ error: "Conta não encontrada!" }); // Retorna 404 se não encontrar a conta
+            return res.status(404).json({ error: "Conta não encontrada!" });
         }
 
         res.json(account); // Retorna a conta encontrada
     } catch (exception) {
-        exceptionHandler(exception, res); // Chama o manipulador de exceções em caso de erro
+        exceptionHandler(exception, res); // Trata exceções
     }
-}
+};
