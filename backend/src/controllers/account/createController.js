@@ -1,9 +1,6 @@
 import exceptionHandler from '../../utils/ajuda.js';
 import { generateAccessToken } from '../../utils/auth.js';
-<<<<<<< HEAD
-import { createNewAccount } from '../../models/accountModel.js'; // Atualizado para usar createNewAccount
-=======
-import { createNewUser } from '../../models/accountModel.js';
+import { createNewUser } from '../../models/accountModel.js'; // Atualizado para usar createNewUser
 import { DateTime } from 'luxon'; 
 import multer from 'multer';
 import path from 'path';
@@ -17,6 +14,7 @@ const __dirname = dirname(__filename);
 
 const router = express.Router();
 
+// Configuração do multer para upload de arquivos
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, path.resolve("perfil")); 
@@ -28,8 +26,8 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
->>>>>>> 1aed80fefe2d729facc4153246703880c24612eb
 
+// Função para criar uma nova conta
 export async function createAccount(req, res) {
     const { nome, email, senha, cpf, telefone, nascimento, cidade, estado, isAdmin } = req.body;
     let foto_perfil;
@@ -71,9 +69,6 @@ export async function createAccount(req, res) {
     }
 
     try {
-<<<<<<< HEAD
-        const usuario = await createNewAccount({ nome, email, senha, cpf, telefone, nascimento, isAdmin });
-=======
         const usuario = await createNewUser({
             nome,
             email,
@@ -86,7 +81,6 @@ export async function createAccount(req, res) {
             foto_perfil,
             isAdmin
         });
->>>>>>> 1aed80fefe2d729facc4153246703880c24612eb
 
         if (!usuario) {
             return res.status(409).json({ error: "Email já está em uso." });
@@ -102,10 +96,8 @@ export async function createAccount(req, res) {
         exceptionHandler(exception, res);
     }
 }
-<<<<<<< HEAD
-=======
 
+// Rota para criar uma nova conta com upload de foto de perfil
 router.post('/', upload.single('foto_perfil'), createAccount);
 
 export default router;
->>>>>>> 1aed80fefe2d729facc4153246703880c24612eb

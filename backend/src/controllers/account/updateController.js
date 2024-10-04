@@ -1,15 +1,6 @@
-<<<<<<< HEAD
 // controllers/account/updateController.js
 
 import { updateAccount } from "../../models/accountModel.js"; // Altere para o nome correto
-
-const updateController = async (req, res, next) => {
-    const { id } = req.params; // O ID da conta a ser atualizada
-
-    try {
-        const usuario = req.body; // Os dados da conta a serem atualizados
-        usuario.id = Number(id); // Adicionando o ID aos dados do usuário
-=======
 import bcrypt from 'bcryptjs';
 import { update } from "../../models/accountModel.js";
 import multer from 'multer';
@@ -32,33 +23,32 @@ const router = Router();
 const uploadImage = upload.single('foto_perfil');
 
 const updateController = async (req, res, next) => {
-    const { id } = req.params;
+    const { id } = req.params; // O ID da conta a ser atualizada
 
     try {
-        const usuario = req.body;
-        usuario.id = Number(id);
->>>>>>> 1aed80fefe2d729facc4153246703880c24612eb
+        const usuario = req.body; // Os dados da conta a serem atualizados
+        usuario.id = Number(id); // Adicionando o ID aos dados do usuário
 
         if (isNaN(usuario.id)) {
             return res.status(400).json({ error: "ID inválido!" });
         }
 
-<<<<<<< HEAD
-        const result = await updateAccount(usuario.id, usuario); // Chamar a função de atualização
-=======
+        // Convertendo isAdmin para booleano se necessário
         if (typeof usuario.isAdmin === 'string') {
             usuario.isAdmin = usuario.isAdmin.toLowerCase() === 'true';
         }
 
+        // Verifica se uma nova foto de perfil foi enviada
         if (req.file) {
             usuario.foto_perfil = req.file.filename; 
         }
+
+        // Converte a data de nascimento para um objeto Date se estiver presente
         if (usuario.nascimento) {
             usuario.nascimento = new Date(usuario.nascimento);
         }
 
-        const result = await update(usuario);
->>>>>>> 1aed80fefe2d729facc4153246703880c24612eb
+        const result = await update(usuario); // Chamar a função de atualização
 
         if (!result) {
             console.error("Update failed for user ID:", usuario.id);
@@ -70,10 +60,7 @@ const updateController = async (req, res, next) => {
             usuario: result
         });
     } catch (error) {
-<<<<<<< HEAD
-=======
         console.error("Error during user update:", error);
->>>>>>> 1aed80fefe2d729facc4153246703880c24612eb
         if (error?.code === 'P2025') {
             return res.status(404).json({ error: `Conta com o id ${id} não encontrada!` });
         }
