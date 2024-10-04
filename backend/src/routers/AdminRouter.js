@@ -1,5 +1,5 @@
 import express from 'express';
-import { createAdminUser } from '../controllers/admin/adminController.js'; // Importação específica
+import createAdminUser from '../controllers/admin/adminController.js';
 
 const router = express.Router();
 
