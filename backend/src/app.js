@@ -1,4 +1,3 @@
-
 import express from 'express';
 import path from 'path';
 
@@ -19,7 +18,6 @@ import {storage} from './multerConfig.js'
 const upload = multer({storage: storage});
 import AdminRouter from './routers/AdminRouter.js';
 
-
 import 'dotenv/config'; 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,14 +25,11 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d';
 
 app.use(express.json());
 
-
 app.use(cors({}));
-
 
 app.use(logger('dev')); 
 app.use(express.json()); 
@@ -56,9 +51,7 @@ app.use((req, res, next) => {
     res.status(404).json({ message: 'Not Found' });
 });
 
-
 app.use(exceptionHandler);
-
 
 app.use((err, req, res, next) => {
     res.locals.message = err.message;
@@ -69,7 +62,6 @@ app.use((err, req, res, next) => {
         error: res.locals.error,
     });
 });
-
 
 app.listen(PORT, () => {
     console.log(`Servidor Rodando no Ambiente ${ENVIRONMENT} em ${ENVIRONMENT == 'production' ? HOST : HOST + ':' + PORT}`)
