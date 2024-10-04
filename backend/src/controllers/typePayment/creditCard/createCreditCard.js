@@ -15,7 +15,9 @@ async function createCartaoCredito(req, res) {
 
     const cartaoCredito = await createCartao(numero, validade, cvv, nomeTitular, bandeira, usuarioId);
 
-    res.status(201).json({ message: 'Cartão de crédito criado com sucesso'});
+    res.status(201).json({ message: 'Cartão de crédito criado com sucesso',
+      cartaoCredito
+    });
 
   } catch (error) {
     console.error('Erro ao criar cartão de crédito:', error);

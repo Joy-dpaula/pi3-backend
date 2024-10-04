@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 import { v4 as uuid } from 'uuid'; 
-export async function createPaymentModel(compraId, creditCardId = null) {
+export async function createPaymentModel(compraId, creditCardId) {
 
     const compra = await prisma.compra.findUnique({
         where: { id: compraId },
@@ -14,19 +14,25 @@ export async function createPaymentModel(compraId, creditCardId = null) {
         throw new Error('Compra não encontrada!');
     }
 
+    if (!compra.usuarioId) {
+        throw new Error('Informação de usuário não encontrada na compra!');
+    }
+
     const paymentMethod = compra.method;
 
     let status = 'pendente';
     const paymentId = uuid(); 
 
     if (paymentMethod === 'creditCard') {
-        if (!creditCardId) {
-            throw new Error('Cartão de crédito não informado!');
-        }
 
+        if (!creditCardId || typeof creditCardId !== 'string') {
+            throw new Error('ID do cartão de crédito inválido!');
+        }
+      
         const cartaoCredito = await prisma.cartaocredito.findUnique({
             where: { id: creditCardId }
         });
+
 
         if (!cartaoCredito) {
             throw new Error('Cartão não encontrado!');
@@ -35,6 +41,7 @@ export async function createPaymentModel(compraId, creditCardId = null) {
         if (cartaoCredito.usuarioId !== compra.usuarioId) {
             throw new Error('Cartão de crédito não pertencente ao usuário!');
         }
+      
 
     
         status = 'Aprovado';
@@ -53,15 +60,26 @@ export async function createPaymentModel(compraId, creditCardId = null) {
     const payment = await prisma.payment.create({
         data: {
             id: paymentId,
-            usuarioId: compra.usuarioId,
             paymentMethod,
             status,
             amount: compra.veiculo.valor,
-            compraId,
-            timestamp: new Date(),
-            creditCardId: paymentMethod  === 'creditCard' ? creditCardId : null,
+            creditCard: paymentMethod === 'creditCard' ? {
+                connect: { id: creditCardId }
+            } : undefined, 
+            compra: {
+                connect: {
+                    id: compraId
+                }
+            },
+            // Conectando o usuário existente
+            usuario: {
+                connect: {
+                    id: compra.usuarioId
+                }
+            }
         }
     });
+    
 
     await prisma.compra.update({
         where: { id: compraId },

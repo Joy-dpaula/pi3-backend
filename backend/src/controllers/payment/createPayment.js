@@ -2,7 +2,11 @@ import exceptionHandler from '../../utils/ajuda.js';
 import { createPaymentModel } from '../../models/paymentModel.js';
 
 export default async function createPayment(req, res) {
-    const { usuarioId, compraId } = req.body; 
+    const { usuarioId, compraId, creditCardId } = req.body; 
+
+
+    console.log('compraId recebido:', compraId);
+    console.log('creditCardId recebido:', creditCardId);
 
     try {
 
