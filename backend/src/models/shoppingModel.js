@@ -56,6 +56,8 @@ export async function newShopping({ usuarioId, veiculoId, method }) {
 }
 
 
+
+
 export async function getShoppingModel() {
 
     const compras = await prisma.compra.findMany({
@@ -71,7 +73,7 @@ export async function getShoppingModel() {
                     id: true,
                     modelo: true,
                 },
-            },
+            }
         },
     });
 
@@ -104,3 +106,29 @@ export async function deleteShoppingModel(id) {
 
     return compra;
 }
+
+export async function updateShopping(shoppingId, data) {
+    const { veiculoId, method } = data;
+  
+    if (veiculoId) {
+      const veiculo = await prisma.veiculo.findUnique({
+        where: {
+          id: veiculoId,
+        },
+      });
+  
+      if (!veiculo) {
+        throw new Error('Veículo não encontrado.');
+      }
+    }
+  
+    const updatedShopping = await prisma.compra.update({
+      where: { id: shoppingId },
+      data: {
+        method, 
+      },
+    });
+  
+    return updatedShopping;
+  }
+  

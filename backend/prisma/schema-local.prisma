@@ -28,7 +28,8 @@ model compra {
   veiculoId String
   usuarioId String
   method    String
-  status    String    @default("pendente") // Adicionado campo status para rastrear o status da compra
+  status    String    @default("pendente") 
+  timestamp     DateTime       @default(now())
   usuario   usuario   @relation(fields: [usuarioId], references: [id], map: "Compra_usuarioId_fkey")
   veiculo   veiculo   @relation(fields: [veiculoId], references: [id], map: "Compra_veiculoId_fkey")
   payment   payment[]
@@ -57,9 +58,9 @@ model payment {
   compra        compra         @relation(fields: [compraId], references: [id])
   usuario       usuario        @relation(fields: [usuarioId], references: [id])
   compraId      String
-  creditCardId  String
+  creditCardId  String?
  
-  creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
+  creditCard    cartaocredito? @relation(fields: [creditCardId], references: [id])
 
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")

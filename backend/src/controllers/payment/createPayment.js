@@ -1,26 +1,16 @@
-import exceptionHandler from '../../utils/ajuda.js';
 import { createPaymentModel } from '../../models/paymentModel.js';
 
 export default async function createPayment(req, res) {
-    const { usuarioId, compraId, creditCardId } = req.body; 
-
-
-    console.log('compraId recebido:', compraId);
-    console.log('creditCardId recebido:', creditCardId);
-
     try {
+        const { compraId, creditCardId } = req.body; 
 
-        if (!compraId) {
-            return res.status(400).json({ error: 'O ID da compra é necessário.' });
-        }
+        console.log("compraId recebido:", compraId);
+        console.log("creditCardId recebido:", creditCardId);
 
-        const pagamento = await createPaymentModel(compraId, usuarioId);
-
-        res.status(201).json({
-            message: 'Pagamento processado com sucesso.',
-            pagamento
-        });
-    } catch (exception) {
-        exceptionHandler(exception, res);
+        const payment = await createPaymentModel(compraId, creditCardId);
+        res.status(201).json(payment);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
     }
 }

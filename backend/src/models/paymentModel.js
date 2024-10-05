@@ -4,6 +4,8 @@ const prisma = new PrismaClient();
 
 import { v4 as uuid } from 'uuid'; 
 export async function createPaymentModel(compraId, creditCardId) {
+    console.log("compraId recebido:", compraId);
+
 
     const compra = await prisma.compra.findUnique({
         where: { id: compraId },
@@ -25,14 +27,18 @@ export async function createPaymentModel(compraId, creditCardId) {
 
     if (paymentMethod === 'creditCard') {
 
-        if (!creditCardId || typeof creditCardId !== 'string') {
-            throw new Error('ID do cartão de crédito inválido!');
+        console.log("creditCardId recebido:", creditCardId); 
+
+        if (creditCardId === undefined || creditCardId === null) {
+            throw new Error('Cartão de crédito não informado!');
         }
       
         const cartaoCredito = await prisma.cartaocredito.findUnique({
             where: { id: creditCardId }
         });
 
+    
+        
 
         if (!cartaoCredito) {
             throw new Error('Cartão não encontrado!');
@@ -46,40 +52,34 @@ export async function createPaymentModel(compraId, creditCardId) {
     
         status = 'Aprovado';
 
-    } else if (paymentMethod === 'pix') {
-       
+     } else if (paymentMethod === 'pix' || paymentMethod === 'boleto') {
         status = 'Aguardando';
-
-    } else if (paymentMethod === 'boleto') {
-        status = 'Aguardando';
-
     } else {
         throw new Error('Método de pagamento inválido!');
     }
 
-    const payment = await prisma.payment.create({
-        data: {
-            id: paymentId,
-            paymentMethod,
-            status,
-            amount: compra.veiculo.valor,
-            creditCard: paymentMethod === 'creditCard' ? {
-                connect: { id: creditCardId }
-            } : undefined, 
-            compra: {
-                connect: {
-                    id: compraId
-                }
-            },
-            // Conectando o usuário existente
-            usuario: {
-                connect: {
-                    id: compra.usuarioId
-                }
-            }
-        }
-    });
+    const paymentData = {
+        id: paymentId,
+        paymentMethod,
+        status,
+        amount: compra.veiculo.valor,
+        compra: {
+            connect: { id: compraId }
+        },
+        usuario: {
+            connect: { id: compra.usuarioId }
+        },
+        creditCard: creditCardId ? {
+            connect: { id: creditCardId }
+        } : undefined, 
+
+    };
     
+    
+
+    const payment = await prisma.payment.create({
+        data: paymentData
+    });
 
     await prisma.compra.update({
         where: { id: compraId },
@@ -90,7 +90,6 @@ export async function createPaymentModel(compraId, creditCardId) {
 
     return  payment;
 }
-
 
 export async function getPaymentModel() {
 
@@ -121,7 +120,7 @@ export async function updatePaymentModel(id, {
     amount }) {
 
     const pagamentoExistente = await prisma.payment.findUnique({
-        where: { id: (id) }
+        where: { id: id }
     });
 
     if (!pagamentoExistente) {
@@ -129,11 +128,11 @@ export async function updatePaymentModel(id, {
     }
 
     const pagamentoAtualizado = await prisma.payment.update({
-        where: { id: Number(id) },
+        where: { id: id },
         data: {
             usuarioId: usuarioId ?? pagamentoExistente.usuarioId,
             compraId: compraId ?? pagamentoExistente.compraId,
-            creditCardId: creditCardId ?? pagamentoExistente.creditCardId,
+            creditCardId: creditCardId !== undefined ? creditCardId : pagamentoExistente.creditCardId, 
             paymentMethod: paymentMethod ?? pagamentoExistente.paymentMethod,
             status: status ?? pagamentoExistente.status,
             amount: amount ?? pagamentoExistente.amount,
