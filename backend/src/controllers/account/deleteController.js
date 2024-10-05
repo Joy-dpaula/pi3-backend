@@ -1,9 +1,7 @@
-// controllers/account/deleteController.js
-
 import { getUsuarioById, deleteAccountById } from '../../models/accountModel.js';
 import exceptionHandler from '../../utils/ajuda.js';
 
-export const deleteController = async (req, res) => {
+export const deleteAccount = async (req, res) => { // Alteração no nome da função exportada para 'deleteAccount'
     const { id } = req.params; // Obtém o ID do usuário a ser deletado
 
     try {
@@ -18,6 +16,6 @@ export const deleteController = async (req, res) => {
         return res.status(200).json({ message: "Usuário deletado com sucesso!" });
     } catch (error) {
         console.error("Erro ao deletar usuário:", error);
-        exceptionHandler(error, res);
+        exceptionHandler(error, res); // Usa o handler de exceções
     }
 };

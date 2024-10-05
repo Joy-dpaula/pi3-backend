@@ -95,9 +95,32 @@ export const updateUsuario = async (id, data) => {
 };
 
 // ** NOVA FUNÇÃO ADICIONADA **
+// Recupera uma conta pelo ID
 export const getAccountById = async (id) => {
     const account = await prisma.usuario.findUnique({
         where: { id: Number(id) },
     });
     return account; // Retorna a conta encontrada ou null
+};
+
+// ** NOVA FUNÇÃO PARA BUSCAR TODAS AS CONTAS ** 
+// Recupera todas as contas
+export const getAccounts = async () => {
+    try {
+        const accounts = await prisma.usuario.findMany({
+            select: {
+                id: true,
+                nome: true,
+                email: true,
+                cpf: true,
+                telefone: true,
+                data_registro: true,
+                isAdmin: true
+            }
+        });
+        return accounts; // Retorna todas as contas
+    } catch (error) {
+        console.error('Erro ao buscar contas:', error);
+        throw new Error('Não foi possível buscar as contas');
+    }
 };
