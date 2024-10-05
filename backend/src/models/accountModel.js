@@ -14,19 +14,13 @@ const userSchema = z.object({
     senha: z.string().min(8, { message: "A senha deve ter no mínimo 8 caracteres!" }),
 })
 
+// console.log("Current time in GMT-3:", gmt3Date.toString());
+
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
-
-    const result = userSchema.safeParse({ nome, cpf, email, senha })
-
-    if (!result.success) {
-        const errors = result.error.errors.map(err => err.message).join(",");
-        throw new Error(`Erros de validação: ${errors}`);
-    }
-
     const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
 
     if (existingUsuario) {
-        return null;
+        return null; 
     }
 
     const hashedSenha = await bcrypt.hash(senha, 12);
@@ -45,7 +39,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
             cidade,
             estado,
             foto_perfil,
-            data_registro: dataRegistroUTC
+            data_registro: dataRegistroUTC 
         },
         select: {
             id: true,
@@ -80,33 +74,12 @@ export const deleteUsuarioById = async (id) => {
     });
 };
 
-export const update = async (id, data) => {
-    if (!id) {
-        throw new Error('ID não fornecido');
-    }
-
-    const userId = Number(id);
-    console.log("Received ID:", userId);
-
-    if (isNaN(userId)) {
-        throw new Error('ID inválido');
-    }
-
-    try {
-        const updatedUsuario = await prisma.usuario.update({
-            where: { id: userId },
-            data,
-            select: {
-                id: true,
-                nome: true,
-                email: true,
-                isAdmin: true,
-            },
-        });
-
-        return updatedUsuario;
-    } catch (error) {
-        console.error('Update failed:', error);
-        throw new Error('Failed to update user');
-    }
-};
+export const update = async (usuario) => {
+    const result = await prisma.usuario.update({
+        data: usuario,
+        where:{
+           id: usuario.id 
+        }
+    })
+    return result
+}
