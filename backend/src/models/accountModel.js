@@ -1,21 +1,42 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcryptjs';
 import { DateTime } from 'luxon';
+import { z } from 'zod'; // Certifique-se de que está importando zod
 
 const prisma = new PrismaClient();
 
-// Cria um novo usuário
-export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
-    const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
+// Definir o fuso horário
+const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
+// Esquema de validação do usuário usando Zod
+const userSchema = z.object({
+    nome: z.string().min(1, { message: "Nome deve ser obrigatório!" }),
+    cpf: z.string().length(11, { message: "CPF deve ter 11 dígitos!" }),
+    email: z.string().email({ message: "Email inválido!" }).max(200),
+    senha: z.string().min(8, { message: "A senha deve ter no mínimo 8 caracteres!" }),
+});
+
+export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
+    // Valida os dados de entrada
+    try {
+        userSchema.parse({ nome, cpf, email, senha });
+    } catch (error) {
+        throw new Error(`Erro de validação: ${error.message}`);
+    }
+
+    // Verifica se o usuário já existe
+    const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
     if (existingUsuario) {
         return null; // Retorna null se o usuário já existir
     }
 
-    const hashedSenha = await bcrypt.hash(senha, 12); // Hash da senha
+    // Hash da senha
+    const hashedSenha = await bcrypt.hash(senha, 12);
 
-    const dataRegistroUTC = DateTime.now().setZone('America/Sao_Paulo').toUTC().toJSDate(); // Data de registro em UTC
+    // Define a data de registro em UTC
+    const dataRegistroUTC = DateTime.now().setZone('America/Sao_Paulo').toUTC().toJSDate();
 
+    // Cria o novo usuário no banco de dados
     const usuario = await prisma.usuario.create({
         data: {
             nome,
@@ -94,8 +115,7 @@ export const updateUsuario = async (id, data) => {
     }
 };
 
-// ** NOVA FUNÇÃO ADICIONADA **
-// Recupera uma conta pelo ID
+// ** NOVA FUNÇÃO PARA BUSCAR UMA CONTA POR ID **
 export const getAccountById = async (id) => {
     const account = await prisma.usuario.findUnique({
         where: { id: Number(id) },
@@ -104,7 +124,6 @@ export const getAccountById = async (id) => {
 };
 
 // ** NOVA FUNÇÃO PARA BUSCAR TODAS AS CONTAS ** 
-// Recupera todas as contas
 export const getAccounts = async () => {
     try {
         const accounts = await prisma.usuario.findMany({
