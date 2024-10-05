@@ -118,3 +118,12 @@ model veiculo {
 
   @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
 }
+
+
+model Admin {
+    id      Int    @id @default(autoincrement())
+    nome    String
+    email   String @unique
+    senha   String
+    isAdmin Boolean @default(false)
+}
