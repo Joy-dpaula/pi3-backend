@@ -26,9 +26,7 @@ const updateController = async (req, res, next) => {
         const usuario = req.body;
         usuario.id = String(id);
 
-        if (isNaN(usuario.id)) {
-            return res.status(400).json({ error: "ID inválido!" });
-        }
+     
 
         if (typeof usuario.isAdmin === 'string') {
             usuario.isAdmin = usuario.isAdmin.toLowerCase() === 'true';
