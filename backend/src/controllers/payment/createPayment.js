@@ -1,24 +1,16 @@
-import exceptionHandler from '../../utils/ajuda.js';
-
 import { createPaymentModel } from '../../models/paymentModel.js';
 
 export default async function createPayment(req, res) {
-    const { usuarioId, compraId, creditCardId } = req.body;
-
     try {
+        const { compraId, creditCardId } = req.body; 
 
-        if (!creditCardId || isNaN(creditCardId)) {
-            return res.status(400).json({ error: 'O ID do cartão de crédito é inválido.' });
-        }
+        console.log("compraId recebido:", compraId);
+        console.log("creditCardId recebido:", creditCardId);
 
-        const pagamento = await createPaymentModel(usuarioId, compraId, creditCardId);
-
-        res.status(201).json({
-            message: 'O pagamento foi aprovado e sua compra aceita.',
-            pagamento
-        });
-
-    } catch (exception) {
-        exceptionHandler(exception, res);
+        const payment = await createPaymentModel(compraId, creditCardId);
+        res.status(201).json(payment);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
     }
 }

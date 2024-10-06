@@ -33,8 +33,8 @@ export async function generateBoleto(req, res) {
     }
 }
 /**
- * Gera um código de barras fictício.
- * @returns {string} - Um código de barras fictício
+
+ * @returns {string}
  */
 function generateFakeBarcode() {
 
