@@ -24,11 +24,12 @@ model cartaocredito {
 }
 
 model compra {
-  id String @id @default(uuid())
-
+  id        String    @id @default(uuid())
   veiculoId String
   usuarioId String
   status    String    @default("pendente")
+  method    String
+  timestamp DateTime  @default(now())
   usuario   usuario   @relation(fields: [usuarioId], references: [id])
   veiculo   veiculo   @relation(fields: [veiculoId], references: [id])
   payment   payment[]
@@ -38,7 +39,7 @@ model compra {
 }
 
 model message {
-  id String @id @default(uuid())
+  id                                   String   @id @default(uuid())
   recipientId                          String
   content                              String
   timestamp                            DateTime @default(now())
@@ -48,25 +49,27 @@ model message {
 }
 
 model payment {
-  id String @id @default(uuid())
+  id            String        @id @default(uuid())
   usuarioId     String
   paymentMethod String        @db.VarChar(20)
   status        String        @db.VarChar(20)
-  pixQRCodeURL  String?       @db.VarChar(255) 
-  boletoURL     String?       @db.VarChar(255) 
+  pixQRCodeURL  String?       @db.VarChar(255)
+  boletoURL     String?       @db.VarChar(255)
   amount        Int
   timestamp     DateTime      @default(now())
-  compra        compra        @relation(fields: [compraId], references: [id])
-  usuario       usuario       @relation(fields: [usuarioId], references: [id])
   compraId      String
   creditCardId  String
+  compra        compra        @relation(fields: [compraId], references: [id])
   creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
+  usuario       usuario       @relation(fields: [usuarioId], references: [id])
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
+  @@index([compraId], map: "payment_compraId_fkey")
+  @@index([creditCardId], map: "payment_creditCardId_fkey")
 }
 
 model usuario {
-  id String @id @default(uuid())
+  id                                   String          @id @default(uuid())
   nome                                 String          @db.VarChar(50)
   cpf                                  String          @unique(map: "Usuario_cpf_key") @db.VarChar(15)
   telefone                             String          @db.VarChar(15)
@@ -82,20 +85,22 @@ model usuario {
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
-  veiculo                              veiculo[]
   sessions                             sessions[]
+  veiculo                              veiculo[]
 }
 
 model sessions {
-  id String @id @default(uuid())
+  id        String   @id @default(uuid())
   id_user   String
-  session   String   @db.Text 
-  usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  session   String   @db.Text
   createdAt DateTime @default(now())
-}
-model veiculo {
-  id String @id @default(uuid())
+  usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
 
+  @@index([id_user], map: "sessions_id_user_fkey")
+}
+
+model veiculo {
+  id            String   @id @default(uuid())
   modelo        String   @db.VarChar(50)
   anoFabricacao Int
   cor           String   @db.VarChar(25)
@@ -120,10 +125,10 @@ model veiculo {
   @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
 }
 
-model Admin {
-  id String @id @default(uuid())
+model admin {
+  id      String  @id
   nome    String
-  email   String  @unique
+  email   String  @unique(map: "Admin_email_key")
   senha   String
-  isAdmin Boolean @default(true) 
+  isAdmin Boolean @default(true)
 }

@@ -38,6 +38,7 @@ model compra {
   @@index([veiculoId], map: "Compra_veiculoId_fkey")
 }
 
+
 model message {
   id        String    @id @default(uuid())
   recipientId String
