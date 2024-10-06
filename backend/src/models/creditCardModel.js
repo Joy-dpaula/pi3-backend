@@ -36,7 +36,7 @@ export async function getCartaoById(id) {
 
     const cartaoCredito = await prisma.cartaocredito.findUnique({
         where: {
-            id: parseInt(id),
+            id: String(id),
         },
     });
 
@@ -52,7 +52,7 @@ export async function updateCartaoModel(id, { numero, validade, cvv, nomeTitular
     const hashedCvv = await bcrypt.hash(cvv, 10);
 
     const cartaoCreditoAtualizado = await prisma.cartaocredito.update({
-        where: { id: Number(id) },
+        where: { id: String(id) },
         data: {
             numero,
             validade,
@@ -69,9 +69,9 @@ export async function updateCartaoModel(id, { numero, validade, cvv, nomeTitular
 
 export async function deleteCartaoModel(id) {
 
-    const credit = await prisma.cartaocredito.findUnique({ where: { id: parseInt(id) } });
+    const credit = await prisma.cartaocredito.findUnique({ where: { id: String(id) } });
 
-    await prisma.cartaocredito.delete({ where: { id: parseInt(id) } });
+    await prisma.cartaocredito.delete({ where: { id: String(id) } });
 
     if (!credit) {
         throw new Error("Cartão de credito não encontrado." );

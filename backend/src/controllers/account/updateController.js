@@ -24,24 +24,25 @@ const updateController = async (req, res, next) => {
 
     try {
         const usuario = req.body;
-        usuario.id = Number(id);
+        usuario.id = String(id);
 
-        if (isNaN(usuario.id)) {
-            return res.status(400).json({ error: "ID inválido!" });
-        }
+     
 
         if (typeof usuario.isAdmin === 'string') {
             usuario.isAdmin = usuario.isAdmin.toLowerCase() === 'true';
         }
 
         if (req.file) {
-            usuario.imagePath = req.file.path; 
+            usuario.foto_perfil = req.file.filename; 
+        }
+        if (usuario.nascimento) {
+            usuario.nascimento = new Date(usuario.nascimento);
         }
 
-        const result = await update(usuario.id, usuario);
+        const result = await update(usuario);
 
         if (!result) {
-            console.error("Update failed for user ID:", usuario.id); 
+            console.error("Update failed for user ID:", usuario.id);
             return res.status(404).json({ error: "Erro ao atualizar a conta!" });
         }
 
@@ -50,7 +51,7 @@ const updateController = async (req, res, next) => {
             usuario: result
         });
     } catch (error) {
-        console.error("Error during user update:", error); 
+        console.error("Error during user update:", error);
         if (error?.code === 'P2025') {
             return res.status(404).json({ error: `Conta com o id ${id} não encontrada!` });
         }

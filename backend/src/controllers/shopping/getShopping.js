@@ -13,14 +13,11 @@ export default async function getShopping(req, res) {
             "Compra ID": compra.id,
             "Status" : compra.status,
             "Usuário": {
-                "Usuário ID": compra.usuario.id,
-                "Nome": compra.usuario.nome, 
-            },
+                "ID": compra.usuario.id,
+            },  
             "Veículo": {
-                "Veículo ID": compra.veiculo.id,
-                "Modelo": compra.veiculo.modelo, 
+                "ID": compra.veiculo.id,
             },
-            "Valor Total": compra.valorTotal,  
             "Data da Compra": new Date(compra.dataCompra).toLocaleDateString()
         }));
 

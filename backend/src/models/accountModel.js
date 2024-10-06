@@ -21,7 +21,9 @@ const userSchema = z.object({
     senha: passwordSchema,
 })
 
+
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
+    const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
 
     const result = userSchema.safeParse({ nome, cpf, email, senha })
 
@@ -33,6 +35,8 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
     const existingCpf = await prisma.usuario.findUnique({ where: { cpf } });
     const existingEmail = await prisma.usuario.findUnique({ where: { email } });
 
+    if (existingUsuario) {
+        return null; 
     if (existingCpf){
         throw new Error("Esse CPF já esta em uso por outro usuário.")
     }
@@ -57,7 +61,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
             cidade,
             estado,
             foto_perfil,
-            data_registro: dataRegistroUTC
+            data_registro: dataRegistroUTC 
         },
         select: {
             id: true,
@@ -81,44 +85,23 @@ export async function getUsuarios() {
 
 export async function getUsuarioById(id) {
     const account = await prisma.usuario.findUnique({
-        where: { id: Number(id) },
+        where: { id: String(id) },
     });
     return account;
 }
 
 export const deleteUsuarioById = async (id) => {
     return await prisma.usuario.delete({
-        where: { id: Number(id) },
+        where: { id: String(id) },
     });
 };
 
-export const update = async (id, data) => {
-    if (!id) {
-        throw new Error('ID não fornecido');
-    }
-
-    const userId = Number(id);
-    console.log("Received ID:", userId);
-
-    if (isNaN(userId)) {
-        throw new Error('ID inválido');
-    }
-
-    try {
-        const updatedUsuario = await prisma.usuario.update({
-            where: { id: userId },
-            data,
-            select: {
-                id: true,
-                nome: true,
-                email: true,
-                isAdmin: true,
-            },
-        });
-
-        return updatedUsuario;
-    } catch (error) {
-        console.error('Update failed:', error);
-        throw new Error('Failed to update user');
-    }
-};
+export const update = async (usuario) => {
+    const result = await prisma.usuario.update({
+        data: usuario,
+        where:{
+           id: usuario.id 
+        }
+    })
+    return result
+}

@@ -6,11 +6,11 @@ import multer from 'multer';
 import path from 'path';
 import express from 'express';
 import fs from 'fs/promises'; 
-import { fileURLToPath } from 'url'; // Importando para usar com import.meta.url
-import { dirname } from 'path'; // Importando para obter o diretório
+import { fileURLToPath } from 'url'; 
+import { dirname } from 'path'; 
 
-const __filename = fileURLToPath(import.meta.url); // Obtendo o nome do arquivo
-const __dirname = dirname(__filename); // Obtendo o diretório
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename); 
 
 const router = express.Router();
 
@@ -43,7 +43,7 @@ export async function createAccount(req, res) {
         }
 
         const time = Date.now();
-        foto_perfil = `${time}_padraouser.png`;
+        foto_perfil = `${time}_padraouser.jpg`;
 
         try {
             await fs.copyFile(defaultImagePath, path.resolve('perfil', foto_perfil));
