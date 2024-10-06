@@ -76,7 +76,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
     });
 
     return usuario;
-}
+}}
 
 export async function getUsuarios() {
     const usuarios = await prisma.usuario.findMany();
