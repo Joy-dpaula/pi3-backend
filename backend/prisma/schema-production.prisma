@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+ 
 }
 
 model cartaocredito {
@@ -49,24 +49,23 @@ model message {
   @@index([recipientId], map: "Message_recipientId_fkey")
 }
 
+
 model payment {
-  id            String        @id @default(uuid())
+  id String @id @default(uuid())
   usuarioId     String
   paymentMethod String        @db.VarChar(20)
   status        String        @db.VarChar(20)
-  pixQRCodeURL  String?       @db.VarChar(255)
-  boletoURL     String?       @db.VarChar(255)
+  pixQRCodeURL  String?       @db.VarChar(255) 
+  boletoURL     String?       @db.VarChar(255) 
   amount        Int
   timestamp     DateTime      @default(now())
+  compra        compra        @relation(fields: [compraId], references: [id])
+  usuario       usuario       @relation(fields: [usuarioId], references: [id])
   compraId      String
   creditCardId  String
-  compra        compra        @relation(fields: [compraId], references: [id])
   creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
-  usuario       usuario       @relation(fields: [usuarioId], references: [id])
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
-  @@index([compraId], map: "payment_compraId_fkey")
-  @@index([creditCardId], map: "payment_creditCardId_fkey")
 }
 
 model usuario {
@@ -86,7 +85,6 @@ model usuario {
   compra                               compra[]
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
-  sessions                             sessions[]
   veiculo                              veiculo[]
 }
 
@@ -95,7 +93,6 @@ model sessions {
   id_user   String
   session   String   @db.Text
   createdAt DateTime @default(now())
-  usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
 
   @@index([id_user], map: "sessions_id_user_fkey")
 }
