@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model cartaocredito {
@@ -127,5 +128,5 @@ model Admin {
   nome    String
   email   String   @unique
   senha   String
-  isAdmin Boolean  @default(true)
+  isAdmin Boolean  @default(true) 
 }
