@@ -1,26 +1,22 @@
-import Account from '../../models/accountModel.js'; // Verifique se o caminho está correto
-import exceptionHandler from '../../utils/ajuda.js'; // Verifique o caminho correto para o seu manipulador de exceções
+import Account from '../../models/accountModel.js'; 
+import exceptionHandler from '../../utils/ajuda.js'; 
 
-// Cria um novo usuário admin
 export const createAdminUser = async (req, res) => {
     const { nome, email, senha } = req.body;
 
     try {
-        // Verifica se o usuário já existe
         const userExists = await Account.findUnique({ where: { email } });
         if (userExists) {
             return res.status(400).json({ error: 'Usuário já existe' });
         }
 
-        // Hash da senha (se o bcrypt estiver configurado)
         const hashedSenha = await bcrypt.hash(senha, 12);
 
-        // Cria um novo usuário admin
         const newUser = await Account.create({
             data: {
                 nome,
                 email,
-                senha: hashedSenha, // Salvando a senha hash
+                senha: hashedSenha, 
                 isAdmin: true,
             },
         });
@@ -31,7 +27,6 @@ export const createAdminUser = async (req, res) => {
     }
 };
 
-// Deletar um usuário
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
     try {
@@ -45,7 +40,6 @@ export const deleteUser = async (req, res) => {
     }
 };
 
-// Obter todos os usuários
 export const getUsers = async (req, res) => {
     try {
         const users = await Account.findMany();

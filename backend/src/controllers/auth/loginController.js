@@ -19,9 +19,6 @@ export default async function loginController(req, res) {
 
         const { usuario, accessToken } = await loginModel(email, senha, res);
 
-        // console.log(usuario.estado)
-        // console.log(usuario.cidade)
-
         res.json({
             id: usuario.id,
             nome: usuario.nome,

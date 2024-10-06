@@ -3,7 +3,7 @@ import { createAdminUser, getAllAdmins, getAdmin, updateAdminById, deleteAdmin }
 
 const router = express.Router();
 
-router.post('/', createAdminUser); // Ajustei para bater com a função exportada no controller
+router.post('/', createAdminUser); 
 router.get('/', getAllAdmins); 
 router.get('/:id', getAdmin); 
 router.put('/:id', updateAdminById); 

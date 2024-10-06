@@ -1,23 +1,19 @@
-// src/controllers/services/AdminService.js
+
 import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
-console.log(prisma); // Verificando a instância do Prisma
+console.log(prisma);
 
 export async function createAdmin({ nome, email, senha, isAdmin }) {
     try {
-        // Verifica se o admin já existe
         const existingAdmin = await prisma.admin.findUnique({ where: { email } });
 
         if (existingAdmin) {
-            return null; // Retorna null se o administrador já existir
+            return null;
         }
 
-        // Hash da senha
         const hashedSenha = await bcrypt.hash(senha, 12);
-
-        // Criação do novo administrador no banco de dados
         const admin = await prisma.admin.create({
             data: {
                 nome,
@@ -33,7 +29,7 @@ export async function createAdmin({ nome, email, senha, isAdmin }) {
             }
         });
 
-        return admin; // Retorna o administrador criado
+        return admin;
     } catch (error) {
         console.error('Erro ao criar administrador:', error);
         throw new Error('Erro ao criar administrador');
@@ -43,7 +39,7 @@ export async function createAdmin({ nome, email, senha, isAdmin }) {
 export async function getAdmins() {
     try {
         const admins = await prisma.admin.findMany();
-        return admins; // Retorna a lista de administradores
+        return admins;
     } catch (error) {
         console.error('Erro ao buscar administradores:', error);
         throw new Error('Erro ao buscar administradores');
@@ -55,7 +51,7 @@ export async function getAdminById(id) {
         const admin = await prisma.admin.findUnique({
             where: { id: Number(id) },
         });
-        return admin; // Retorna o administrador encontrado
+        return admin;
     } catch (error) {
         console.error('Erro ao buscar administrador:', error);
         throw new Error('Erro ao buscar administrador');
@@ -95,7 +91,6 @@ export async function updateAdmin(id, data) {
     }
 }
 
-// Função para obter um administrador por email
 export async function getAdminByEmail(email) {
     return await prisma.admin.findUnique({
         where: {

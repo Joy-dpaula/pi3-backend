@@ -1,8 +1,7 @@
-// controllers/account/updateController.js
 
 import multer from 'multer';
 import path from 'path';
-import { updateUsuario } from "../../models/accountModel.js"; // Este nome deve corresponder exatamente ao exportado
+import { updateUsuario } from "../../models/accountModel.js";
 import { Router } from 'express';
 
 const storage = multer.diskStorage({
@@ -40,7 +39,7 @@ const updateController = async (req, res, next) => {
             usuario.nascimento = new Date(usuario.nascimento);
         }
 
-        const result = await updateUsuario(usuario.id, usuario); // Chama a função de atualização
+        const result = await updateUsuario(usuario.id, usuario); 
 
         if (!result) {
             console.error("Update failed for user ID:", usuario.id);

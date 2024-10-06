@@ -1,6 +1,6 @@
 import exceptionHandler from '../../utils/ajuda.js';
 import { generateAccessToken } from '../../utils/auth.js';
-import { createNewUser } from '../../models/accountModel.js'; // Atualizado para usar createNewUser
+import { createNewUser } from '../../models/accountModel.js';
 import { DateTime } from 'luxon'; 
 import multer from 'multer';
 import path from 'path';
@@ -14,7 +14,6 @@ const __dirname = dirname(__filename);
 
 const router = express.Router();
 
-// Configuração do multer para upload de arquivos
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, path.resolve("perfil")); 
@@ -27,7 +26,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Função para criar uma nova conta
 export async function createAccount(req, res) {
     const { nome, email, senha, cpf, telefone, nascimento, cidade, estado, isAdmin } = req.body;
     let foto_perfil;
@@ -55,7 +53,6 @@ export async function createAccount(req, res) {
         }
     }
 
-    // Validações de entrada
     if (!nome || !email || !senha || !cpf || !telefone) {
         return res.status(400).json({ error: "Nome, email, senha, CPF e telefone são obrigatórios." });
     }
@@ -97,7 +94,6 @@ export async function createAccount(req, res) {
     }
 }
 
-// Rota para criar uma nova conta com upload de foto de perfil
 router.post('/', upload.single('foto_perfil'), createAccount);
 
 export default router;

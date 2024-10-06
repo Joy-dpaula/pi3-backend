@@ -1,21 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcryptjs';
 import { DateTime } from 'luxon';
-import { z } from 'zod'; // Certifique-se de que está importando zod
+import { z } from 'zod';
 
 const prisma = new PrismaClient();
 
-// Definir o fuso horário
 const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
-// Esquema de validação da senha usando Zod
 const passwordSchema = z.string()
   .min(8, { message: "A senha deve ter um tamanho mínimo de 8 caracteres." })
   .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}$/, {
     message: "Senha deve ter pelo menos 8 caracteres (incluindo letras maiúsculas, minúsculas, números e caracteres especiais)"
   });
 
-// Esquema de validação do usuário usando Zod
 const userSchema = z.object({
     nome: z.string().min(1, { message: "Nome deve ser obrigatório" }),
     cpf: z.string().length(11, { message: "CPF deve conter 11 dígitos" }),
@@ -23,16 +20,13 @@ const userSchema = z.object({
     senha: passwordSchema,
 });
 
-// Função para criar um novo usuário
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
-    // Valida os dados de entrada
+
     try {
         userSchema.parse({ nome, cpf, email, senha });
     } catch (error) {
         throw new Error(`Erro de validação: ${error.message}`);
     }
-
-    // Verifica se o CPF ou email já estão em uso
     const existingCpf = await prisma.usuario.findUnique({ where: { cpf } });
     const existingEmail = await prisma.usuario.findUnique({ where: { email } });
 
@@ -43,14 +37,9 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
     if (existingEmail) {
         throw new Error("Esse Email já está em uso por outro usuário.");
     }
-
-    // Hash da senha
     const hashedSenha = await bcrypt.hash(senha, 12);
-
-    // Define a data de registro em UTC
     const dataRegistroUTC = DateTime.now().setZone('America/Sao_Paulo').toUTC().toJSDate();
 
-    // Cria o novo usuário no banco de dados
     const usuario = await prisma.usuario.create({
         data: {
             nome,
@@ -73,31 +62,27 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
         }
     });
 
-    return usuario; // Retorna o usuário criado
+    return usuario; 
 }
 
-// Recupera todos os usuários
 export async function getUsuarios() {
     const usuarios = await prisma.usuario.findMany();
-    return usuarios; // Retorna todos os usuários
+    return usuarios; 
 }
 
-// Recupera um usuário pelo ID
 export async function getUsuarioById(id) {
     const account = await prisma.usuario.findUnique({
         where: { id: String(id) },
     });
-    return account; // Retorna o usuário encontrado ou null
+    return account; 
 }
 
-// Deleta um usuário pelo ID
 export const deleteAccountById = async (id) => {
     return await prisma.usuario.delete({
         where: { id: String(id) },
     });
 };
 
-// Atualiza um usuário pelo ID
 export const updateUsuario = async (id, data) => {
     if (!id) {
         throw new Error('ID não fornecido');
@@ -121,22 +106,20 @@ export const updateUsuario = async (id, data) => {
             },
         });
 
-        return updatedUsuario; // Retorna o usuário atualizado
+        return updatedUsuario; 
     } catch (error) {
         console.error('Update failed:', error);
         throw new Error('Failed to update user');
     }
 };
 
-// ** Função para buscar uma conta por ID **
 export const getAccountById = async (id) => {
     const account = await prisma.usuario.findUnique({
         where: { id: Number(id) },
     });
-    return account; // Retorna a conta encontrada ou null
+    return account;
 };
 
-// ** Função para buscar todas as contas ** 
 export const getAccounts = async () => {
     try {
         const accounts = await prisma.usuario.findMany({
@@ -150,7 +133,7 @@ export const getAccounts = async () => {
                 isAdmin: true
             }
         });
-        return accounts; // Retorna todas as contas
+        return accounts;
     } catch (error) {
         console.error('Erro ao buscar contas:', error);
         throw new Error('Não foi possível buscar as contas');

@@ -89,7 +89,7 @@ model usuario {
 model sessions {
   id String @id @default(uuid())
   id_user   String
-  session   String   @db.Text // Alterando para Text caso os dados da sessão sejam grandes
+  session   String   @db.Text 
   usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
@@ -125,5 +125,5 @@ model Admin {
   nome    String
   email   String  @unique
   senha   String
-  isAdmin Boolean @default(true) // Isso garante que todos os admins criados tenham 'isAdmin' como 'true'
+  isAdmin Boolean @default(true) 
 }
