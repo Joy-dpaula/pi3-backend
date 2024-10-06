@@ -10,7 +10,7 @@ export const createAdminUser = async (req, res) => {
     const { nome, email, senha } = req.body;
 
     try {
-        const userExists = await prisma.usuario.findUnique({ where: { email } });
+        const userExists = await prisma.Admin.findUnique({ where: { email } });
         if (userExists) {
             return res.status(400).json({ error: 'Usuário já existe' });
         }

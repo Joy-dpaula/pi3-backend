@@ -15,8 +15,9 @@ import create  from './routers/shoppingRouter.js';
 import creditCard from './routers/typePaymentRouter.js'
 import multer from 'multer'
 import {storage} from './multerConfig.js'
+import user from './routers/userRouter.js'
 const upload = multer({storage: storage});
-import admin from './routers/AdminRoutes.js'
+import admin from './routers/AdminRouter.js'
 import 'dotenv/config'; 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -43,6 +44,7 @@ app.use('/veiculos', vehicleRouter);
 app.use('/payment', paymentRoutes);
 app.use('/credit' , creditCard) 
 app.use('/admin', admin);
+app.use('/user' , user)
 
 app.use('/compra', create)
 
