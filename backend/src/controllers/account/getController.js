@@ -1,24 +1,21 @@
-// controllers/accountController.js
-import { getUsuarios } from '../../models/accountModel.js';
+import { getAccounts } from '../../models/accountModel.js'; 
 import exceptionHandler from '../../utils/ajuda.js';
-import { DateTime } from 'luxon'; // Importar luxon corretamente
+import { DateTime } from 'luxon';
 
 export const getAccount = async (req, res) => {
     try {
+        const accounts = await getAccounts();
 
-        const usuarios = await getUsuarios();
-
-        const usuariosFormatted = usuarios.map(usuario => ({
-            ...usuario,
-            cpf: usuario.cpf.toString(),
-            telefone: usuario.telefone ? usuario.telefone.toString() : null,
-            data_registro: DateTime.fromJSDate(usuario.data_registro).setZone('America/Sao_Paulo').toString()
-
+        const accountsFormatted = accounts.map(account => ({
+            ...account,
+            cpf: account.cpf.toString(),
+            telefone: account.telefone ? account.telefone.toString() : null,
+            data_registro: DateTime.fromJSDate(account.data_registro)
+                .setZone('America/Sao_Paulo').toString() 
         }));
 
-        res.json(usuariosFormatted);
+        res.json(accountsFormatted);
     } catch (exception) {
-
-        exceptionHandler(exception, res);
+        exceptionHandler(exception, res); 
     }
 };

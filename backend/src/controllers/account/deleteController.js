@@ -1,27 +1,26 @@
-import { getUsuarioById, deleteUsuarioById } from '../../models/accountModel.js';
+import { getUsuarioById, deleteAccountById } from '../../models/accountModel.js';
 import exceptionHandler from '../../utils/ajuda.js';
 
 export const deleteAccount = async (req, res) => {
+    const { id } = req.params; 
+    const token = req.accessToken; 
+
+    if (!token || !token.email) {
+        return res.sendStatus(401);
+    }
+
     try {
-        const id = (req.params.id);
-        const token = req.accessToken;
+        const usuario = await getUsuarioById(id);
 
-        if (!token || !token.email) {
-            return res.sendStatus(401); 
+        if (!usuario) {
+            return res.status(404).json({ error: "Usuário não encontrado!" });
         }
 
-        const checkUsuario = await getUsuarioById(id);
+        await deleteAccountById(id);
 
-        if (!checkUsuario || (checkUsuario.email !== token.email && !token.isAdmin)) {
-            return res.sendStatus(403);
-        }
-
-        await deleteUsuarioById(id);
-
-        res.status(204).end();
-        
-        
-    } catch (exception) {
-        exceptionHandler(exception, res);
+        return res.status(200).json({ message: "Usuário deletado com sucesso!" });
+    } catch (error) {
+        console.error("Erro ao deletar usuário:", error);
+        exceptionHandler(error, res); 
     }
 };

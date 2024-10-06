@@ -2,9 +2,9 @@ import QRCode from 'qrcode';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
- * Simula a geração de um pagamento Pix com QR Code
- * @param {Object} req - Requisição HTTP
- * @param {Object} res - Resposta HTTP
+ * 
+ * @param {Object} req 
+ * @param {Object} res 
  */
 export default async function generatePixPayment(req, res) {
     try {

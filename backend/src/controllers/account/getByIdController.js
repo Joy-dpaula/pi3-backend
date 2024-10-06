@@ -1,13 +1,18 @@
+import { getAccountById } from '../../models/accountModel.js'; 
 import exceptionHandler from '../../utils/ajuda.js';
-import { getUsuarioById } from '../../models/accountModel.js';
 
-export default async function getAccountById(req, res) {
+export const getAccountByIdController = async (req, res) => {
+    const { id } = req.params; 
     try {
-        const id = req.params.id;
-        const account = await getUsuarioById(id);
+        const account = await getAccountById(id);
+
+        if (!account) {
+            return res.status(404).json({ error: "Conta não encontrada!" }); 
+        }
 
         res.json(account);
     } catch (exception) {
+        console.error('Erro ao recuperar conta:', exception);
         exceptionHandler(exception, res);
     }
-}
+};

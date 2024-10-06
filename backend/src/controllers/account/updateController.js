@@ -1,7 +1,7 @@
-import bcrypt from 'bcryptjs';
-import { update } from "../../models/accountModel.js";
+
 import multer from 'multer';
 import path from 'path';
+import { updateUsuario } from "../../models/accountModel.js";
 import { Router } from 'express';
 
 const storage = multer.diskStorage({
@@ -33,13 +33,13 @@ const updateController = async (req, res, next) => {
         }
 
         if (req.file) {
-            usuario.foto_perfil = req.file.filename; 
+            usuario.foto_perfil = req.file.filename;
         }
         if (usuario.nascimento) {
             usuario.nascimento = new Date(usuario.nascimento);
         }
 
-        const result = await update(usuario);
+        const result = await updateUsuario(usuario.id, usuario); 
 
         if (!result) {
             console.error("Update failed for user ID:", usuario.id);

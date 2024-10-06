@@ -41,4 +41,3 @@ HOST=http://localhost
 NODE_ENV=development
 SECRET_KEY=myChavesecreta12345!@#
 CLIENT_ORIGIN_URL="*"
-

@@ -1,0 +1,46 @@
+Controllers (/controllers/):
+
+    Contém arquivos como getAdmin.js, getVeiculo.js, 
+    createVeiculo.js, etc., que são responsáveis por implementar 
+    a lógica de controle do backend. Estes arquivos provavelmente 
+    contêm as funções para buscar, criar, atualizar e deletar 
+    entidades no banco de dados.
+
+Middlewares (/middleware/):
+
+    Um exemplo é o cacheMiddleware.js, que parece ser utilizado 
+    para gerenciar o cache, possivelmente para otimizar as 
+    consultas de dados e reduzir a latência. Um bom uso de 
+    middlewares melhora a escalabilidade do projeto.
+
+Models (/models/):
+
+    Aqui temos os modelos de dados do projeto, como 
+    accountModel.js, vehicleModel.js, e paymentModel.js. Esses 
+    arquivos contêm a definição de esquema das tabelas no banco 
+    de dados, e o uso de um ORM como Prisma facilita as 
+    interações com o banco, mantendo o código mais limpo e menos 
+    propenso a erros.
+
+Routers (/routers/):
+
+    Contém arquivos como accountRouter.js, adminRouter.js, 
+    vehicleRouter.js, e outros que definem as rotas da API. 
+    Estes arquivos são responsáveis por mapear endpoints para 
+    seus respectivos controladores, o que é uma boa prática ao 
+    modularizar rotas e separar responsabilidades.
+
+Utils (/utils/):
+
+    Aqui temos utilitários como auth.js, crypto.js, e 
+    uploadSingle.js, que fornecem funções de apoio como 
+    autenticação, criptografia e upload de arquivos. Manter 
+    funções auxiliares bem organizadas em um diretório separado 
+    é uma boa prática para reutilização de código e manutenção.
+
+Uploads (/uploads/):
+
+    Há também uma pasta uploads/ que parece ser destinada ao 
+    armazenamento temporário de arquivos que os usuários podem 
+    enviar, como imagens. O gerenciamento adequado de uploads é 
+    importante para segurança e performance.

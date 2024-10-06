@@ -1,75 +1,88 @@
-import { createAdmin, getAdmins, getAdminById, deleteAdminById, updateAdmin, getAdminByEmail } from '../services/AdminService.js';
 
-export async function createNewAdmin(req, res) {
-    const { nome, email, senha, isAdmin } = req.body;
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+import bcrypt from 'bcryptjs';
+
+
+import exceptionHandler from '../../utils/ajuda.js'; // Verifique o caminho correto para o seu manipulador de exceções
+
+export const createAdminUser = async (req, res) => {
+    const { nome, email, senha } = req.body;
 
     try {
-        // Verifica se o administrador já existe
-        const existingAdmin = await getAdminByEmail(email);
-
-        if (existingAdmin) {
-            return res.status(400).json({ error: 'Administrador já existe.' });
+        const userExists = await prisma.Admin.findUnique({ where: { email } });
+        if (userExists) {
+            return res.status(400).json({ error: 'Usuário já existe' });
         }
 
-        const admin = await createAdmin({ nome, email, senha, isAdmin });
+        const hashedSenha = await bcrypt.hash(senha, 12);
 
-        if (!admin) {
-            return res.status(500).json({ error: 'Erro ao criar administrador.' });
+        // Cria um novo usuário admin
+        const newUser = await prisma.Admin.create({
+            data: {
+                nome,
+                email,
+                senha: hashedSenha, // Salvando a senha hash
+                isAdmin: true,
+            },
+        });
+
+        res.status(201).json({ message: 'Usuário criado com sucesso', user: newUser });
+    } catch (error) {
+        exceptionHandler(error, res);
+    }
+};
+
+// Deletar um usuário
+export const deleteUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const user = await prisma.Admin.delete({ where: { id: Number(id) } });
+        if (!user) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+        res.status(200).json({ message: 'Usuário deletado com sucesso.' });
+    } catch (error) {
+        exceptionHandler(error, res);
+    }
+};
+
+// Obter todos os usuários
+export const getUsers = async (req, res) => {
+    try {
+        const users = await prisma.Admin.findMany();
+        res.status(200).json(users);
+    } catch (error) {
+        exceptionHandler(error, res);
+    }
+};
+                                                       
+
+
+
+export const updateUserByAdmin = async (req, res) => {
+    const { id } = req.params;
+    const { nome, email, telefone, cidade, estado } = req.body;
+
+    try {
+        const userExists = await prisma.Admin.findUnique({ where: { id } });
+        if (!userExists) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
         }
 
-        res.status(201).json(admin); // Retorna o administrador criado
+        const updatedUser = await prisma.Admin.update({
+            where: { id },
+            data: {
+                nome,
+                email,
+                telefone,
+                cidade,
+                estado,
+            },
+        });
+
+        res.status(200).json({ message: 'Usuário atualizado com sucesso', user: updatedUser });
     } catch (error) {
-        console.error('Erro ao criar novo administrador:', error);
-        res.status(500).json({ error: 'Erro ao criar novo administrador.' });
+        exceptionHandler(error, res);
     }
-}
-
-export async function getAllAdmins(req, res) {
-    try {
-        const admins = await getAdmins();
-        res.status(200).json(admins); // Retorna a lista de administradores
-    } catch (error) {
-        console.error('Erro ao buscar todos os administradores:', error);
-        res.status(500).json({ error: 'Erro ao buscar administradores.' });
-    }
-}
-
-export async function getAdmin(req, res) {
-    try {
-        const admin = await getAdminById(req.params.id);
-
-        if (!admin) {
-            return res.status(404).json({ error: 'Administrador não encontrado.' });
-        }
-
-        res.status(200).json(admin); // Retorna o administrador encontrado
-    } catch (error) {
-        console.error('Erro ao buscar administrador:', error);
-        res.status(500).json({ error: 'Erro ao buscar administrador.' });
-    }
-}
-
-export async function updateAdminById(req, res) {
-    try {
-        const admin = await updateAdmin(req.params.id, req.body);
-
-        if (!admin) {
-            return res.status(404).json({ error: 'Administrador não encontrado.' });
-        }
-
-        res.status(200).json(admin); // Retorna o administrador atualizado
-    } catch (error) {
-        console.error('Erro ao atualizar administrador:', error);
-        res.status(500).json({ error: 'Erro ao atualizar administrador.' });
-    }
-}
-
-export async function deleteAdmin(req, res) {
-    try {
-        await deleteAdminById(req.params.id);
-        res.sendStatus(204); // Retorna status 204 (Sem Conteúdo)
-    } catch (error) {
-        console.error('Erro ao deletar administrador:', error);
-        res.status(500).json({ error: 'Erro ao deletar administrador.' });
-    }
-}
+};
