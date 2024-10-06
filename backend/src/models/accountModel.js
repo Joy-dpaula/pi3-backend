@@ -8,12 +8,19 @@ const prisma = new PrismaClient();
 // Definir o fuso horário
 const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
+// Esquema de validação da senha usando Zod
+const passwordSchema = z.string()
+  .min(8, { message: "A senha deve ter um tamanho mínimo de 8 caracteres." })
+  .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}$/, {
+    message: "Senha deve ter pelo menos 8 caracteres (incluindo letras maiúsculas, minúsculas, números e caracteres especiais)"
+  });
+
 // Esquema de validação do usuário usando Zod
 const userSchema = z.object({
-    nome: z.string().min(1, { message: "Nome deve ser obrigatório!" }),
-    cpf: z.string().length(11, { message: "CPF deve ter 11 dígitos!" }),
-    email: z.string().email({ message: "Email inválido!" }).max(200),
-    senha: z.string().min(8, { message: "A senha deve ter no mínimo 8 caracteres!" }),
+    nome: z.string().min(1, { message: "Nome deve ser obrigatório" }),
+    cpf: z.string().length(11, { message: "CPF deve conter 11 dígitos" }),
+    email: z.string().email({ message: "Email em formato inválido" }).max(200),
+    senha: passwordSchema,
 });
 
 // Função para criar um novo usuário
@@ -25,10 +32,16 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
         throw new Error(`Erro de validação: ${error.message}`);
     }
 
-    // Verifica se o usuário já existe
-    const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
-    if (existingUsuario) {
-        return null; // Retorna null se o usuário já existir
+    // Verifica se o CPF ou email já estão em uso
+    const existingCpf = await prisma.usuario.findUnique({ where: { cpf } });
+    const existingEmail = await prisma.usuario.findUnique({ where: { email } });
+
+    if (existingCpf) {
+        throw new Error("Esse CPF já está em uso por outro usuário.");
+    }
+
+    if (existingEmail) {
+        throw new Error("Esse Email já está em uso por outro usuário.");
     }
 
     // Hash da senha
@@ -91,7 +104,6 @@ export const updateUsuario = async (id, data) => {
     }
 
     const userId = Number(id);
-    console.log("Received ID:", userId);
 
     if (isNaN(userId)) {
         throw new Error('ID inválido');
@@ -116,7 +128,7 @@ export const updateUsuario = async (id, data) => {
     }
 };
 
-// ** NOVA FUNÇÃO PARA BUSCAR UMA CONTA POR ID **
+// ** Função para buscar uma conta por ID **
 export const getAccountById = async (id) => {
     const account = await prisma.usuario.findUnique({
         where: { id: Number(id) },
@@ -124,7 +136,7 @@ export const getAccountById = async (id) => {
     return account; // Retorna a conta encontrada ou null
 };
 
-// ** NOVA FUNÇÃO PARA BUSCAR TODAS AS CONTAS ** 
+// ** Função para buscar todas as contas ** 
 export const getAccounts = async () => {
     try {
         const accounts = await prisma.usuario.findMany({
@@ -136,11 +148,4 @@ export const getAccounts = async () => {
                 telefone: true,
                 data_registro: true,
                 isAdmin: true
-            }
-        });
-        return accounts; // Retorna todas as contas
-    } catch (error) {
-        console.error('Erro ao buscar contas:', error);
-        throw new Error('Não foi possível buscar as contas');
-    }
-};
+           

@@ -83,7 +83,7 @@ export async function createAccount(req, res) {
         });
 
         if (!usuario) {
-            return res.status(409).json({ error: "Email já está em uso." });
+            return res.status(409).json({ error: "Email já está cadastrado no sistema!" });
         }
 
         usuario.data_registro = DateTime.fromJSDate(usuario.data_registro).setZone('America/Sao_Paulo').toString();
