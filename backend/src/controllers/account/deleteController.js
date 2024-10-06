@@ -1,10 +1,9 @@
-// controllers/accountController.js
 import { getUsuarioById, deleteUsuarioById } from '../../models/accountModel.js';
 import exceptionHandler from '../../utils/ajuda.js';
 
 export const deleteAccount = async (req, res) => {
     try {
-        const id = Number(req.params.id);
+        const id = (req.params.id);
         const token = req.accessToken;
 
         if (!token || !token.email) {

@@ -84,7 +84,7 @@ export async function getShoppingModel() {
 export async function getShoppingById(id) {
 
     const compra = await prisma.compra.findUniqueOrThrow({
-        where: { id: Number(id) },
+        where: { id: String(id) },
         include: {
             usuario: { select: { id: true } },
             veiculo: { select: {id: true} },
@@ -98,11 +98,11 @@ export async function getShoppingById(id) {
 
 export async function deleteShoppingModel(id) {
 
-    const compra = await prisma.compra.findUnique({ where: { id: parseInt(id) } });
+    const compra = await prisma.compra.findUnique({ where: { id: String(id) } });
 
     if(!compra) throw new Error('Compra não encontrada!');
 
-    await prisma.compra.delete({ where: { id: parseInt(id) } });
+    await prisma.compra.delete({ where: { id: String(id) } });
 
     return compra;
 }

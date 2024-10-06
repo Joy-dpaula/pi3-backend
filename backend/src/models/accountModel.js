@@ -14,7 +14,6 @@ const userSchema = z.object({
     senha: z.string().min(8, { message: "A senha deve ter no mínimo 8 caracteres!" }),
 })
 
-// console.log("Current time in GMT-3:", gmt3Date.toString());
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
     const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
@@ -63,14 +62,14 @@ export async function getUsuarios() {
 
 export async function getUsuarioById(id) {
     const account = await prisma.usuario.findUnique({
-        where: { id: Number(id) },
+        where: { id: String(id) },
     });
     return account;
 }
 
 export const deleteUsuarioById = async (id) => {
     return await prisma.usuario.delete({
-        where: { id: Number(id) },
+        where: { id: String(id) },
     });
 };
 
