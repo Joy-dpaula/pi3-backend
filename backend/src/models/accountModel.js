@@ -8,11 +8,17 @@ const prisma = new PrismaClient();
 const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
 // console.log("Current time in GMT-3:", gmt3Date.toString());
+const passwordSchema = z.string()
+  .min(8, { message: "A senha deve ter um tamanho mínimo de 8 caracteres." })
+  .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}$/, {
+    message: "Senha deve ter pelo menos 8 caracteres (incluindo letras maiúsculas, minúsculas, números e caracteres especiais)"
+  });
+
 const userSchema = z.object({
-    nome: z.string().min(1, { message: "Nome deve ser obrigatório!" }),
-    cpf: z.string().length(11, { message: "CPF deve ter 11 dígitos!" }),
-    email: z.string().email({ message: "Email inválido!" }).max(200),
-    senha: z.string().min(8, { message: "A senha deve ter no mínimo 8 caracteres!" }),
+    nome: z.string().min(1, { message: "Nome deve ser obrigatório" }),
+    cpf: z.string().length(11, { message: "CPF deve conter 11 dígitos" }),
+    email: z.string().email({ message: "Email em formato inválido" }).max(200),
+    senha: passwordSchema,
 })
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
@@ -20,14 +26,19 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
     const result = userSchema.safeParse({ nome, cpf, email, senha })
 
     if (!result.success) {
-        const errors = result.error.errors.map(err => err.message).join(",");
-        throw new Error(`Erros de validação: ${errors}`);
+        const errors = result.error.errors.map(err => err.message).join(", ");
+        throw new Error(errors);
     }
 
-    const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
+    const existingCpf = await prisma.usuario.findUnique({ where: { cpf } });
+    const existingEmail = await prisma.usuario.findUnique({ where: { email } });
 
-    if (existingUsuario) {
-        return null;
+    if (existingCpf){
+        throw new Error("Esse CPF já esta em uso por outro usuário.")
+    }
+
+    if (existingEmail) {
+        throw new Error("Esse Email já esta em uso por outro usuário.");
     }
 
     const hashedSenha = await bcrypt.hash(senha, 12);
