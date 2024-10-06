@@ -1,7 +1,5 @@
-// controllers/admin/adminController.js
-
-import Account from '../../models/accountModel.js'; // Ajuste o caminho conforme necessário
-import exceptionHandler from '../../utils/ajuda.js';
+import Account from '../../models/accountModel.js'; // Verifique se o caminho está correto
+import exceptionHandler from '../../utils/ajuda.js'; // Verifique o caminho correto para o seu manipulador de exceções
 
 // Cria um novo usuário admin
 export const createAdminUser = async (req, res) => {
@@ -14,12 +12,15 @@ export const createAdminUser = async (req, res) => {
             return res.status(400).json({ error: 'Usuário já existe' });
         }
 
-        // Cria um novo usuário
+        // Hash da senha (se o bcrypt estiver configurado)
+        const hashedSenha = await bcrypt.hash(senha, 12);
+
+        // Cria um novo usuário admin
         const newUser = await Account.create({
             data: {
                 nome,
                 email,
-                senha,
+                senha: hashedSenha, // Salvando a senha hash
                 isAdmin: true,
             },
         });

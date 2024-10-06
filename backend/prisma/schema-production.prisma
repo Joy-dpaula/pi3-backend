@@ -52,8 +52,8 @@ model payment {
   usuarioId     String
   paymentMethod String        @db.VarChar(20)
   status        String        @db.VarChar(20)
-  pixQRCodeURL  String?       @db.VarChar(255)
-  boletoURL     String?       @db.VarChar(255)
+  pixQRCodeURL  String?       @db.VarChar(255) 
+  boletoURL     String?       @db.VarChar(255) 
   amount        Int
   timestamp     DateTime      @default(now())
   compra        compra        @relation(fields: [compraId], references: [id])
@@ -89,11 +89,10 @@ model usuario {
 model sessions {
   id String @id @default(uuid())
   id_user   String
-  session   String   @db.VarChar(600) // Exemplo, pode estar com um limite baixo
+  session   String   @db.Text // Alterando para Text caso os dados da sessão sejam grandes
   usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
-
 model veiculo {
   id String @id @default(uuid())
 
@@ -123,9 +122,8 @@ model veiculo {
 
 model Admin {
   id String @id @default(uuid())
-
   nome    String
   email   String  @unique
   senha   String
-  isAdmin Boolean @default(false)
+  isAdmin Boolean @default(true) // Isso garante que todos os admins criados tenham 'isAdmin' como 'true'
 }
