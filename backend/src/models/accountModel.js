@@ -148,4 +148,11 @@ export const getAccounts = async () => {
                 telefone: true,
                 data_registro: true,
                 isAdmin: true
-           
+            }
+        });
+        return accounts; // Retorna todas as contas
+    } catch (error) {
+        console.error('Erro ao buscar contas:', error);
+        throw new Error('Não foi possível buscar as contas');
+    }
+};
