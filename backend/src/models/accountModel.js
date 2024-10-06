@@ -16,6 +16,7 @@ const userSchema = z.object({
     senha: z.string().min(8, { message: "A senha deve ter no mínimo 8 caracteres!" }),
 });
 
+// Função para criar um novo usuário
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
     // Valida os dados de entrada
     try {
@@ -71,7 +72,7 @@ export async function getUsuarios() {
 // Recupera um usuário pelo ID
 export async function getUsuarioById(id) {
     const account = await prisma.usuario.findUnique({
-        where: { id: Number(id) },
+        where: { id: String(id) },
     });
     return account; // Retorna o usuário encontrado ou null
 }
@@ -79,7 +80,7 @@ export async function getUsuarioById(id) {
 // Deleta um usuário pelo ID
 export const deleteAccountById = async (id) => {
     return await prisma.usuario.delete({
-        where: { id: Number(id) },
+        where: { id: String(id) },
     });
 };
 
