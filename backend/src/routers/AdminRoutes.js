@@ -1,9 +1,9 @@
 import express from 'express';
-import { createNewAdmin, getAllAdmins, getAdmin, updateAdminById, deleteAdmin } from '../controllers/admin/AdminController.js';
+import { createAdminUser, getAllAdmins, getAdmin, updateAdminById, deleteAdmin } from '../controllers/admin/adminController.js';
 
 const router = express.Router();
 
-router.post('/', createNewAdmin); 
+router.post('/', createAdminUser); // Ajustei para bater com a função exportada no controller
 router.get('/', getAllAdmins); 
 router.get('/:id', getAdmin); 
 router.put('/:id', updateAdminById); 
