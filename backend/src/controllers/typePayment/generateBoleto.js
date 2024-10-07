@@ -1,8 +1,7 @@
-// Importa o Prisma Client usando a sintaxe ES Modules
+
 import { PrismaClient } from '@prisma/client';
 const prismaClient = new PrismaClient();
 
-// Função para buscar os detalhes do pagamento a partir do ID
 async function buscarDetalhesPagamento(idPagamento) {
     try {
         const pagamento = await prismaClient.payment.findUnique({
@@ -15,17 +14,17 @@ async function buscarDetalhesPagamento(idPagamento) {
         if (!pagamento) {
             throw new Error('Pagamento não encontrado');
         }
-        return pagamento.amount; // Retorna o valor do pagamento
+        return pagamento.amount; 
     } catch (erro) {
         console.error('Erro ao buscar detalhes do pagamento:', erro);
         return null;
     }
 }
 
-// Função para gerar o código de barras e o código de "copiar e colar" do boleto
+
 function gerarCodigoBoleto(valor) {
     const codigoBarras = `34191.75803 01234.567890 12345.678904 1 234500000${valor}`;
-    const codigoCopiarColar = codigoBarras.replace(/[\s.]/g, ''); // Remove espaços e pontos para um código simplificado
+    const codigoCopiarColar = codigoBarras.replace(/[\s.]/g, ''); 
 
     return {
         codigoBarras,

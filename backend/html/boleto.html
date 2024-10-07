@@ -15,7 +15,7 @@
             margin-top: 10px;
         }
     </style>
-    <!-- Incluindo a biblioteca JsBarcode via CDN -->
+
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
@@ -32,10 +32,10 @@
     <p id="dataExpiracao"></p>
     <button id="botaoCopiar" style="display: none;" onclick="copiarCodigo()">Copiar Código</button>
 
-    <svg id="barcode"></svg> <!-- Elemento onde o código de barras será exibido -->
+    <svg id="barcode"></svg> 
 
     <script>
-        // Função para carregar os veículos do banco de dados e preencher a lista de seleção
+
         async function carregarVeiculos() {
             const veiculoSelect = document.getElementById('veiculo');
 
@@ -48,7 +48,6 @@
                     return;
                 }
 
-                // Limpa as opções atuais e preenche com os veículos do banco de dados
                 veiculoSelect.innerHTML = '<option value="">Selecione um veículo</option>';
                 veiculos.forEach(veiculo => {
                     const option = document.createElement('option');
@@ -62,7 +61,6 @@
             }
         }
 
-        // Chama a função para carregar os veículos assim que a página for carregada
         window.onload = carregarVeiculos;
 
         async function obterValorVeiculo() {
@@ -82,25 +80,23 @@
                 }
 
                 document.getElementById('valorVeiculo').innerText = `Valor do Veículo: R$ ${veiculo.valor}`;
-                gerarBoleto(veiculo.valor); // Chama a função para gerar o boleto com o valor do carro
+                gerarBoleto(veiculo.valor); 
             } catch (error) {
                 console.error('Erro ao buscar valor do veículo:', error);
             }
         }
 
         function gerarCodigoBoleto(valor) {
-            // Gera uma sequência aleatória para o código de barras
-            const parteFixa = '51000'; // Parte fixa para manter a consistência
-            const parteAleatoria = Math.floor(100000000 + Math.random() * 900000000).toString(); // Número aleatório de 9 dígitos
-            const codigoBarras = `${parteFixa}.${parteAleatoria.substr(0, 5)} ${parteAleatoria.substr(5)}`; // Formata o código de barras
-            const codigoCopiarColar = codigoBarras.replace(/[\s.]/g, ''); // Remove espaços e pontos para um código simplificado
 
-            // Calcula a data de expiração (5 dias a partir da data atual)
+            const parteFixa = '51000';
+            const parteAleatoria = Math.floor(100000000 + Math.random() * 900000000).toString(); 
+            const codigoBarras = `${parteFixa}.${parteAleatoria.substr(0, 5)} ${parteAleatoria.substr(5)}`; 
+            const codigoCopiarColar = codigoBarras.replace(/[\s.]/g, ''); 
+
             const dataAtual = new Date();
             const dataExpiracao = new Date(dataAtual);
-            dataExpiracao.setDate(dataAtual.getDate() + 5); // Adiciona 5 dias
+            dataExpiracao.setDate(dataAtual.getDate() + 5); 
 
-            // Formata a data de expiração em um formato legível
             const dataExpiracaoFormatada = dataExpiracao.toLocaleDateString('pt-BR', {
                 year: 'numeric',
                 month: 'long',
@@ -121,10 +117,8 @@
             document.getElementById('codigoCopiarColar').innerText = `Código Copiar e Colar: ${boleto.codigoCopiarColar}`;
             document.getElementById('dataExpiracao').innerText = `Data de Expiração: ${boleto.dataExpiracaoFormatada}`;
 
-            // Mostrar o botão de copiar
             document.getElementById('botaoCopiar').style.display = 'inline-block';
 
-            // Gerar o código de barras visual usando JsBarcode
             JsBarcode("#barcode", boleto.codigoCopiarColar, {
                 format: "CODE128",
                 lineColor: "#000",
