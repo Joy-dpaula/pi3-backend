@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de PIX com QR Code</title>
+    <style>
+        .qrcode-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .copy-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .copy-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+    <h1>Gerador de PIX com QR Code</h1>
+
+    <label for="veiculo">Escolha um Veículo:</label>
+    <select id="veiculo" onchange="gerarPix()">
+        <option value="">Selecione um veículo</option>
+        <option value="1" data-marca="Ford" data-modelo="Ka" data-valor="45000">Ford Ka - R$ 45.000</option>
+        <option value="2" data-marca="Chevrolet" data-modelo="Onix" data-valor="60000">Chevrolet Onix - R$ 60.000</option>
+        <option value="3" data-marca="Volkswagen" data-modelo="Golf" data-valor="80000">Volkswagen Golf - R$ 80.000</option>
+    </select>
+
+    <div class="qrcode-container" id="qrcode-container" style="display: none;">
+        <h2>QR Code para Pagamento PIX</h2>
+        <canvas id="qrcode" style="border:1px solid black;"></canvas>
+        <p id="pixData"></p>
+        <button class="copy-button" onclick="copiarCodigo()">Copiar Código PIX</button>
+    </div>
+
+    <script>
+        function gerarPix() {
+            const veiculoSelect = document.getElementById('veiculo');
+            const selectedOption = veiculoSelect.options[veiculoSelect.selectedIndex];
+
+            if (!selectedOption.value) {
+                alert('Por favor, selecione um veículo.');
+                return;
+            }
+
+            const marca = selectedOption.getAttribute('data-marca');
+            const modelo = selectedOption.getAttribute('data-modelo');
+            const valor = selectedOption.getAttribute('data-valor');
+            const timestamp = new Date().getTime(); 
+
+            const pixData = `00020126680014BR.GOV.BCB.PIX0136fakepix@domain.com5204000053039865405${valor}5802BR5913${marca} ${modelo}6014Sao Paulo62070503***${timestamp}`;
+
+            QRCode.toCanvas(document.getElementById('qrcode'), pixData, {
+                width: 200,
+                margin: 2,
+                color: {
+                    dark: "#000000", 
+                    light: "#FFFFFF" 
+                }
+            }, function (error) {
+                if (error) {
+                    console.error('Erro ao gerar QR Code:', error);
+                    alert('Erro ao gerar o QR Code do PIX.');
+                    return;
+                }
+
+                document.getElementById('pixData').innerText = `Dados do PIX: ${pixData}`;
+                document.getElementById('qrcode-container').style.display = 'block';
+            });
+        }
+
+        function copiarCodigo() {
+            const pixData = document.getElementById('pixData').innerText.replace('Dados do PIX: ', '');
+            navigator.clipboard.writeText(pixData).then(() => {
+                alert('Código PIX copiado para a área de transferência!');
+            }).catch(err => {
+                console.error('Erro ao copiar o código PIX: ', err);
+                alert('Erro ao copiar o código PIX.');
+            });
+        }
+    </script>
+</body>
+</html>
