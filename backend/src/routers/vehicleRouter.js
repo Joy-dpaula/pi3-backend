@@ -6,6 +6,7 @@ import getVeiculos from '../controllers/vehicle/getVeiculo.js';
 import { storage } from '../multerConfig.js';
 import handleCreateVeiculo from '../controllers/vehicle/createVeiculo.js';
 import { PrismaClient } from '@prisma/client';
+import { simulateFinancing } from '../controllers/vehicle/financeSimulator.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -25,5 +26,6 @@ router.get('/', getVeiculos);
 router.get('/:id', getById);
 router.put('/:id', updateVeiculo);
 router.delete('/:id', deleteVeiculo);
+router.post('/financiamento', simulateFinancing);
 
 export default router;
