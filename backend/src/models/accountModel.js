@@ -2,16 +2,20 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcryptjs';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
+import moment  from 'moment'
+moment.locale('pt-br')
 
 const prisma = new PrismaClient();
 
 const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
+console.log("Current time in GMT-3:", gmt3Date.toString());
+
 const passwordSchema = z.string()
-  .min(8, { message: "A senha deve ter um tamanho mínimo de 8 caracteres." })
-  .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}$/, {
-    message: "Senha deve ter pelo menos 8 caracteres (incluindo letras maiúsculas, minúsculas, números e caracteres especiais)"
-  });
+    .min(8, { message: "A senha deve ter um tamanho mínimo de 8 caracteres." })
+    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}$/, {
+        message: "Senha deve ter pelo menos 8 caracteres (incluindo letras maiúsculas, minúsculas, números e caracteres especiais)"
+    });
 
 const userSchema = z.object({
     nome: z.string().min(1, { message: "Nome deve ser obrigatório" }),
@@ -22,13 +26,20 @@ const userSchema = z.object({
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
 
-    try {
-        userSchema.parse({ nome, cpf, email, senha });
-    } catch (error) {
-        throw new Error(`Erro de validação: ${error.message}`);
+    const result = userSchema.safeParse({ nome, cpf, email, senha })
+
+    if (!result.success) {
+        const errors = result.error.errors.map(err => err.message).join(", ");
+        throw new Error(errors);
     }
-    const existingCpf = await prisma.usuario.findUnique({ where: { cpf } });
-    const existingEmail = await prisma.usuario.findUnique({ where: { email } });
+
+    const existingCpf = await prisma.usuario.findUnique({
+        where: { cpf }
+    });
+
+    const existingEmail = await prisma.usuario.findUnique({
+        where: { email }
+    });
 
     if (existingCpf) {
         throw new Error("Esse CPF já está em uso por outro usuário.");
@@ -62,19 +73,19 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
         }
     });
 
-    return usuario; 
+    return usuario;
 }
 
 export async function getUsuarios() {
     const usuarios = await prisma.usuario.findMany();
-    return usuarios; 
+    return usuarios;
 }
 
 export async function getUsuarioById(id) {
     const account = await prisma.usuario.findUnique({
         where: { id: String(id) },
     });
-    return account; 
+    return account;
 }
 
 export const deleteAccountById = async (id) => {
@@ -106,7 +117,7 @@ export const updateUsuario = async (id, data) => {
             },
         });
 
-        return updatedUsuario; 
+        return updatedUsuario;
     } catch (error) {
         console.error('Update failed:', error);
         throw new Error('Failed to update user');
