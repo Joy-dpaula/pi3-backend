@@ -1,0 +1,11 @@
+PUT http://localhost:5000/admin/user/{id}
+
+
+{
+  "nome": "Novo Nome",
+  "email": "novoemail@example.com",
+  "telefone": "123456789",
+  "cidade": "Nova Cidade",
+  "estado": "Novo Estado",
+  "foto_perfil": "nova_foto_url"
+}
