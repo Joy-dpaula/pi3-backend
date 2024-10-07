@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Boletos com Veículo Selecionado</title>
+    <style>
+        .codigo-binario {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+            display: inline-block;
+            margin-top: 10px;
+        }
+    </style>
+    <!-- Incluindo a biblioteca JsBarcode via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+    <h1>Gerador de Boletos com Veículo Selecionado</h1>
+
+    <label for="veiculo">Escolha um Veículo:</label>
+    <select id="veiculo" onchange="obterValorVeiculo()">
+        <option value="">Carregando veículos...</option>
+    </select>
+
+    <h2>Informações do Boleto</h2>
+    <p id="valorVeiculo"></p>
+    <p id="codigoCopiarColar"></p>
+    <p id="dataExpiracao"></p>
+    <button id="botaoCopiar" style="display: none;" onclick="copiarCodigo()">Copiar Código</button>
+
+    <svg id="barcode"></svg> <!-- Elemento onde o código de barras será exibido -->
+
+    <script>
+        // Função para carregar os veículos do banco de dados e preencher a lista de seleção
+        async function carregarVeiculos() {
+            const veiculoSelect = document.getElementById('veiculo');
+
+            try {
+                const response = await fetch('http://localhost:5000/api/veiculos');
+                const veiculos = await response.json();
+
+                if (veiculos.error) {
+                    alert('Erro ao carregar veículos: ' + veiculos.error);
+                    return;
+                }
+
+                // Limpa as opções atuais e preenche com os veículos do banco de dados
+                veiculoSelect.innerHTML = '<option value="">Selecione um veículo</option>';
+                veiculos.forEach(veiculo => {
+                    const option = document.createElement('option');
+                    option.value = veiculo.id;
+                    option.textContent = `${veiculo.marca} ${veiculo.modelo} - R$ ${veiculo.valor}`;
+                    veiculoSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar veículos:', error);
+                veiculoSelect.innerHTML = '<option value="">Erro ao carregar veículos</option>';
+            }
+        }
+
+        // Chama a função para carregar os veículos assim que a página for carregada
+        window.onload = carregarVeiculos;
+
+        async function obterValorVeiculo() {
+            const veiculoId = document.getElementById('veiculo').value;
+            if (!veiculoId) {
+                alert('Por favor, selecione um veículo.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/veiculo/${veiculoId}`);
+                const veiculo = await response.json();
+
+                if (veiculo.error) {
+                    alert('Erro: ' + veiculo.error);
+                    return;
+                }
+
+                document.getElementById('valorVeiculo').innerText = `Valor do Veículo: R$ ${veiculo.valor}`;
+                gerarBoleto(veiculo.valor); // Chama a função para gerar o boleto com o valor do carro
+            } catch (error) {
+                console.error('Erro ao buscar valor do veículo:', error);
+            }
+        }
+
+        function gerarCodigoBoleto(valor) {
+            // Gera uma sequência aleatória para o código de barras
+            const parteFixa = '51000'; // Parte fixa para manter a consistência
+            const parteAleatoria = Math.floor(100000000 + Math.random() * 900000000).toString(); // Número aleatório de 9 dígitos
+            const codigoBarras = `${parteFixa}.${parteAleatoria.substr(0, 5)} ${parteAleatoria.substr(5)}`; // Formata o código de barras
+            const codigoCopiarColar = codigoBarras.replace(/[\s.]/g, ''); // Remove espaços e pontos para um código simplificado
+
+            // Calcula a data de expiração (5 dias a partir da data atual)
+            const dataAtual = new Date();
+            const dataExpiracao = new Date(dataAtual);
+            dataExpiracao.setDate(dataAtual.getDate() + 5); // Adiciona 5 dias
+
+            // Formata a data de expiração em um formato legível
+            const dataExpiracaoFormatada = dataExpiracao.toLocaleDateString('pt-BR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            return {
+                codigoBarras,
+                codigoCopiarColar,
+                dataExpiracaoFormatada
+            };
+        }
+
+        function gerarBoleto(valor) {
+            const boleto = gerarCodigoBoleto(valor);
+            document.getElementById('codigoCopiarColar').innerText = `Código Copiar e Colar: ${boleto.codigoCopiarColar}`;
+            document.getElementById('dataExpiracao').innerText = `Data de Expiração: ${boleto.dataExpiracaoFormatada}`;
+
+            // Mostrar o botão de copiar
+            document.getElementById('botaoCopiar').style.display = 'inline-block';
+
+            // Gerar o código de barras visual usando JsBarcode
+            JsBarcode("#barcode", boleto.codigoCopiarColar, {
+                format: "CODE128",
+                lineColor: "#000",
+                width: 2,
+                height: 60,
+                displayValue: true
+            });
+        }
+
+        function copiarCodigo() {
+            const codigoCopiarColar = document.getElementById('codigoCopiarColar').innerText.split(': ')[1];
+            navigator.clipboard.writeText(codigoCopiarColar).then(() => {
+                alert('Código copiado para a área de transferência!');
+            }).catch(err => {
+                console.error('Erro ao copiar o código: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
