@@ -2,8 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcryptjs';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
-import moment  from 'moment'
-moment.locale('pt-br')
 
 const prisma = new PrismaClient();
 
@@ -48,8 +46,15 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
     if (existingEmail) {
         throw new Error("Esse Email já está em uso por outro usuário.");
     }
+
     const hashedSenha = await bcrypt.hash(senha, 12);
     const dataRegistroUTC = DateTime.now().setZone('America/Sao_Paulo').toUTC().toJSDate();
+
+    let nascimentoFormatado = null;
+    if (nascimento) {
+        const [day, month, year ] = nascimento.split('/');
+        nascimentoFormatado = new Date(year, month - 1, day);
+    }
 
     const usuario = await prisma.usuario.create({
         data: {
@@ -58,7 +63,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
             senha: hashedSenha,
             cpf: cpf.toString(),
             telefone: telefone.toString(),
-            nascimento: nascimento ? new Date(nascimento) : null,
+            nascimento: nascimentoFormatado,
             isAdmin: isAdmin || false,
             cidade,
             estado,
@@ -140,6 +145,7 @@ export const getAccounts = async () => {
                 email: true,
                 cpf: true,
                 telefone: true,
+                nascimento: true,
                 data_registro: true,
                 isAdmin: true
             }
