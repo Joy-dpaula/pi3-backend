@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 
 /**
- * Simula a geração de um boleto com código de barras
- * @param {Object} req - Requisição HTTP
- * @param {Object} res - Resposta HTTP
+ 
+ * @param {Object} req 
+ * @param {Object} res 
  */
 export async function generateBoleto(req, res) {
     try {
@@ -46,7 +46,7 @@ function generateFakeBarcode() {
 }
 
 /**
- * Gera uma imagem do código de barras em formato base64.
+ * 
  * @param {string} barcode 
  * @returns {Promise<string>}
  */
