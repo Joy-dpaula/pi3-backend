@@ -15,6 +15,15 @@ const userSchema = z.object({
 })
 
 
+const validateIsAdmin = (value) => {
+    const validValues = [true, false];
+    if (!validValues.includes(value)) {
+      throw new Error('Valor invalido para o campo is_admin');
+    }
+    return value;
+  };
+
+
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
     const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
 
@@ -25,6 +34,12 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
     const hashedSenha = await bcrypt.hash(senha, 12);
 
     const dataRegistroUTC = gmt3Date.toUTC().toJSDate();
+
+
+    
+    if ('is_admin' in data) {
+        data.is_admin = validateIsAdmin(data.is_admin);
+      }
 
     const usuario = await prisma.usuario.create({
         data: {
