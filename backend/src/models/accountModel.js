@@ -50,12 +50,6 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
     const hashedSenha = await bcrypt.hash(senha, 12);
     const dataRegistroUTC = DateTime.now().setZone('America/Sao_Paulo').toUTC().toJSDate();
 
-    let nascimentoFormatado = null;
-    if (nascimento) {
-        const [day, month, year ] = nascimento.split('/');
-        nascimentoFormatado = new Date(year, month - 1, day);
-    }
-
     const usuario = await prisma.usuario.create({
         data: {
             nome,
@@ -63,7 +57,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
             senha: hashedSenha,
             cpf: cpf.toString(),
             telefone: telefone.toString(),
-            nascimento: nascimentoFormatado,
+            nascimento:  nascimento ? new Date(nascimento) : null,
             isAdmin: isAdmin || false,
             cidade,
             estado,
