@@ -1,0 +1,20 @@
+PUT http://localhost:5000/admin/user/{id}
+
+
+{
+  "nome": "Novo Nome",
+  "email": "novoemail@example.com",
+  "telefone": "123456789",
+  "cidade": "Nova Cidade",
+  "estado": "Novo Estado",
+  "foto_perfil": "nova_foto_url"
+}
+
+
+http://localhost:5000/veiculos/financiamento
+
+{
+  "veiculoId": "id-do-veiculo",
+  "parcelas": 24,
+  "taxaJuros": 2.5
+}

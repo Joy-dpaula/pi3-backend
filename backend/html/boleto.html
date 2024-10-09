@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Boletos com Veículo Selecionado</title>
+    <style>
+        .codigo-binario {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+            display: inline-block;
+            margin-top: 10px;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+    <h1>Gerador de Boletos com Veículo Selecionado</h1>
+
+    <label for="veiculo">Escolha um Veículo:</label>
+    <select id="veiculo" onchange="obterValorVeiculo()">
+        <option value="">Carregando veículos...</option>
+    </select>
+
+    <h2>Informações do Boleto</h2>
+    <p id="valorVeiculo"></p>
+    <p id="codigoCopiarColar"></p>
+    <p id="dataExpiracao"></p>
+    <button id="botaoCopiar" style="display: none;" onclick="copiarCodigo()">Copiar Código</button>
+
+    <svg id="barcode"></svg> 
+
+    <script>
+
+        async function carregarVeiculos() {
+            const veiculoSelect = document.getElementById('veiculo');
+
+            try {
+                const response = await fetch('http://localhost:5000/api/veiculos');
+                const veiculos = await response.json();
+
+                if (veiculos.error) {
+                    alert('Erro ao carregar veículos: ' + veiculos.error);
+                    return;
+                }
+
+                veiculoSelect.innerHTML = '<option value="">Selecione um veículo</option>';
+                veiculos.forEach(veiculo => {
+                    const option = document.createElement('option');
+                    option.value = veiculo.id;
+                    option.textContent = `${veiculo.marca} ${veiculo.modelo} - R$ ${veiculo.valor}`;
+                    veiculoSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar veículos:', error);
+                veiculoSelect.innerHTML = '<option value="">Erro ao carregar veículos</option>';
+            }
+        }
+
+        window.onload = carregarVeiculos;
+
+        async function obterValorVeiculo() {
+            const veiculoId = document.getElementById('veiculo').value;
+            if (!veiculoId) {
+                alert('Por favor, selecione um veículo.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/veiculo/${veiculoId}`);
+                const veiculo = await response.json();
+
+                if (veiculo.error) {
+                    alert('Erro: ' + veiculo.error);
+                    return;
+                }
+
+                document.getElementById('valorVeiculo').innerText = `Valor do Veículo: R$ ${veiculo.valor}`;
+                gerarBoleto(veiculo.valor); 
+            } catch (error) {
+                console.error('Erro ao buscar valor do veículo:', error);
+            }
+        }
+
+        function gerarCodigoBoleto(valor) {
+
+            const parteFixa = '51000';
+            const parteAleatoria = Math.floor(100000000 + Math.random() * 900000000).toString(); 
+            const codigoBarras = `${parteFixa}.${parteAleatoria.substr(0, 5)} ${parteAleatoria.substr(5)}`; 
+            const codigoCopiarColar = codigoBarras.replace(/[\s.]/g, ''); 
+
+            const dataAtual = new Date();
+            const dataExpiracao = new Date(dataAtual);
+            dataExpiracao.setDate(dataAtual.getDate() + 5); 
+
+            const dataExpiracaoFormatada = dataExpiracao.toLocaleDateString('pt-BR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            return {
+                codigoBarras,
+                codigoCopiarColar,
+                dataExpiracaoFormatada
+            };
+        }
+
+        function gerarBoleto(valor) {
+            const boleto = gerarCodigoBoleto(valor);
+            document.getElementById('codigoCopiarColar').innerText = `Código Copiar e Colar: ${boleto.codigoCopiarColar}`;
+            document.getElementById('dataExpiracao').innerText = `Data de Expiração: ${boleto.dataExpiracaoFormatada}`;
+
+            document.getElementById('botaoCopiar').style.display = 'inline-block';
+
+            JsBarcode("#barcode", boleto.codigoCopiarColar, {
+                format: "CODE128",
+                lineColor: "#000",
+                width: 2,
+                height: 60,
+                displayValue: true
+            });
+        }
+
+        function copiarCodigo() {
+            const codigoCopiarColar = document.getElementById('codigoCopiarColar').innerText.split(': ')[1];
+            navigator.clipboard.writeText(codigoCopiarColar).then(() => {
+                alert('Código copiado para a área de transferência!');
+            }).catch(err => {
+                console.error('Erro ao copiar o código: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
