@@ -26,12 +26,23 @@ const updateController = async (req, res, next) => {
         const usuario = req.body;
         usuario.id = String(id);
 
-     
+        if (req.accessToken.is_admin) {
+            // O admin pode atualizar qualquer usuário
+            console.log("Admin está atualizando o usuário:", usuario.id);
+        } else {
+            // O usuário deve ter permissão para atualizar sua própria conta
+            if (String(id) !== String(req.accessToken.id)) {
+                return res.status(403).json({ error: "Você não tem permissão para atualizar este usuário." });
+            }
+            console.log("Usuário comum atualizando sua própria conta:", usuario.id);
+        }
 
+        // Processa a atualização do usuário
         if (typeof usuario.isAdmin === 'string') {
             usuario.isAdmin = usuario.isAdmin.toLowerCase() === 'true';
         }
 
+      
         if (req.file) {
             usuario.foto_perfil = req.file.filename;
         }

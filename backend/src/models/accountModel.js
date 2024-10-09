@@ -22,13 +22,18 @@ const userSchema = z.object({
     senha: passwordSchema,
 });
 
-const validateIsAdmin = (value) => {
-    const validValues = [true, false];
-    if (!validValues.includes(value)) {
-      throw new Error('Valor invalido para o campo is_admin');
+const isAdminSchema = z.boolean().refine(value => value === true || value === false, {
+    message: 'Valor inválido para o campo is_admin',
+  });
+  
+  const validateIsAdmin = (value) => {
+    const result = isAdminSchema.safeParse(value);
+    if (!result.success) {
+      return { error: result.error.errors }; 
     }
-    return value;
+    return { value: result.data }; 
   };
+
 
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
@@ -61,9 +66,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
 
 
     
-    if ('is_admin' in data) {
-        data.is_admin = validateIsAdmin(data.is_admin);
-      }
+
 
     const usuario = await prisma.usuario.create({
         data: {
@@ -87,6 +90,17 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
         }
     });
 
+
+    if ('is_admin' in data) {
+        const validationResult = validateIsAdmin(data.is_admin);
+        
+        if (validationResult.error) {
+          console.error(validationResult.error); 
+        } else {
+          data.is_admin = validationResult.value; 
+        }
+      }
+
     return usuario;
 }
 
@@ -108,20 +122,19 @@ export const deleteAccountById = async (id) => {
     });
 };
 
-export const updateUsuario = async (id, data) => {
+export const updateUsuario = async (id, data, userId, isAdmin) => {
     if (!id) {
         throw new Error('ID não fornecido');
     }
 
-    const userId = Number(id);
-
-    if (isNaN(userId)) {
-        throw new Error('ID inválido');
+    if (!token.is_admin && String(id) !== String(token.id)) {
+        return res.status(403).json({ error: "Você não tem permissão para atualizar este usuário." });
     }
+    
 
     try {
         const updatedUsuario = await prisma.usuario.update({
-            where: { id: userId },
+            where: { id },
             data,
             select: {
                 id: true,
