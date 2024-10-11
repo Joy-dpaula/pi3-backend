@@ -127,10 +127,6 @@ export const updateUsuario = async (id, data, userId, isAdmin) => {
         throw new Error('ID não fornecido');
     }
 
-    if (!token.is_admin && String(id) !== String(token.id)) {
-        return res.status(403).json({ error: "Você não tem permissão para atualizar este usuário." });
-    }
-    
 
     try {
         const updatedUsuario = await prisma.usuario.update({
