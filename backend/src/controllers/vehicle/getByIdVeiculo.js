@@ -10,7 +10,7 @@ const getById = async (req, res, next) => {
             });
         }
 
-        const veiculo = await getByIdVeiculo(+id); 
+        const veiculo = await getByIdVeiculo(id); 
         if (!veiculo) {
             return res.status(404).json({
                 error: `Veículo com o id ${id} não encontrado!`

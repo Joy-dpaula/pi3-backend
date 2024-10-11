@@ -4,7 +4,7 @@ const remove = async (req, res, next) => {
     const { id } = req.params;
 
     try {
-        const veiculo = await deleteVeiculo(+id);
+        const veiculo = await deleteVeiculo(id);
 
         return res.json({
             success: "Veículo removido com sucesso!",
