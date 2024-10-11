@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 import bcrypt from 'bcryptjs';
 import exceptionHandler from '../../utils/ajuda.js';
 
-r
+
 export const createAdminUser = async (req, res) => {
     const { nome, email, senha } = req.body;
 

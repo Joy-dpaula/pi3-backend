@@ -4,7 +4,6 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
-import multer from 'multer';
 import 'dotenv/config'; 
 
 import accountRouter from './routers/accountRouter.js';
@@ -23,7 +22,6 @@ import 'dotenv/config';
 
 
 import { ENVIRONMENT, PORT, HOST } from './config.js';
-import exceptionHandler from './utils/ajuda.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -59,7 +57,6 @@ app.use('/payment', paymentRoutes);
 
 app.use('/credit' , creditCard) 
 app.use('/admin', admin);
-app.use('/user' , user)
 
 app.use('/compra', create)
 
