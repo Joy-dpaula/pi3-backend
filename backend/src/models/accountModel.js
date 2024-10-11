@@ -98,15 +98,11 @@ export const updateUsuario = async (id, data) => {
         throw new Error('ID não fornecido');
     }
 
-    const userId = Number(id);
-
-    if (isNaN(userId)) {
-        throw new Error('ID inválido');
-    }
+   
 
     try {
         const updatedUsuario = await prisma.usuario.update({
-            where: { id: userId },
+            where: { id: id },
             data,
             select: {
                 id: true,
@@ -125,7 +121,7 @@ export const updateUsuario = async (id, data) => {
 
 export const getAccountById = async (id) => {
     const account = await prisma.usuario.findUnique({
-        where: { id: Number(id) },
+        where: { id: id },
     });
     return account;
 };
