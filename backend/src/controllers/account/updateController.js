@@ -21,7 +21,11 @@ const uploadImage = upload.single('foto_perfil');
 
 const updateController = async (req, res, next) => {
     const { id } = req.params;
+    const userToken = req.user; 
 
+    if (!userToken) {
+        return res.status(403).json({ error: "Usuário não autenticado." });
+    }
    
    
     try {
@@ -41,7 +45,7 @@ const updateController = async (req, res, next) => {
             usuario.nascimento = new Date(usuario.nascimento);
         }
 
-        const result = await updateUsuario(usuario.id, usuario); 
+        const result = await updateUsuario(usuario.id, usuario, userToken, userToken.isAdmin);
 
         if (!result) {
             console.error("Update failed for user ID:", usuario.id);
@@ -51,7 +55,11 @@ const updateController = async (req, res, next) => {
         return res.json({
             success: "Conta atualizada com sucesso!",
             usuario: result
-        });} catch (error) {
+
+
+        });
+    
+    } catch (error) {
         console.error("Error during user update:", error);
         if (error?.code === 'P2025') {
             return res.status(404).json({ error: `Conta com o id ${id} não encontrada!` });
