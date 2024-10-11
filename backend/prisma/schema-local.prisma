@@ -40,6 +40,7 @@ model compra {
 
 
 model message {
+
   id        String    @id @default(uuid())
   recipientId String
   content   String
@@ -49,43 +50,45 @@ model message {
   @@index([recipientId], map: "Message_recipientId_fkey")
 }
 
+
 model payment {
-  id            String         @id @default(uuid())
+  id String @id @default(uuid())
   usuarioId     String
-  paymentMethod String         @db.VarChar(20)
-  status        String         @db.VarChar(20)
-  pixQRCodeURL  String?        @db.VarChar(255)
-  boletoURL     String?        @db.VarChar(255)
+  paymentMethod String        @db.VarChar(20)
+  status        String        @db.VarChar(20)
+  pixQRCodeURL  String?       @db.VarChar(255) 
+  boletoURL     String?       @db.VarChar(255) 
   amount        Int
-  timestamp     DateTime       @default(now())
-  compra        compra         @relation(fields: [compraId], references: [id])
-  usuario       usuario        @relation(fields: [usuarioId], references: [id])
+  timestamp     DateTime      @default(now())
+  compra        compra        @relation(fields: [compraId], references: [id])
+  usuario       usuario       @relation(fields: [usuarioId], references: [id])
   compraId      String
-  creditCardId  String?
-  creditCard    cartaocredito? @relation(fields: [creditCardId], references: [id])
+  creditCardId  String
+  creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
 
 model usuario {
-  id            String     @id @default(uuid())
-  nome          String     @db.VarChar(50)
-  cpf           String     @unique(map: "Usuario_cpf_key") @db.VarChar(15)
-  telefone      String     @db.VarChar(15)
-  email         String     @unique(map: "Usuario_email_key") @db.VarChar(200)
-  nascimento    DateTime
-  senha         String     @db.VarChar(200)
-  cidade        String     @db.VarChar(30)
-  estado        String     @db.VarChar(30)
-  foto_perfil   String     @default("padrão")
-  data_registro DateTime   @default(now())
-  isAdmin       Boolean    @default(false)
-  cartaocredito cartaocredito[]
-  compra        compra[]
-  message_message_recipientIdTousuario message[] @relation("message_recipientIdTousuario")
-  payment       payment[]
-  veiculo       veiculo[]
-  sessions      sessions[]
+  id                                   String          @id @default(uuid())
+  nome                                 String          @db.VarChar(50)
+  cpf                                  String          @unique(map: "Usuario_cpf_key") @db.VarChar(15)
+  telefone                             String          @db.VarChar(15)
+  email                                String          @unique(map: "Usuario_email_key") @db.VarChar(200)
+  nascimento                           DateTime
+  senha                                String          @db.VarChar(200)
+  isAdmin                              Boolean         @default(false)
+  cidade                               String          @db.VarChar(30)
+  estado                               String          @db.VarChar(30)
+  foto_perfil                          String
+  data_registro                        DateTime        @default(now())
+  cartaocredito                        cartaocredito[]
+  compra                               compra[]
+  message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
+  payment                              payment[]
+  veiculo                              veiculo[]
+  atividades                           UserActivity[]  @relation("usuarioAtividade") // Adicionando relação com UserActivity
+
 }
 
 model sessions {
@@ -94,30 +97,34 @@ model sessions {
   session   String   @db.Text
   usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@index([id_user], map: "sessions_id_user_fkey")
 }
 
 model veiculo {
-  id           String   @id @default(uuid())
-  modelo       String   @db.VarChar(50)
+
+  id            String   @id @default(uuid())
+  modelo        String   @db.VarChar(50)
   anoFabricacao Int
-  cor          String   @db.VarChar(25)
-  descricao    String   @db.VarChar(500)
-  valor        Int
-  km           Int
-  marca        String   @db.VarChar(20)
-  foto         String?  @db.VarChar(2000)
-  usuarioId    String
-  cidade       String   @db.VarChar(30)
-  estado       String   @db.VarChar(30)
-  cep          String
-  complemento  String
-  logradouro   String
-  numero       String
-  cambio       String
-  carroceria   String
-  combustivel  String
-  compra       compra[]
-  usuario      usuario  @relation(fields: [usuarioId], references: [id])
+  cor           String   @db.VarChar(25)
+  descricao     String   @db.VarChar(500)
+  valor         Int
+  km            Int
+  marca         String   @db.VarChar(20)
+  foto          String   @db.VarChar(2000)
+  usuarioId     String
+  cidade        String   @db.VarChar(30)
+  estado        String   @db.VarChar(30)
+  cep           String
+  complemento   String
+  logradouro    String
+  numero        String
+  cambio        String
+  carroceria    String
+  combustivel   String
+  compra        compra[]
+  usuario       usuario  @relation(fields: [usuarioId], references: [id])
+
 
   @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
 }
@@ -127,5 +134,17 @@ model Admin {
   nome    String
   email   String   @unique
   senha   String
-  isAdmin Boolean  @default(true) 
+  isAdmin Boolean  @default(true)
 }
+
+
+model UserActivity {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  timestamp DateTime @default(now())
+  usuario   usuario  @relation("usuarioAtividade", fields: [userId], references: [id])
+
+  @@index([userId], map: "UserActivity_userId_idx")
+}
+

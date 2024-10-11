@@ -45,7 +45,9 @@ const updateController = async (req, res, next) => {
             usuario.nascimento = new Date(usuario.nascimento);
         }
 
+
         const result = await updateUsuario(usuario.id, usuario, userToken, userToken.isAdmin);
+
 
         if (!result) {
             console.error("Update failed for user ID:", usuario.id);

@@ -11,6 +11,7 @@ router.post('/', createAdminUser);
 router.delete('/:id' , deleteUser)
 router.get('/', getUsers) 
 
+
 router.put('/:id', updateUserByAdmin);
 
 export default router;

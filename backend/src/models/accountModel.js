@@ -9,19 +9,6 @@ const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
 console.log("Current time in GMT-3:", gmt3Date.toString());
 
-const passwordSchema = z.string()
-    .min(8, { message: "A senha deve ter um tamanho mínimo de 8 caracteres." })
-    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}$/, {
-        message: "Senha deve ter pelo menos 8 caracteres (incluindo letras maiúsculas, minúsculas, números e caracteres especiais)"
-    });
-
-const userSchema = z.object({
-    nome: z.string().min(1, { message: "Nome deve ser obrigatório" }),
-    cpf: z.string().length(11, { message: "CPF deve conter 11 dígitos" }),
-    email: z.string().email({ message: "Email em formato inválido" }).max(200),
-    senha: passwordSchema,
-});
-
 const isAdminSchema = z.boolean().refine(value => value === true || value === false, {
     message: 'Valor inválido para o campo is_admin',
   });
@@ -35,6 +22,19 @@ const isAdminSchema = z.boolean().refine(value => value === true || value === fa
   };
 
 
+
+const passwordSchema = z.string()
+    .min(8, { message: "A senha deve ter um tamanho mínimo de 8 caracteres." })
+    .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[\W_]).{8,}$/, {
+        message: "Senha deve ter pelo menos 8 caracteres (incluindo letras maiúsculas, minúsculas, números e caracteres especiais)"
+    });
+
+const userSchema = z.object({
+    nome: z.string().min(1, { message: "Nome deve ser obrigatório" }),
+    cpf: z.string().length(11, { message: "CPF deve conter 11 dígitos" }),
+    email: z.string().email({ message: "Email em formato inválido" }).max(200),
+    senha: passwordSchema,
+});
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
 
@@ -63,10 +63,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
 
     const hashedSenha = await bcrypt.hash(senha, 12);
     const dataRegistroUTC = DateTime.now().setZone('America/Sao_Paulo').toUTC().toJSDate();
-
-
-    
-
+aster
 
     const usuario = await prisma.usuario.create({
         data: {
@@ -122,6 +119,7 @@ export const deleteAccountById = async (id) => {
     });
 };
 
+
 export const updateUsuario = async (id, data, userId, isAdmin) => {
     if (!id) {
         throw new Error('ID não fornecido');
@@ -156,7 +154,9 @@ export const updateUsuario = async (id, data, userId, isAdmin) => {
 
 export const getAccountById = async (id) => {
     const account = await prisma.usuario.findUnique({
-        where: { id: Number(id) },
+
+        where: { id: id },
+
     });
     return account;
 };

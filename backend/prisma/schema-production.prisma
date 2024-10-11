@@ -86,6 +86,9 @@ model usuario {
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
+
+  atividades                           UserActivity[]  @relation("usuarioAtividade") // Adicionando relação com UserActivity
+
 }
 
 model sessions {
@@ -129,4 +132,15 @@ model Admin {
   email   String   @unique
   senha   String
   isAdmin Boolean  @default(true)
+}
+
+
+model UserActivity {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  timestamp DateTime @default(now())
+  usuario   usuario  @relation("usuarioAtividade", fields: [userId], references: [id])
+
+  @@index([userId], map: "UserActivity_userId_idx")
 }

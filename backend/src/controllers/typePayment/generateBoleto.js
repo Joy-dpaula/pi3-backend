@@ -1,69 +1,50 @@
-import { v4 as uuidv4 } from 'uuid';
 
-/**
- 
- * @param {Object} req 
- * @param {Object} res 
- */
-export async function generateBoleto(req, res) {
+import { PrismaClient } from '@prisma/client';
+const prismaClient = new PrismaClient();
+
+async function buscarDetalhesPagamento(idPagamento) {
+
     try {
-
-        const transactionId = uuidv4();
-
-        const boletoData = {
-            transactionId,
-            amount: req.body.amount || 5000, 
-            beneficiary: req.body.beneficiary || 'Beneficiário Exemplo',
-            dueDate: req.body.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], 
-            barcode: generateFakeBarcode(),
-        };
-
-        const barcodeImage = await generateBarcodeImage(boletoData.barcode);
-
-        console.log('Boleto Simulado:', boletoData);
-
-        return res.json({
-            boletoData,
-            barcodeImage, 
+        const pagamento = await prismaClient.payment.findUnique({
+            where: { id: idPagamento },
+            include: {
+                compra: true,
+            },
         });
 
-    } catch (error) {
-        console.error('Erro ao gerar o boleto simulado:', error);
-        return res.status(500).json({ error: 'Erro ao gerar o boleto simulado' });
+        if (!pagamento) {
+            throw new Error('Pagamento não encontrado');
+        }
+        return pagamento.amount; 
+    } catch (erro) {
+        console.error('Erro ao buscar detalhes do pagamento:', erro);
+        return null;
     }
 }
-/**
 
- * @returns {string}
- */
-function generateFakeBarcode() {
 
-    let barcode = '';
-    for (let i = 0; i < 47; i++) {
-        barcode += Math.floor(Math.random() * 10).toString();
+function gerarCodigoBoleto(valor) {
+    const codigoBarras = `34191.75803 01234.567890 12345.678904 1 234500000${valor}`;
+    const codigoCopiarColar = codigoBarras.replace(/[\s.]/g, ''); 
+
+    return {
+        codigoBarras,
+        codigoCopiarColar,
+    };
+}
+
+
+export async function generateBoleto(idPagamento) {
+    const valor = await buscarDetalhesPagamento(idPagamento);
+
+    if (!valor) {
+        console.log('Não foi possível obter o valor do pagamento.');
+        return;
     }
-    return barcode;
+
+    const boleto = gerarCodigoBoleto(valor);
+    console.log(`Valor do Item: R$ ${valor}`);
+    console.log(`Código de Barras do Boleto: ${boleto.codigoBarras}`);
+    console.log(`Código Copiar e Colar: ${boleto.codigoCopiarColar}`);
 }
 
-/**
- * 
- * @param {string} barcode 
- * @returns {Promise<string>}
- */
-function generateBarcodeImage(barcode) {
-    return new Promise((resolve, reject) => {
-        bwipjs.toBuffer({
-            bcid: 'code128',      
-            text: barcode,         
-            scale: 3,             
-            height: 10,            
-            includetext: true,    
-            textxalign: 'center',  
-        }, (err, png) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(`data:image/png;base64,${png.toString('base64')}`);
-        });
-    });
-}

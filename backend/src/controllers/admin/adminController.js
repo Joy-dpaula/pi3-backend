@@ -2,10 +2,9 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import bcrypt from 'bcryptjs';
+import exceptionHandler from '../../utils/ajuda.js';
 
-
-import exceptionHandler from '../../utils/ajuda.js'; // Verifique o caminho correto para o seu manipulador de exceções
-
+r
 export const createAdminUser = async (req, res) => {
     const { nome, email, senha } = req.body;
 
@@ -17,12 +16,13 @@ export const createAdminUser = async (req, res) => {
 
         const hashedSenha = await bcrypt.hash(senha, 12);
 
-        // Cria um novo usuário admin
+
         const newUser = await prisma.Admin.create({
             data: {
                 nome,
                 email,
                 senha: hashedSenha, // Salvando a senha hash
+
                 isAdmin: true,
             },
         });
@@ -33,11 +33,12 @@ export const createAdminUser = async (req, res) => {
     }
 };
 
-// Deletar um usuário
+
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
     try {
-        const user = await prisma.Admin.delete({ where: { id: Number(id) } });
+        const user = await prisma.usuario.delete({ where: { id } });
+
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
@@ -47,15 +48,17 @@ export const deleteUser = async (req, res) => {
     }
 };
 
-// Obter todos os usuários
+
 export const getUsers = async (req, res) => {
     try {
-        const users = await prisma.Admin.findMany();
+        const users = await prisma.usuario.findMany();
+
         res.status(200).json(users);
     } catch (error) {
         exceptionHandler(error, res);
     }
 };
+
                                                        
 
 
@@ -66,11 +69,13 @@ export const updateUserByAdmin = async (req, res) => {
 
     try {
         const userExists = await prisma.Admin.findUnique({ where: { id } });
+
         if (!userExists) {
             return res.status(404).json({ error: 'Usuário não encontrado' });
         }
 
-        const updatedUser = await prisma.Admin.update({
+        const updatedUser = await prisma.usuario.update({
+
             where: { id },
             data: {
                 nome,
