@@ -38,26 +38,23 @@ model compra {
   @@index([veiculoId], map: "Compra_veiculoId_fkey")
 }
 
-
 model message {
-
-  id        String    @id @default(uuid())
-  recipientId String
-  content   String
-  timestamp DateTime  @default(now())
+  id                                   String   @id @default(uuid())
+  recipientId                          String
+  content                              String
+  timestamp                            DateTime @default(now())
   usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id])
 
   @@index([recipientId], map: "Message_recipientId_fkey")
 }
 
-
 model payment {
-  id String @id @default(uuid())
+  id            String        @id @default(uuid())
   usuarioId     String
   paymentMethod String        @db.VarChar(20)
   status        String        @db.VarChar(20)
-  pixQRCodeURL  String?       @db.VarChar(255) 
-  boletoURL     String?       @db.VarChar(255) 
+  pixQRCodeURL  String?       @db.VarChar(255)
+  boletoURL     String?       @db.VarChar(255)
   amount        Int
   timestamp     DateTime      @default(now())
   compra        compra        @relation(fields: [compraId], references: [id])
@@ -89,20 +86,20 @@ model usuario {
   veiculo                              veiculo[]
   atividades                           UserActivity[]  @relation("usuarioAtividade") // Adicionando relação com UserActivity
 
+  sessions sessions[]
 }
 
 model sessions {
   id        String   @id @default(uuid())
   id_user   String
   session   String   @db.Text
-  usuario   usuario  @relation(fields: [id_user], references: [id], onDelete: Cascade)
+  usuario   usuario  @relation(fields: [id_user], references: [id])
   createdAt DateTime @default(now())
 
   @@index([id_user], map: "sessions_id_user_fkey")
 }
 
 model veiculo {
-
   id            String   @id @default(uuid())
   modelo        String   @db.VarChar(50)
   anoFabricacao Int
@@ -125,18 +122,16 @@ model veiculo {
   compra        compra[]
   usuario       usuario  @relation(fields: [usuarioId], references: [id])
 
-
   @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
 }
 
 model Admin {
-  id      String   @id @default(uuid())
+  id      String  @id @default(uuid())
   nome    String
-  email   String   @unique
+  email   String  @unique
   senha   String
-  isAdmin Boolean  @default(true)
+  isAdmin Boolean @default(true)
 }
-
 
 model UserActivity {
   id        String   @id @default(uuid())
@@ -147,4 +142,3 @@ model UserActivity {
 
   @@index([userId], map: "UserActivity_userId_idx")
 }
-
