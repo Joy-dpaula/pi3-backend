@@ -62,8 +62,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
     }
 
     const hashedSenha = await bcrypt.hash(senha, 12);
-    const dataRegistroUTC = DateTime.now().setZone('America/Sao_Paulo').toUTC().toJSDate();
-aster
+    const dataRegistroUTC = gmt3Date.toUTC().toJSDate();
 
     const usuario = await prisma.usuario.create({
         data: {
@@ -84,6 +83,10 @@ aster
             nome: true,
             email: true,
             isAdmin: true,
+            data_registro: true,
+            cidade: true,
+            estado: true,
+            foto_perfil: true
         }
     });
 
@@ -120,17 +123,20 @@ export const deleteAccountById = async (id) => {
 };
 
 
-export const updateUsuario = async (id, data, userId, isAdmin) => {
+export const updateUsuario = async (id, data, token) => {
     if (!id) {
         throw new Error('ID não fornecido');
-
-
     }
 
-      if (!token.is_admin && String(id) !== String(token.id)) {
-        return res.status(403).json({ error: "Você não tem permissão para atualizar este usuário." });
+  
+    if (!token || typeof token.isAdmin === 'undefined' || typeof token.id === 'undefined') {
+        throw new Error('Token inválido ou usuário não autenticado.');
     }
-    
+
+    const isAdmin = token.isAdmin;
+    if (!isAdmin && String(id) !== String(token.id)) {
+        throw new Error("Você não tem permissão para atualizar este usuário.");
+    }
 
 
     try {

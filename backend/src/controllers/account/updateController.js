@@ -23,8 +23,11 @@ const updateController = async (req, res, next) => {
     const { id } = req.params;
     const userToken = req.user; 
 
-    if (!userToken) {
-        return res.status(403).json({ error: "Usuário não autenticado." });
+    console.log("Informações do usuário autenticado:", userToken);
+
+    if (!userToken || !userToken.id) {
+        console.log("Usuário não autenticado ou token inválido.");
+        return res.status(403).json({ error: "Usuário não autenticado ou token inválido." });
     }
    
    
@@ -32,11 +35,11 @@ const updateController = async (req, res, next) => {
         const usuario = req.body;
         usuario.id = String(id);
 
-     
-
         if (typeof usuario.isAdmin === 'string') {
             usuario.isAdmin = usuario.isAdmin.toLowerCase() === 'true';
         }
+
+     
 
         if (req.file) {
             usuario.foto_perfil = req.file.filename;
@@ -45,9 +48,13 @@ const updateController = async (req, res, next) => {
             usuario.nascimento = new Date(usuario.nascimento);
         }
 
+        
+        if (!userToken.isAdmin && String(id) !== String(userToken.id)) {
+            console.log("Usuário não tem permissão para atualizar este perfil.");
+            return res.status(403).json({ error: "Você não tem permissão para atualizar este usuário." });
+        }
 
-        const result = await updateUsuario(usuario.id, usuario, userToken, userToken.isAdmin);
-
+        const result = await updateUsuario(usuario.id, usuario);
 
         if (!result) {
             console.error("Update failed for user ID:", usuario.id);

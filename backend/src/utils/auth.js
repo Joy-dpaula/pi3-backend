@@ -11,7 +11,8 @@ export function generateAccessToken(usuario, options = { expiresIn: '1800s' }) {
             nome: usuario.nome,
             email: usuario.email,
             cpf: usuario.cpf ? usuario.cpf.toString() : null,
-            telefone: usuario.telefone ? usuario.telefone.toString() : null
+            telefone: usuario.telefone ? usuario.telefone.toString() : null,
+            isAdmin: usuario.isAdmin || false 
         };
 
         if (!process.env.SECRET_KEY) {
