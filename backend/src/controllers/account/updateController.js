@@ -2,7 +2,6 @@
 import multer from 'multer';
 import path from 'path';
 import { updateUsuario } from "../../models/accountModel.js";
-import { Router } from 'express';
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
@@ -14,45 +13,50 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
-const router = Router();
+export const upload  = multer({ storage: storage });
 
-const uploadImage = upload.single('foto_perfil');
 
-const updateController = async (req, res, next) => {
+
+export const uploadImage = upload.single('foto_perfil');
+
+export const updateController = async (req, res, next) => {
     const { id } = req.params;
     const userToken = req.user; 
 
     console.log("Informações do usuário autenticado:", userToken);
 
+   
     if (!userToken || !userToken.id) {
         console.log("Usuário não autenticado ou token inválido.");
         return res.status(403).json({ error: "Usuário não autenticado ou token inválido." });
     }
-   
+
+
+    const isAdmin = userToken.isAdmin;
+    const userId = userToken.id;
+
+    console.log('isAdmin:', isAdmin); 
+    console.log('ID do usuário:', userId);  
+
+    if (!isAdmin && String(id) !== String(userId)) {
+        console.log("Você não tem permissão para atualizar este usuário.");
+        return res.status(403).json({ error: "Você não tem permissão para atualizar este usuário." });
+    }
    
     try {
         const usuario = req.body;
         usuario.id = String(id);
 
-        if (typeof usuario.isAdmin === 'string') {
-            usuario.isAdmin = usuario.isAdmin.toLowerCase() === 'true';
-        }
 
-     
-
+       
         if (req.file) {
             usuario.foto_perfil = req.file.filename;
         }
+
         if (usuario.nascimento) {
             usuario.nascimento = new Date(usuario.nascimento);
         }
 
-        
-        if (!userToken.isAdmin && String(id) !== String(userToken.id)) {
-            console.log("Usuário não tem permissão para atualizar este perfil.");
-            return res.status(403).json({ error: "Você não tem permissão para atualizar este usuário." });
-        }
 
         const result = await updateUsuario(usuario.id, usuario);
 
@@ -80,6 +84,4 @@ const updateController = async (req, res, next) => {
     }
 };
 
-router.put('/:id', uploadImage, updateController);
 
-export default router;

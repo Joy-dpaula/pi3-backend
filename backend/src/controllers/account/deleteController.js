@@ -3,9 +3,10 @@ import exceptionHandler from '../../utils/ajuda.js';
 
 export const deleteAccount = async (req, res) => {
     const { id } = req.params; 
-    const token = req.accessToken; 
+    const userToken = req.user; 
 
-    if (!token || !token.email) {
+
+    if (!userToken || !userToken.email) {
         return res.sendStatus(401);
     }
 

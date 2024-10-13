@@ -9,17 +9,7 @@ const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
 console.log("Current time in GMT-3:", gmt3Date.toString());
 
-const isAdminSchema = z.boolean().refine(value => value === true || value === false, {
-    message: 'Valor inválido para o campo is_admin',
-  });
-  
-  const validateIsAdmin = (value) => {
-    const result = isAdminSchema.safeParse(value);
-    if (!result.success) {
-      return { error: result.error.errors }; 
-    }
-    return { value: result.data }; 
-  };
+
 
 
 
@@ -72,7 +62,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
             cpf: cpf.toString(),
             telefone: telefone.toString(),
             nascimento:  nascimento ? new Date(nascimento) : null,
-            isAdmin: isAdmin || false,
+            isAdmin,
             cidade,
             estado,
             foto_perfil,
@@ -90,16 +80,6 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
         }
     });
 
-
-    if ('is_admin' in data) {
-        const validationResult = validateIsAdmin(data.is_admin);
-        
-        if (validationResult.error) {
-          console.error(validationResult.error); 
-        } else {
-          data.is_admin = validationResult.value; 
-        }
-      }
 
     return usuario;
 }
@@ -126,16 +106,6 @@ export const deleteAccountById = async (id) => {
 export const updateUsuario = async (id, data, token) => {
     if (!id) {
         throw new Error('ID não fornecido');
-    }
-
-  
-    if (!token || typeof token.isAdmin === 'undefined' || typeof token.id === 'undefined') {
-        throw new Error('Token inválido ou usuário não autenticado.');
-    }
-
-    const isAdmin = token.isAdmin;
-    if (!isAdmin && String(id) !== String(token.id)) {
-        throw new Error("Você não tem permissão para atualizar este usuário.");
     }
 
 
