@@ -22,6 +22,9 @@ const router = Router();
 router.post('/', upload.single('foto'), async (req, res) => {
     const { modelo, anoFabricacao, cor, descricao, valor, km, marca, usuarioId, cidade, estado, cep, complemento, logradouro, numero, cambio, carroceria, combustivel } = req.body;
 
+    
+
+
     if (!req.file) {
         return res.status(400).json({ message: 'A foto do veículo é obrigatória.' });
     }

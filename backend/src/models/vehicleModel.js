@@ -25,7 +25,8 @@ export const createVeiculo = async (veiculo) => {
 export const deleteVeiculo = async (id) => {
     const veiculo = await prisma.veiculo.delete({
         where: {
-            id: id
+            id: String(id),
+
         }
     })
     return veiculo

@@ -3,7 +3,6 @@ import deleteVeiculo from '../controllers/vehicle/deleteVeiculo.js';
 import getById from '../controllers/vehicle/getByIdVeiculo.js'; 
 import updateVeiculo from '../controllers/vehicle/updateVeiculo.js'; 
 import getVeiculos from '../controllers/vehicle/getVeiculo.js'; 
-import handleCreateVeiculo from '../controllers/vehicle/createVeiculo.js';
 import { PrismaClient } from '@prisma/client';
 import { simulateFinancing } from '../controllers/vehicle/financeSimulator.js';
 
@@ -20,7 +19,7 @@ router.get('/todos', async (req, res) => {
     }
 });
 
-router.post('/', handleCreateVeiculo);
+
 router.get('/', getVeiculos)
 
 router.get('/:id', getById);

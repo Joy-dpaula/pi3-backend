@@ -20,7 +20,6 @@ const upload = multer({storage: storage});
 import admin from './routers/AdminRouter.js'
 import 'dotenv/config'; 
 
-
 import { ENVIRONMENT, PORT, HOST } from './config.js';
 
 
@@ -34,7 +33,7 @@ app.use(express.json());
 
 const COOKIE_SECRET = process.env.COOKIE_SECRET || 'd4e9f6c2abf29a19d12c3c8b36d7a8e72b1c5f5e8e0b9d1c7f3f1f6e9a6b7c8d';
 
-app.use(cors({}));
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
