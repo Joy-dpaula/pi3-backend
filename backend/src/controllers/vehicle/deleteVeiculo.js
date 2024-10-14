@@ -1,9 +1,10 @@
 import { deleteVeiculo } from "../../models/vehicleModel.js";
 
 const remove = async (req, res, next) => {
-    const { id } = req.params;
+    
 
     try {
+        const { id } = req.params;
         const veiculo = await deleteVeiculo(id);
 
         return res.json({

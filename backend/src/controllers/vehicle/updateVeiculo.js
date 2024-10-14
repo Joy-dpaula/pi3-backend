@@ -21,6 +21,10 @@ const router = Router();
 
 router.put('/:id', upload.single('foto'), async (req, res) => {
     const { id } = req.params;
+
+
+
+    
     const {
         modelo,
         anoFabricacao,
