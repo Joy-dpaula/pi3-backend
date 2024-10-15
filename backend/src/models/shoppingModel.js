@@ -25,15 +25,15 @@ export async function newShopping({ usuarioId, veiculoId, method }) {
         throw new Error('Veículo não encontrado.');
     }
 
-    const existingShopping = await prisma.compra.findFirst({
-        where: {
-            veiculoId: veiculoId
-        }
-    });
+   // const existingShopping = await prisma.compra.findFirst({
+     //   where: {
+       //     veiculoId: veiculoId
+       // }
+   // });
 
-    if (existingShopping) {
-        throw new Error('Compra de veículo já efetuada!');
-    }
+  //  if (existingShopping) {
+    //    throw new Error('Compra de veículo já efetuada!');
+   // }
 
  
 

@@ -52,7 +52,7 @@ model payment {
   usuarioId     String
   paymentMethod String        @db.VarChar(20)
   status        String        @db.VarChar(20)
-  pixQRCodeURL  String?     
+  pixQRCodeURL  String?       @db.VarChar(1000)
   boletoURL     String?       @db.VarChar(255)
   amount        Int
   timestamp     DateTime      @default(now())

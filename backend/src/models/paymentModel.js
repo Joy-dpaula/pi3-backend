@@ -39,6 +39,7 @@ export async function createPaymentModel(compraId, creditCardId) {
     let qrCodeURL = null; 
 
     let creditCardData = undefined;
+    let boletoData = null; // Certifique-se de declarar boletoData aqui
 
     if (paymentMethod === 'creditCard') {
      
@@ -91,7 +92,7 @@ export async function createPaymentModel(compraId, creditCardId) {
         status = 'Aguardando';  
 
         // Gera os dados do boleto
-        boletoData = gerarCodigoBoleto(compra.veiculo.valor);
+     const boletoData = gerarCodigoBoleto(compra.veiculo.valor);
         console.log('Pagamento via Boleto Simulado:', boletoData);
     }  
     
