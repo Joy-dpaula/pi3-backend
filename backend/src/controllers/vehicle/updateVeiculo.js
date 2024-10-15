@@ -49,13 +49,13 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
 
     const veiculoData = {
         modelo,
-        anoFabricacao:(anoFabricacao, 10),
+        anoFabricacao:parseInt(anoFabricacao, 10),
         cor,
         descricao,
-        valor: parseFloat(valor),
-        km: parseFloat(km),
+        valor:(valor),
+        km:(km),
         marca,
-        usuarioId: (usuarioId, 10),
+        usuarioId,
         cidade,
         estado,
         cep,
@@ -72,7 +72,8 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
     }
 
     try {
-        const result = await updateVeiculo({ id: (id, 10), ...veiculoData });
+        const result = await updateVeiculo({ id: String(id), ...veiculoData });
+
 
         if (!result) {
             return res.status(404).json({ message: 'Veículo não encontrado.' });
