@@ -1,21 +1,16 @@
-// Dentro do seu vehicleRouter.js ou controlador
-
 import { Router } from 'express';
 import { createVeiculo } from '../../models/vehicleModel.js'; 
 import multer from 'multer';
-import path from 'path';
+import cloudinary from 'cloudinary';
 
-const storage = multer.diskStorage({
-    destination: (req, file, callback) => {
-        callback(null, path.resolve("uploads")); 
-    },
-    filename: (req, file, callback) => {
-        const time = Date.now();
-        callback(null, `${time}_${file.originalname}`);
-    }
-});
-
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+
+cloudinary.v2.config({
+    cloud_name: 'de0ujb8vh',
+    api_key: '259617411365387',
+    api_secret: 'rD3ZHcyDygGR8fTDaridZ-3Nab4'
+});
 
 const router = Router();
 
@@ -27,6 +22,20 @@ router.post('/', upload.single('foto'), async (req, res) => {
     }
 
     try {
+        const uploadOptions = {
+            resource_type: 'auto',
+            public_id: `veiculos/${Date.now()}_${req.file.originalname}`, 
+        };
+
+        const uploadResponse = await new Promise((resolve, reject) => {
+            cloudinary.v2.uploader.upload_stream(uploadOptions, (error, result) => {
+                if (error) {
+                    return reject(new Error('Erro ao fazer upload da imagem.'));
+                }
+                resolve(result);
+            }).end(req.file.buffer);
+        });
+
         const veiculoData = {
             modelo,
             anoFabricacao: parseInt(anoFabricacao),
@@ -35,8 +44,8 @@ router.post('/', upload.single('foto'), async (req, res) => {
             valor: parseFloat(valor),
             km: parseFloat(km),
             marca,
-            foto: req.file.filename, 
-            usuarioId: usuarioId,
+            foto: uploadResponse.secure_url,  
+            usuarioId: parseInt(usuarioId),
             cidade,
             estado,
             cep,
@@ -57,4 +66,3 @@ router.post('/', upload.single('foto'), async (req, res) => {
 });
 
 export default router;
-

@@ -1,23 +1,18 @@
 import { Router } from 'express';
 import { updateVeiculo } from '../../models/vehicleModel.js'; 
 import multer from 'multer';
-import path from 'path';
+import cloudinary from 'cloudinary';
 
-
-const storage = multer.diskStorage({
-    destination: (req, file, callback) => {
-        callback(null, path.resolve("uploads")); 
-    },
-    filename: (req, file, callback) => {
-        const time = Date.now();
-        callback(null, `${time}_${file.originalname}`);
-    }
-});
-
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-const router = Router();
+cloudinary.v2.config({
+    cloud_name: 'de0ujb8vh',
+    api_key: '259617411365387',
+    api_secret: 'rD3ZHcyDygGR8fTDaridZ-3Nab4'
+});
 
+const router = Router();
 
 router.put('/:id', upload.single('foto'), async (req, res) => {
     const { id } = req.params;
@@ -41,46 +36,60 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
         combustivel
     } = req.body;
 
- 
-
-    const veiculoData = {
-        modelo,
-        anoFabricacao:(anoFabricacao, 10),
-        cor,
-        descricao,
-        valor: parseFloat(valor),
-        km: parseFloat(km),
-        marca,
-        usuarioId: (usuarioId, 10),
-        cidade,
-        estado,
-        cep,
-        complemento,
-        logradouro,
-        numero,
-        cambio,
-        carroceria,
-        combustivel
-    };
-
-    if (req.file) {
-        veiculoData.foto = req.file.filename; 
-    }
-
     try {
-        const result = await updateVeiculo({ id: (id, 10), ...veiculoData });
+        const veiculoId = Number(id);
+        if (isNaN(veiculoId)) {
+            return res.status(400).json({ message: 'ID do veículo inválido.' });
+        }
 
-        if (!result) {
+        const veiculoData = {
+            modelo,
+            anoFabricacao: parseInt(anoFabricacao),
+            cor,
+            descricao,
+            valor: parseFloat(valor),
+            km: parseFloat(km),
+            marca,
+            usuarioId: parseInt(usuarioId),
+            cidade,
+            estado,
+            cep,
+            complemento,
+            logradouro,
+            numero,
+            cambio,
+            carroceria,
+            combustivel
+        };
+
+        if (req.file) {
+            const uploadOptions = {
+                resource_type: 'auto',
+                public_id: `veiculos/${Date.now()}_${req.file.originalname}`, 
+            };
+
+            const uploadResponse = await new Promise((resolve, reject) => {
+                cloudinary.v2.uploader.upload_stream(uploadOptions, (error, result) => {
+                    if (error) {
+                        return reject(new Error('Erro ao fazer upload da imagem.'));
+                    }
+                    resolve(result);
+                }).end(req.file.buffer);
+            });
+
+            veiculoData.foto = uploadResponse.secure_url; 
+        }
+
+        const updatedVeiculo = await updateVeiculo(veiculoId, veiculoData);
+
+        if (!updatedVeiculo) {
             return res.status(404).json({ message: 'Veículo não encontrado.' });
         }
 
-        res.json({ message: 'Veículo atualizado com sucesso!', veiculo: result });
+        res.status(200).json(updatedVeiculo);
     } catch (error) {
         console.error(error);
-        if (error?.code === 'P2025') {
-            return res.status(404).json({ message: `Veículo com ID ${id} não encontrado!` });
-        }
-        res.status(500).json({ message: 'Erro ao atualizar veículo.', error: error.message });
+        res.status(500).json({ message: 'Erro ao atualizar veículo.' });
     }
 });
 
