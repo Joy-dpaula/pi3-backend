@@ -1,4 +1,4 @@
-import { getUsuarioById, deleteAccountById } from '../../models/accountModel.js';
+import { getUsuarioById, deleteUsuarioById  } from '../../models/accountModel.js';
 import exceptionHandler from '../../utils/ajuda.js';
 
 export const deleteAccount = async (req, res) => {
@@ -16,7 +16,7 @@ export const deleteAccount = async (req, res) => {
             return res.status(404).json({ error: "Usuário não encontrado!" });
         }
 
-        await deleteAccountById(id);
+        await deleteUsuarioById(id);
 
         return res.status(200).json({ message: "Usuário deletado com sucesso!" });
     } catch (error) {
