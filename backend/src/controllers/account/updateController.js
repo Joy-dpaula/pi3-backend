@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { update } from "../../models/accountModel.js";
+import { updateUsuario } from "../../models/accountModel.js";
 import multer from 'multer';
 
 import { Router } from 'express';
@@ -99,7 +99,7 @@ const updateController = async (req, res) => {
     }
 };
 
-
+router.put('/:id', uploadImage, updateController);
 
 export default router;
 
