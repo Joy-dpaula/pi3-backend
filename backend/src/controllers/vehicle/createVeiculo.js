@@ -45,7 +45,7 @@ router.post('/', upload.single('foto'), async (req, res) => {
             km: parseFloat(km),
             marca,
             foto: uploadResponse.secure_url,  
-            usuarioId: parseInt(usuarioId),
+            usuarioId: usuarioId,
             cidade,
             estado,
             cep,
