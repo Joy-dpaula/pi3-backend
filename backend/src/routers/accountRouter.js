@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { createAccount } from '../controllers/account/createController.js';
+import createAccount from '../controllers/account/createController.js';
 import { deleteAccount } from '../controllers/account/deleteController.js';
 import updateAccount from '../controllers/account/updateController.js'; 
 import { getAccountByIdController } from '../controllers/account/getByIdController.js';
