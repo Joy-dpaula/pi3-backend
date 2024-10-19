@@ -45,7 +45,7 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>foto</th>
+            <th>Foto</th>
             <th>Marca</th>
             <th>Modelo</th>
             <th>Ano</th>
@@ -107,7 +107,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${veiculo.id}</td>
-                    <td><img src="../uploads/${veiculo.foto}" alt="Foto do Veículo" width="100"></td>
+                    <td><img src="${veiculo.foto}" alt="Foto do Veículo" width="100"></td>
                     <td>${veiculo.marca}</td>
                     <td>${veiculo.modelo}</td>
                     <td>${veiculo.anoFabricacao}</td>
