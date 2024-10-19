@@ -9,7 +9,7 @@ export const getveiculo = async () => {
 export const getByIdVeiculo = async (id) => {
     const veiculo = await prisma.veiculo.findUnique({
         where: {
-            id: String(id),
+            id: parseInt(id),
         },
     });
     return veiculo;
@@ -39,16 +39,9 @@ export const deleteVeiculo = async (id) => {
 }
 
 
-
-
-
-
-export const updateVeiculo = async (veiculo) => {
-    const result = await prisma.veiculo.update({
-        data: veiculo,
-        where:{
-           id: veiculo.id 
-        }
-    })
-    return result
-}
+export const updateVeiculo = async (id, data) => {
+    return await prisma.veiculo.update({
+        where: { id: id },
+        data: data,
+    });
+};

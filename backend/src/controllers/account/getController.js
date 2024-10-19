@@ -1,10 +1,10 @@
-import { getAccounts } from '../../models/accountModel.js'; 
+import {getUsuarios } from '../../models/accountModel.js'; 
 import exceptionHandler from '../../utils/ajuda.js';
 import { DateTime } from 'luxon';
 
 export const getAccount = async (req, res) => {
     try {
-        const accounts = await getAccounts();
+        const accounts = await getUsuarios();
 
         const accountsFormatted = accounts.map(account => ({
             ...account,
