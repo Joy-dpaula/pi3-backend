@@ -4,7 +4,7 @@ import exceptionHandler from '../../utils/ajuda.js';
 export const getAccountByIdController = async (req, res) => {
     const { id } = req.params; 
     try {
-        const account = await getAccountById(id);
+        const account = await getUsuarioById(id);
 
         if (!account) {
             return res.status(404).json({ error: "Conta não encontrada!" }); 
