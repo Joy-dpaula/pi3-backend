@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function newShopping({ usuarioId, veiculoId, method }) {
+export async function newShopping({ usuarioId, veiculoId, method  }) {
 
 
     if (!method) {
@@ -48,7 +48,8 @@ export async function newShopping({ usuarioId, veiculoId, method }) {
         select: {
             id: true,
             status: true,
-            method: true
+            method: true,
+            timestamp: true
         }
     });
 
@@ -61,6 +62,7 @@ export async function newShopping({ usuarioId, veiculoId, method }) {
 export async function getShoppingModel() {
 
     const compras = await prisma.compra.findMany({
+
         include: {
             usuario: {
                 select: {
