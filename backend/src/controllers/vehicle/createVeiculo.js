@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import { createVeiculo } from '../../models/vehicleModel.js'; 
 import multer from 'multer';
@@ -17,7 +16,7 @@ const router = Router();
 
 router.post('/', upload.single('foto'), async (req, res) => {
     const { modelo, anoFabricacao, cor, descricao, valor, km, marca, usuarioId, cidade, estado, cep, complemento, logradouro, numero, cambio, carroceria, combustivel } = req.body;
-    console.log('Arquivo recebido:', req.file);
+
     if (!req.file) {
         return res.status(400).json({ message: 'A foto do veículo é obrigatória.' });
     }
@@ -39,14 +38,14 @@ router.post('/', upload.single('foto'), async (req, res) => {
 
         const veiculoData = {
             modelo,
-            anoFabricacao,
+            anoFabricacao: parseInt(anoFabricacao),
             cor,
             descricao,
-            valor: parseFloat(valor), // Conversão de string para número
-            km: parseFloat(km), // Conversão de string para número
+            valor: parseFloat(valor),
+            km: parseFloat(km),
             marca,
-            usuarioId,
             foto: uploadResponse.secure_url,  
+            usuarioId: usuarioId,
             cidade,
             estado,
             cep,
@@ -58,16 +57,12 @@ router.post('/', upload.single('foto'), async (req, res) => {
             combustivel
         };
 
-        console.log('Dados recebidos para criar veículo:', veiculoData);
-
         const novoVeiculo = await createVeiculo(veiculoData);
         res.status(201).json(novoVeiculo);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Erro ao criar veículo.' });
     }
-
 });
 
 export default router;
-
