@@ -34,7 +34,6 @@ const updateController = async (req, res) => {
     const userId = userToken.id;
 
     console.log('isAdmin:', isAdmin); 
-    console.log('ID do usuário:', userId);  
 
     if (!isAdmin && String(id) !== String(userId)) {
         console.log("Você não tem permissão para atualizar este usuário.");
@@ -43,7 +42,7 @@ const updateController = async (req, res) => {
    
     try {
         const usuario = req.body;
-        usuario.id = Number(id);
+        usuario.id = (id);
 
 
 
