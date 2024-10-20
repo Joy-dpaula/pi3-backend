@@ -36,7 +36,7 @@ router.get('/todos', async (req, res) => {
 });
 
 router.get('/', getVeiculos);
-router.post('/', upload.single('foto'), handleCreateVeiculo); // Adicionando upload de foto no create
+router.post('/', handleCreateVeiculo); // Adicionando upload de foto no create
 router.get('/:id', getById);
 router.delete('/:id', deleteVeiculo);
 router.post('/financiamento', simulateFinancing);
