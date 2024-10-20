@@ -107,7 +107,7 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${usuario.id}</td>
-                        <td><img src="../perfil/${usuario.foto_perfil || 'default_profile.png'}" alt="Foto do Usuário" width="100"></td>
+                        <td><img src="${usuario.foto_perfil || 'default_profile.png'}" alt="Foto do Usuário" width="100"></td>
                         <td>${usuario.nome}</td>
                         <td>${usuario.email}</td>
                         <td>${usuario.cpf}</td>
