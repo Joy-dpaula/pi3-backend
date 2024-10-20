@@ -1,13 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcryptjs';
-import { DateTime } from 'luxon';
 import { z } from 'zod';
+import { DateTime } from 'luxon';
 
 const prisma = new PrismaClient();
-
 const gmt3Date = DateTime.now().setZone('America/Sao_Paulo');
 
+
 console.log("Current time in GMT-3:", gmt3Date.toString());
+
+
+
+
 
 const passwordSchema = z.string()
     .min(8, { message: "A senha deve ter um tamanho mínimo de 8 caracteres." })
@@ -23,33 +27,17 @@ const userSchema = z.object({
 });
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
+    // Validar o usuário antes de criar
+    const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
 
-    const result = userSchema.safeParse({ nome, cpf, email, senha })
-
-    if (!result.success) {
-        const errors = result.error.errors.map(err => err.message).join(", ");
-        throw new Error(errors);
-    }
-
-    const existingCpf = await prisma.usuario.findUnique({
-        where: { cpf }
-    });
-
-    const existingEmail = await prisma.usuario.findUnique({
-        where: { email }
-    });
-
-    if (existingCpf) {
-        throw new Error("Esse CPF já está em uso por outro usuário.");
-    }
-
-    if (existingEmail) {
-        throw new Error("Esse Email já está em uso por outro usuário.");
+    if (existingUsuario) {
+        return null; 
     }
 
     const hashedSenha = await bcrypt.hash(senha, 12);
-    const dataRegistroUTC = DateTime.now().setZone('America/Sao_Paulo').toUTC().toJSDate();
+    const dataRegistroUTC = gmt3Date.toUTC().toJSDate();
 
+    // Criar o novo usuário
     const usuario = await prisma.usuario.create({
         data: {
             nome,
@@ -58,23 +46,28 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
             cpf: cpf.toString(),
             telefone: telefone.toString(),
             nascimento:  nascimento ? new Date(nascimento) : null,
-            isAdmin: isAdmin || false,
+            isAdmin,
             cidade,
             estado,
-            foto_perfil,
-            data_registro: dataRegistroUTC,
+            foto_perfil, // Usando a variável foto_perfil corretamente
+            data_registro: dataRegistroUTC 
         },
         select: {
             id: true,
             nome: true,
             email: true,
             isAdmin: true,
-            nascimento: true,
+            data_registro: true,
+            cidade: true,
+            estado: true,
+            foto_perfil: true
         }
     });
 
+
     return usuario;
 }
+
 
 export async function getUsuarios() {
     const usuarios = await prisma.usuario.findMany();
@@ -83,27 +76,27 @@ export async function getUsuarios() {
 
 export async function getUsuarioById(id) {
     const account = await prisma.usuario.findUnique({
-        where: { id: String(id) },
+        where: { id: (id) },
     });
     return account;
 }
 
 export const deleteUsuarioById = async (id) => {
     return await prisma.usuario.delete({
-        where: { id: String(id) },
+        where: { id: (id) },
     });
 };
 
-export const update = async (id, data) => {
+
+export const updateUsuario = async (id, data, token) => {
     if (!id) {
         throw new Error('ID não fornecido');
     }
 
-   
 
     try {
         const updatedUsuario = await prisma.usuario.update({
-            where: { id: id },
+            where: { id },
             data,
             select: {
                 id: true,
@@ -122,7 +115,9 @@ export const update = async (id, data) => {
 
 export const getAccountById = async (id) => {
     const account = await prisma.usuario.findUnique({
+
         where: { id: id },
+
     });
     return account;
 };
@@ -147,3 +142,4 @@ export const getAccounts = async () => {
         throw new Error('Não foi possível buscar as contas');
     }
 };
+

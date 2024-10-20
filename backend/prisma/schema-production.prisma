@@ -86,7 +86,9 @@ model usuario {
   message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
+
   atividades                           UserActivity[]  @relation("usuarioAtividade") // Adicionando relação com UserActivity
+
 }
 
 model sessions {

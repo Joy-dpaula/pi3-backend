@@ -17,8 +17,7 @@ export default async function getShopping(req, res) {
             },  
             "Veículo": {
                 "ID": compra.veiculo.id,
-            },
-            "Data da Compra": new Date(compra.dataCompra).toLocaleDateString()
+            }
         }));
 
         res.status(200).json({

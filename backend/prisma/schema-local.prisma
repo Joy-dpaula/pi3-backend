@@ -9,9 +9,9 @@ datasource db {
 
 model cartaocredito {
   id           String    @id @default(uuid())
-  numero       String    @unique @db.VarChar(16)
+  numero       String    @db.VarChar(16)
   validade     String    @db.VarChar(5)
-  cvv          String    @unique @db.VarChar(100)
+  cvv          String     @db.VarChar(100)
   nomeTitular  String    @db.VarChar(100)
   bandeira     String    @db.VarChar(20)
   usuarioId    String
@@ -20,7 +20,6 @@ model cartaocredito {
   usuario      usuario   @relation(fields: [usuarioId], references: [id])
   payment      payment[]
 
-  @@index([usuarioId], map: "CartaoCredito_usuarioId_fkey")
 }
 
 model compra {
@@ -48,21 +47,20 @@ model message {
   @@index([recipientId], map: "Message_recipientId_fkey")
 }
 
-
 model payment {
-  id String @id @default(uuid())
+  id            String        @id @default(uuid())
   usuarioId     String
   paymentMethod String        @db.VarChar(20)
   status        String        @db.VarChar(20)
-  pixQRCodeURL  String?       @db.VarChar(255) 
-  boletoURL     String?       @db.VarChar(255) 
+  pixQRCodeURL  String?       @db.Text
+  boletoURL     String?       @db.VarChar(255)
   amount        Int
   timestamp     DateTime      @default(now())
   compra        compra        @relation(fields: [compraId], references: [id])
   usuario       usuario       @relation(fields: [usuarioId], references: [id])
   compraId      String
-  creditCardId  String
-  creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
+  creditCardId  String ?
+  creditCard    cartaocredito? @relation(fields: [creditCardId], references: [id])
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -86,12 +84,15 @@ model usuario {
   payment                              payment[]
   veiculo                              veiculo[]
   atividades                           UserActivity[]  @relation("usuarioAtividade") // Adicionando relação com UserActivity
+
+  sessions sessions[]
 }
 
 model sessions {
   id        String   @id @default(uuid())
   id_user   String
   session   String   @db.Text
+  usuario   usuario  @relation(fields: [id_user], references: [id])
   createdAt DateTime @default(now())
 
   @@index([id_user], map: "sessions_id_user_fkey")
@@ -124,13 +125,12 @@ model veiculo {
 }
 
 model Admin {
-  id      String   @id @default(uuid())
+  id      String  @id @default(uuid())
   nome    String
-  email   String   @unique
+  email   String  @unique
   senha   String
-  isAdmin Boolean  @default(true)
+  isAdmin Boolean @default(true)
 }
-
 
 model UserActivity {
   id        String   @id @default(uuid())

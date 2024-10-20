@@ -1,7 +1,9 @@
+
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import bcrypt from 'bcryptjs';
 import exceptionHandler from '../../utils/ajuda.js';
+
 
 export const createAdminUser = async (req, res) => {
     const { nome, email, senha } = req.body;
@@ -14,11 +16,13 @@ export const createAdminUser = async (req, res) => {
 
         const hashedSenha = await bcrypt.hash(senha, 12);
 
+
         const newUser = await prisma.Admin.create({
             data: {
                 nome,
                 email,
-                senha: hashedSenha,
+                senha: hashedSenha, // Salvando a senha hash
+
                 isAdmin: true,
             },
         });
@@ -29,10 +33,12 @@ export const createAdminUser = async (req, res) => {
     }
 };
 
+
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
     try {
         const user = await prisma.usuario.delete({ where: { id } });
+
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
@@ -42,26 +48,34 @@ export const deleteUser = async (req, res) => {
     }
 };
 
+
 export const getUsers = async (req, res) => {
     try {
         const users = await prisma.usuario.findMany();
+
         res.status(200).json(users);
     } catch (error) {
         exceptionHandler(error, res);
     }
 };
 
+                                                       
+
+
+
 export const updateUserByAdmin = async (req, res) => {
     const { id } = req.params;
-    const { nome, email, telefone, cidade, estado, foto_perfil } = req.body;
+    const { nome, email, telefone, cidade, estado } = req.body;
 
     try {
-        const userExists = await prisma.usuario.findUnique({ where: { id } });
+        const userExists = await prisma.Admin.findUnique({ where: { id } });
+
         if (!userExists) {
             return res.status(404).json({ error: 'Usuário não encontrado' });
         }
 
         const updatedUser = await prisma.usuario.update({
+
             where: { id },
             data: {
                 nome,
@@ -69,7 +83,6 @@ export const updateUserByAdmin = async (req, res) => {
                 telefone,
                 cidade,
                 estado,
-                foto_perfil,
             },
         });
 

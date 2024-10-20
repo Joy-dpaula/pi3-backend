@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
-import { update } from "../../models/accountModel.js";
+import { updateUsuario } from "../../models/accountModel.js";
 import multer from 'multer';
+
 import { Router } from 'express';
 import cloudinary from 'cloudinary';
 
@@ -18,19 +19,34 @@ const uploadImage = upload.single('foto_perfil');
 
 const updateController = async (req, res) => {
     const { id } = req.params;
+    const userToken = req.user; 
 
+    console.log("Informações do usuário autenticado:", userToken);
+
+   
+    if (!userToken || !userToken.id) {
+        console.log("Usuário não autenticado ou token inválido.");
+        return res.status(403).json({ error: "Usuário não autenticado ou token inválido." });
+    }
+
+
+    const isAdmin = userToken.isAdmin;
+    const userId = userToken.id;
+
+    console.log('isAdmin:', isAdmin); 
+
+    if (!isAdmin && String(id) !== String(userId)) {
+        console.log("Você não tem permissão para atualizar este usuário.");
+        return res.status(403).json({ error: "Você não tem permissão para atualizar este usuário." });
+    }
+   
     try {
         const usuario = req.body;
-        usuario.id = Number(id);
+        usuario.id = (id);
 
-        if (isNaN(usuario.id)) {
-            return res.status(400).json({ error: "ID inválido!" });
-        }
 
-        if (typeof usuario.isAdmin === 'string') {
-            usuario.isAdmin = usuario.isAdmin.toLowerCase() === 'true';
-        }
 
+       
         if (req.file) {
             const uploadResponse = await new Promise((resolve, reject) => {
                 const uploadOptions = {
@@ -53,7 +69,10 @@ const updateController = async (req, res) => {
             usuario.nascimento = new Date(usuario.nascimento);
         }
 
-        const result = await update(usuario);
+
+
+        const result = await updateUsuario(usuario.id, usuario);
+
 
         if (!result) {
             console.error("Update failed for user ID:", usuario.id);
@@ -63,7 +82,10 @@ const updateController = async (req, res) => {
         return res.json({
             success: "Conta atualizada com sucesso!",
             usuario: result
+
+
         });
+    
     } catch (error) {
         console.error("Error during user update:", error);
         if (error?.code === 'P2025') {
@@ -79,3 +101,4 @@ const updateController = async (req, res) => {
 router.put('/:id', uploadImage, updateController);
 
 export default router;
+

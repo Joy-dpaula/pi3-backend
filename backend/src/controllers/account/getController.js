@@ -1,4 +1,4 @@
-import { getUsuarios } from '../../models/accountModel.js'; 
+import {getUsuarios } from '../../models/accountModel.js'; 
 import exceptionHandler from '../../utils/ajuda.js';
 import { DateTime } from 'luxon';
 

@@ -36,30 +36,41 @@
 
     <script>
 
-        async function carregarVeiculos() {
-            const veiculoSelect = document.getElementById('veiculo');
 
-            try {
-                const response = await fetch('http://localhost:5000/api/veiculos');
-                const veiculos = await response.json();
+async function carregarVeiculos() {
+    const veiculoSelect = document.getElementById('veiculo');
 
-                if (veiculos.error) {
-                    alert('Erro ao carregar veículos: ' + veiculos.error);
-                    return;
-                }
-
-                veiculoSelect.innerHTML = '<option value="">Selecione um veículo</option>';
-                veiculos.forEach(veiculo => {
-                    const option = document.createElement('option');
-                    option.value = veiculo.id;
-                    option.textContent = `${veiculo.marca} ${veiculo.modelo} - R$ ${veiculo.valor}`;
-                    veiculoSelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Erro ao carregar veículos:', error);
-                veiculoSelect.innerHTML = '<option value="">Erro ao carregar veículos</option>';
-            }
+    try {
+        const response = await fetch('http://localhost:5000/veiculos');
+        if (!response.ok) {
+            throw new Error('Erro ao carregar veículos');
         }
+
+        const veiculosObj = await response.json();
+
+        // Acessa a chave "veiculos" que contém a lista
+        const veiculos = veiculosObj.veiculos; 
+
+        console.log('Veículos carregados:', veiculos);
+
+        // Verifica se a resposta é um array
+        if (!Array.isArray(veiculos)) {
+            throw new Error('A resposta não é uma lista de veículos');
+        }
+
+        veiculoSelect.innerHTML = '<option value="">Selecione um veículo</option>';
+        veiculos.forEach(veiculo => {
+            const option = document.createElement('option');
+            option.value = veiculo.id;
+            option.textContent = `${veiculo.marca} ${veiculo.modelo} - R$ ${veiculo.valor.toFixed(2)}`;
+            veiculoSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar veículos:', error);
+        veiculoSelect.innerHTML = '<option value="">Erro ao carregar veículos</option>';
+    }
+}
+
 
         window.onload = carregarVeiculos;
 
@@ -71,7 +82,7 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:5000/api/veiculo/${veiculoId}`);
+                const response = await fetch(`http://localhost:5000/veiculo/${veiculoId}`);
                 const veiculo = await response.json();
 
                 if (veiculo.error) {

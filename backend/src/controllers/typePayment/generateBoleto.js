@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prismaClient = new PrismaClient();
 
 async function buscarDetalhesPagamento(idPagamento) {
+
     try {
         const pagamento = await prismaClient.payment.findUnique({
             where: { id: idPagamento },
@@ -32,6 +33,7 @@ function gerarCodigoBoleto(valor) {
     };
 }
 
+
 export async function generateBoleto(idPagamento) {
     const valor = await buscarDetalhesPagamento(idPagamento);
 
@@ -45,3 +47,4 @@ export async function generateBoleto(idPagamento) {
     console.log(`Código de Barras do Boleto: ${boleto.codigoBarras}`);
     console.log(`Código Copiar e Colar: ${boleto.codigoCopiarColar}`);
 }
+
