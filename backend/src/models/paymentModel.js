@@ -7,12 +7,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 function gerarCodigoBoleto(valor) {
-    const valorFormatado = valor.toFixed(2).replace('.', ''); 
+    const valorFormatado = valor.toFixed(2).replace('.', '');
     const codigoBarras = `34191.75803 01234.567890 12345.678904 1 234500000${valorFormatado}`;
 
     return {
-        codigoBarras,
-        codigoCopiarColar,
+        codigoBarras
     };
 }
 
@@ -34,15 +33,15 @@ export async function createPaymentModel(compraId, creditCardId) {
 
     const paymentMethod = compra.method;
     let status = 'pendente';
-    const paymentId = uuidv4();  
+    const paymentId = uuidv4();
 
-    let qrCodeURL = null; 
+    let qrCodeURL = null;
 
     let creditCardData = undefined;
-    let boletoData = null; // Certifique-se de declarar boletoData aqui
+    let boletoData = null;
 
     if (paymentMethod === 'creditCard') {
-     
+
         console.log("creditCardId recebido:", creditCardId);
 
         if (creditCardId === undefined || creditCardId === null) {
@@ -61,20 +60,20 @@ export async function createPaymentModel(compraId, creditCardId) {
             throw new Error('Cartão de crédito não pertencente ao usuário!');
         }
 
-        status = 'Aprovado'; 
+        status = 'Aprovado';
         creditCardData = {
             connect: { id: creditCardId }
         };
-        
-    
+
+
 
     } else if (paymentMethod === 'pix') {
-        
+
         status = 'Aguardando';
 
         const pixData = {
-            transactionId: paymentId, 
-            amount: compra.veiculo.valor,  
+            transactionId: paymentId,
+            amount: compra.veiculo.valor,
             timestamp: new Date().toISOString(),
         };
 
@@ -88,15 +87,17 @@ export async function createPaymentModel(compraId, creditCardId) {
 
         console.log('Pagamento Pix Simulado:', pixData);
 
-    }else if (paymentMethod === 'boleto') {
-        status = 'Aguardando';  
+    } else if (paymentMethod === 'boleto') {
+        status = 'Aguardando';
 
-        // Gera os dados do boleto
-     const boletoData = gerarCodigoBoleto(compra.veiculo.valor);
+        boletoData = gerarCodigoBoleto(compra.veiculo.valor);
+        if (!boletoData || !boletoData.codigoBarras) {
+            throw new Error('Falha ao gerar o boleto ou código de barras indisponível.');
+        }
         console.log('Pagamento via Boleto Simulado:', boletoData);
-    }  
-    
-    
+    }
+
+
     else {
         throw new Error('Método de pagamento inválido!');
     }
@@ -112,16 +113,16 @@ export async function createPaymentModel(compraId, creditCardId) {
         usuario: {
             connect: { id: compra.usuarioId }
         },
-        creditCard: creditCardData, 
-        pixQRCodeURL: qrCodeURL || undefined  ,
-        boletoURL:  boletoData ? boletoData.codigoBarras : undefined
+        creditCard: creditCardData,
+        pixQRCodeURL: qrCodeURL || undefined,
+        boletoURL: boletoData ? boletoData.codigoBarras : undefined
     };
 
     const payment = await prisma.payment.create({
         data: paymentData
     });
 
-    // Atualiza o status da compra para "aceita"
+
     await prisma.compra.update({
         where: { id: compraId },
         data: {
@@ -129,10 +130,9 @@ export async function createPaymentModel(compraId, creditCardId) {
         }
     });
 
-    // Retorna o pagamento, incluindo o QR Code para Pix, se aplicável
+    
     return {
-        payment,
-        qrCodeURL
+        payment
     };
 }
 
@@ -178,7 +178,7 @@ export async function updatePaymentModel(id, {
         data: {
             usuarioId: usuarioId ?? pagamentoExistente.usuarioId,
             compraId: compraId ?? pagamentoExistente.compraId,
-            creditCardId: creditCardId !== undefined ? creditCardId : pagamentoExistente.creditCardId, 
+            creditCardId: creditCardId !== undefined ? creditCardId : pagamentoExistente.creditCardId,
             paymentMethod: paymentMethod ?? pagamentoExistente.paymentMethod,
             status: status ?? pagamentoExistente.status,
             amount: amount ?? pagamentoExistente.amount,
@@ -197,8 +197,8 @@ export async function deletePaymentModel(id) {
     if (!payment) {
         throw new Error('Pagamento não encontrado ou não efetuado!');
     }
-    
+
     const pagamentoDeletado = await prisma.payment.delete({ where: { id: (id) } });
- 
-   return pagamentoDeletado;
+
+    return pagamentoDeletado;
 }

@@ -25,17 +25,17 @@ export async function newShopping({ usuarioId, veiculoId, method }) {
         throw new Error('Veículo não encontrado.');
     }
 
-   // const existingShopping = await prisma.compra.findFirst({
-     //   where: {
-       //     veiculoId: veiculoId
-       // }
-   // });
+    const existingShopping = await prisma.compra.findFirst({
+        where: {
+            veiculoId: veiculoId
+        }
+    });
 
-  //  if (existingShopping) {
-    //    throw new Error('Compra de veículo já efetuada!');
-   // }
+    if (existingShopping) {
+        throw new Error('Compra de veículo já efetuada!');
+    }
 
- 
+
 
 
     const compra = await prisma.compra.create({
@@ -43,12 +43,12 @@ export async function newShopping({ usuarioId, veiculoId, method }) {
             veiculoId: veiculoId,
             usuarioId: usuarioId,
             status: 'pendente',
-            method: method 
+            method: method
         },
         select: {
             id: true,
             status: true,
-            method: true 
+            method: true
         }
     });
 
@@ -87,12 +87,12 @@ export async function getShoppingById(id) {
         where: { id: String(id) },
         include: {
             usuario: { select: { id: true } },
-            veiculo: { select: {id: true} },
+            veiculo: { select: { id: true } },
         },
     });
 
-    if(!compra) throw new Error('Compra não encontrada!');
-  
+    if (!compra) throw new Error('Compra não encontrada!');
+
     return compra;
 }
 
@@ -100,7 +100,7 @@ export async function deleteShoppingModel(id) {
 
     const compra = await prisma.compra.findUnique({ where: { id: String(id) } });
 
-    if(!compra) throw new Error('Compra não encontrada!');
+    if (!compra) throw new Error('Compra não encontrada!');
 
     await prisma.compra.delete({ where: { id: String(id) } });
 
@@ -109,26 +109,25 @@ export async function deleteShoppingModel(id) {
 
 export async function updateShopping(shoppingId, data) {
     const { veiculoId, method } = data;
-  
+
     if (veiculoId) {
-      const veiculo = await prisma.veiculo.findUnique({
-        where: {
-          id: veiculoId,
-        },
-      });
-  
-      if (!veiculo) {
-        throw new Error('Veículo não encontrado.');
-      }
+        const veiculo = await prisma.veiculo.findUnique({
+            where: {
+                id: veiculoId,
+            },
+        });
+
+        if (!veiculo) {
+            throw new Error('Veículo não encontrado.');
+        }
     }
-  
+
     const updatedShopping = await prisma.compra.update({
-      where: { id: shoppingId },
-      data: {
-        method, 
-      },
+        where: { id: shoppingId },
+        data: {
+            method,
+        },
     });
-  
+
     return updatedShopping;
-  }
-  
+}
