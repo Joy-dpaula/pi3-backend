@@ -113,7 +113,8 @@ export async function createPaymentModel(compraId, creditCardId) {
         usuario: {
             connect: { id: compra.usuarioId }
         },
-        creditCard: creditCardData,
+        ...(paymentMethod === 'creditCard' && creditCardData && { creditCard: creditCardData }), // Inclui creditCard apenas se o método de pagamento for cartão de crédito
+
         pixQRCodeURL: qrCodeURL || undefined,
         boletoURL: boletoData ? boletoData.codigoBarras : undefined
     };

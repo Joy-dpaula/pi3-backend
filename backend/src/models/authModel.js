@@ -34,7 +34,7 @@ export const loginModel = async (email, senha, res) => {
 
     await prisma.sessions.create({
       data: {
-          id_user: usuario.id,
+          iduser: usuario.id,
           session: accessToken,
       }
   });
@@ -72,7 +72,7 @@ export const logoutModel = async (email, token) => {
  
   const deletedSession = await prisma.sessions.deleteMany({
       where: {
-          id_user: usuario.id,
+          iduser: usuario.id,
           session: token
       }
   });
