@@ -14,6 +14,36 @@ cloudinary.v2.config({
     api_secret: 'rD3ZHcyDygGR8fTDaridZ-3Nab4'
 });
 
+// URL da imagem padrão que será enviada para o Cloudinary
+const DEFAULT_PROFILE_PIC_URL = 'https://st.depositphotos.com/2101611/3925/v/450/depositphotos_39258193-stock-illustration-anonymous-business-man-icon.jpg';
+
+// Função para fazer upload da imagem padrão para o Cloudinary
+const uploadDefaultProfilePic = async () => {
+    const uploadOptions = {
+        resource_type: 'auto',
+        public_id: 'usuarios/default_profile_pic',
+    };
+
+    try {
+        const result = await cloudinary.v2.uploader.upload(DEFAULT_PROFILE_PIC_URL, uploadOptions);
+        return result.secure_url;
+    } catch (error) {
+        console.error('Erro ao fazer upload da imagem padrão:', error);
+        throw new Error('Erro ao fazer upload da imagem padrão.');
+    }
+};
+
+let DEFAULT_PROFILE_PIC_URL_CLOUDINARY;
+
+// Fazendo o upload da imagem padrão uma vez ao iniciar a aplicação
+(async () => {
+    try {
+        DEFAULT_PROFILE_PIC_URL_CLOUDINARY = await uploadDefaultProfilePic();
+    } catch (error) {
+        console.error('Erro ao definir imagem padrão:', error);
+    }
+})();
+
 export const createAccount = [
     upload.single('foto_perfil'),
     async (req, res) => {
@@ -22,30 +52,37 @@ export const createAccount = [
         if (!nome || !email || !senha || !cpf || !telefone) {
             return res.status(400).json({ error: "Nome, email, senha, CPF e telefone são obrigatórios." });
         }
-        if (!req.file) {
-            return res.status(400).json({ message: 'A foto do usuário é obrigatória.' });
-        }
+
         if (senha.length < 8) {
             return res.status(400).json({ error: "A senha deve ter no mínimo 8 caracteres." });
         }
+
         if (isNaN(cpf) || isNaN(telefone)) {
             return res.status(400).json({ error: "CPF e telefone devem conter apenas números." });
         }
 
         try {
-            const uploadOptions = {
-                resource_type: 'auto',
-                public_id: `usuarios/${Date.now()}_${req.file.originalname}`, 
-            };
+            let foto_perfil;
 
-            const uploadResponse = await new Promise((resolve, reject) => {
-                cloudinary.v2.uploader.upload_stream(uploadOptions, (error, result) => {
-                    if (error) {
-                        return reject(new Error('Erro ao fazer upload da imagem.'));
-                    }
-                    resolve(result);
-                }).end(req.file.buffer);
-            });
+            if (req.file) {
+                const uploadOptions = {
+                    resource_type: 'auto',
+                    public_id: `usuarios/${Date.now()}_${req.file.originalname}`,
+                };
+
+                const uploadResponse = await new Promise((resolve, reject) => {
+                    cloudinary.v2.uploader.upload_stream(uploadOptions, (error, result) => {
+                        if (error) {
+                            return reject(new Error('Erro ao fazer upload da imagem.'));
+                        }
+                        resolve(result);
+                    }).end(req.file.buffer);
+                });
+
+                foto_perfil = uploadResponse.secure_url;
+            } else {
+                foto_perfil = DEFAULT_PROFILE_PIC_URL_CLOUDINARY; // Usa a imagem padrão do Cloudinary
+            }
 
             const usuario = await createNewUser({
                 nome,
@@ -56,7 +93,7 @@ export const createAccount = [
                 nascimento,
                 cidade,
                 estado,
-                foto_perfil: uploadResponse.secure_url,
+                foto_perfil,
                 isAdmin
             });
 
@@ -77,4 +114,3 @@ export const createAccount = [
         }
     }
 ];
-
