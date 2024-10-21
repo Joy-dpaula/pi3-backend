@@ -21,7 +21,6 @@ model cartaocredito {
   usuario      usuario   @relation(fields: [usuarioId], references: [id])
   payment      payment[]
 
-  @@index([usuarioId], map: "CartaoCredito_usuarioId_fkey")
 }
 
 model compra {
@@ -35,19 +34,9 @@ model compra {
   veiculo   veiculo   @relation(fields: [veiculoId], references: [id])
   payment   payment[]
 
-  @@index([usuarioId], map: "Compra_usuarioId_fkey")
-  @@index([veiculoId], map: "Compra_veiculoId_fkey")
+ 
 }
 
-model message {
-  id                                   String   @id @default(uuid())
-  recipientId                          String
-  content                              String
-  timestamp                            DateTime @default(now())
-  usuario_message_recipientIdTousuario usuario  @relation("message_recipientIdTousuario", fields: [recipientId], references: [id])
-
-  @@index([recipientId], map: "Message_recipientId_fkey")
-}
 
 
 model payment {
@@ -62,10 +51,10 @@ model payment {
   compra        compra        @relation(fields: [compraId], references: [id])
   usuario       usuario       @relation(fields: [usuarioId], references: [id])
   compraId      String
-  creditCardId  String
-  creditCard    cartaocredito @relation(fields: [creditCardId], references: [id])
+  creditCardId  String?
+  creditCard    cartaocredito? @relation(fields: [creditCardId], references: [id])
 
-  @@index([usuarioId], map: "Payment_usuarioId_fkey")
+
 }
 
 model usuario {
@@ -83,7 +72,6 @@ model usuario {
   data_registro                        DateTime        @default(now())
   cartaocredito                        cartaocredito[]
   compra                               compra[]
-  message_message_recipientIdTousuario message[]       @relation("message_recipientIdTousuario")
   payment                              payment[]
   veiculo                              veiculo[]
 
@@ -93,11 +81,10 @@ model usuario {
 
 model sessions {
   id        String   @id @default(uuid())
-  id_user   String
+  iduser   String
   session   String   @db.Text
   createdAt DateTime @default(now())
 
-  @@index([id_user], map: "sessions_id_user_fkey")
 }
 
 model veiculo {
@@ -123,7 +110,6 @@ model veiculo {
   compra        compra[]
   usuario       usuario  @relation(fields: [usuarioId], references: [id])
 
-  @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
 }
 
 model Admin {
