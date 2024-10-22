@@ -9,7 +9,7 @@ export const getveiculo = async () => {
 export const getByIdVeiculo = async (id) => {
     const veiculo = await prisma.veiculo.findUnique({
         where: {
-            id: parseInt(id),
+            id: (id),
         },
     });
     return veiculo;
