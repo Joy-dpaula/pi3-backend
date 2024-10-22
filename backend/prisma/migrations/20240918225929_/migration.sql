@@ -1,4 +1,0 @@
-ALTER TABLE `veiculo` 
-ADD COLUMN `cidade` VARCHAR(30),
-ADD COLUMN `estado` VARCHAR(30),
-MODIFY `cor` VARCHAR(25) NOT NULL;

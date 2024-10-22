@@ -27,7 +27,7 @@ const userSchema = z.object({
 });
 
 export async function createNewUser({ nome, email, senha, cpf, telefone, nascimento, isAdmin, cidade, estado, foto_perfil }) {
-    // Validar o usuário antes de criar
+ 
     const existingUsuario = await prisma.usuario.findUnique({ where: { email } });
 
     if (existingUsuario) {
@@ -37,7 +37,8 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
     const hashedSenha = await bcrypt.hash(senha, 12);
     const dataRegistroUTC = gmt3Date.toUTC().toJSDate();
 
-    // Criar o novo usuário
+
+    
     const usuario = await prisma.usuario.create({
         data: {
             nome,
@@ -49,7 +50,7 @@ export async function createNewUser({ nome, email, senha, cpf, telefone, nascime
             isAdmin,
             cidade,
             estado,
-            foto_perfil, // Usando a variável foto_perfil corretamente
+            foto_perfil,
             data_registro: dataRegistroUTC 
         },
         select: {

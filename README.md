@@ -21,8 +21,6 @@ npm run prisma:local:migrate
 `````
 git checkout sua-branch
 
-git checkout master
-
 git pull origin master
 
 git checkout sua-branch
