@@ -80,7 +80,7 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
             valor: parseFloat(valor),
             km: parseFloat(km),
             marca,
-            usuarioId: parseInt(usuarioId),
+            usuarioId: usuarioId,
             cidade,
             estado,
             cep,
