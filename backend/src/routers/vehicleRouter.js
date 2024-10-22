@@ -1,7 +1,8 @@
 import express from 'express';
 import deleteVeiculo from '../controllers/vehicle/deleteVeiculo.js';
 import getById from '../controllers/vehicle/getByIdVeiculo.js'; 
-import getVeiculos from '../controllers/vehicle/getVeiculo.js'; 
+import getVeiculos from '../controllers/vehicle/getVeiculo.js';
+import updateVeiculo from '../controllers/vehicle/updateVeiculo.js'; 
 import { PrismaClient } from '@prisma/client';
 import { simulateFinancing } from '../controllers/vehicle/financeSimulator.js';
 import handleCreateVeiculo from '../controllers/vehicle/createVeiculo.js';
@@ -40,5 +41,6 @@ router.post('/', handleCreateVeiculo); // Adicionando upload de foto no create
 router.get('/:id', getById);
 router.delete('/:id', deleteVeiculo);
 router.post('/financiamento', simulateFinancing);
+router.put('/:id', updateVeiculo);
 
 export default router;
