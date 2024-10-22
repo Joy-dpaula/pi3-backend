@@ -39,7 +39,7 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
 
     const veiculoData = {
         modelo,
-        anoFabricacao: parseInt(anoFabricacao, 10),
+        anoFabricacao: parseInt(anoFabricacao),
         cor,
         descricao,
         valor: parseFloat(valor),
