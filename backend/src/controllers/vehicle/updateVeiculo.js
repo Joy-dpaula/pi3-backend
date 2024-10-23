@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { updateVeiculo } from '../../models/vehicleModel.js'; 
 import multer from 'multer';
 import cloudinary from 'cloudinary';
+import { validate as validateUUID } from 'uuid';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -16,7 +17,6 @@ const router = Router();
 
 router.put('/:id', upload.single('foto'), async (req, res) => {
     const { id } = req.params;
-
     const {
         modelo,
         anoFabricacao,
@@ -37,31 +37,36 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
         combustivel
     } = req.body;
 
-    const veiculoData = {
-        modelo,
-        anoFabricacao: parseInt(anoFabricacao),
-        cor,
-        descricao,
-        valor: parseFloat(valor),
-        km: parseFloat(km),
-        marca,
-        usuarioId,
-        cidade,
-        estado,
-        cep,
-        complemento,
-        logradouro,
-        numero,
-        cambio,
-        carroceria,
-        combustivel
-    };
-
     try {
+        const veiculoId = String(id);
+        if (!validateUUID(veiculoId)) {
+            return res.status(400).json({ message: 'ID do veículo inválido.' });
+        }
+
+        const veiculoData = {
+            modelo,
+            anoFabricacao: isNaN(parseInt(anoFabricacao)) ? null : parseInt(anoFabricacao),
+            cor,
+            descricao,
+            valor: isNaN(parseFloat(valor)) ? null : parseFloat(valor),
+            km: isNaN(parseFloat(km)) ? null : parseFloat(km),
+            marca,
+            usuarioId,
+            cidade,
+            estado,
+            cep,
+            complemento,
+            logradouro,
+            numero,
+            cambio,
+            carroceria,
+            combustivel
+        };
+
         if (req.file) {
             const uploadOptions = {
                 resource_type: 'auto',
-                public_id: `veiculos/${Date.now()}_${req.file.originalname}`, 
+                public_id: `veiculos/${Date.now()}_${req.file.originalname}`,
             };
 
             const uploadResponse = await new Promise((resolve, reject) => {
@@ -73,10 +78,10 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
                 }).end(req.file.buffer);
             });
 
-            veiculoData.foto = uploadResponse.secure_url; 
+            veiculoData.foto = uploadResponse.secure_url;
         }
 
-        const updatedVeiculo = await updateVeiculo(String(id), veiculoData);
+        const updatedVeiculo = await updateVeiculo(veiculoId, veiculoData);
 
         if (!updatedVeiculo) {
             return res.status(404).json({ message: 'Veículo não encontrado.' });
