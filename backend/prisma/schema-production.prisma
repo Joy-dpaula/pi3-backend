@@ -17,7 +17,7 @@ model cartaocredito {
   usuarioId    String
   criadoEm     DateTime  @default(now())
   atualizadoEm DateTime
-  usuario      usuario   @relation(fields: [usuarioId], references: [id])
+  usuario      usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   payment      payment[]
 }
 
@@ -28,8 +28,8 @@ model compra {
   status    String    @default("pendente")
   method    String
   timestamp DateTime  @default(now())
-  usuario   usuario   @relation(fields: [usuarioId], references: [id])
-  veiculo   veiculo   @relation(fields: [veiculoId], references: [id])
+  usuario   usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  veiculo   veiculo   @relation(fields: [veiculoId], references: [id], onDelete: Cascade)
   payment   payment[]
 
   @@index([usuarioId], map: "Compra_usuarioId_fkey")
@@ -45,11 +45,11 @@ model payment {
   boletoURL     String?        @db.VarChar(255)
   amount        Int
   timestamp     DateTime       @default(now())
-  compra        compra         @relation(fields: [compraId], references: [id])
-  usuario       usuario        @relation(fields: [usuarioId], references: [id])
+  compra        compra         @relation(fields: [compraId], references: [id], onDelete: Cascade)
+  usuario       usuario        @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   compraId      String
   creditCardId  String?
-  creditCard    cartaocredito? @relation(fields: [creditCardId], references: [id])
+  creditCard    cartaocredito? @relation(fields: [creditCardId], references: [id], onDelete: Cascade)
 
   @@index([usuarioId], map: "Payment_usuarioId_fkey")
 }
@@ -81,7 +81,7 @@ model sessions {
   id        String   @id @default(uuid())
   iduser    String
   session   String   @db.Text
-  usuario   usuario  @relation(fields: [iduser], references: [id])
+  usuario   usuario  @relation(fields: [iduser], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
 
@@ -106,7 +106,7 @@ model veiculo {
   carroceria    String
   combustivel   String
   compra        compra[]
-  usuario       usuario  @relation(fields: [usuarioId], references: [id])
+  usuario       usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
   @@index([usuarioId], map: "Veiculo_usuarioId_fkey")
 }
@@ -124,7 +124,7 @@ model UserActivity {
   userId    String
   action    String
   timestamp DateTime @default(now())
-  usuario   usuario  @relation("usuarioAtividade", fields: [userId], references: [id])
+  usuario   usuario  @relation("usuarioAtividade", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "UserActivity_userId_idx")
 }

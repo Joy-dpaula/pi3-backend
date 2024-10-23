@@ -83,6 +83,12 @@ export async function getUsuarioById(id) {
 }
 
 export const deleteUsuarioById = async (id) => {
+
+    await prisma.veiculo.deleteMany({
+        where: { usuarioId: id }
+    });
+
+
     return await prisma.usuario.delete({
         where: { id: (id) },
     });
