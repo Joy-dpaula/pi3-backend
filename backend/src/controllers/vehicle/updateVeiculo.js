@@ -36,9 +36,8 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
         combustivel
     } = req.body;
 
-    if (!modelo || !marca || !usuarioId) {
-        return res.status(400).json({ message: 'Modelo, marca e ID do usuário são obrigatórios.' });
-    }
+   
+    
 
     try {
         let fotoUrl;
