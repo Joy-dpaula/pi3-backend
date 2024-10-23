@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { updateVeiculo } from '../../models/vehicleModel.js'; 
+import { createVeiculo, updateVeiculo } from '../../models/vehicleModel.js'; 
 import multer from 'multer';
 import cloudinary from 'cloudinary';
-import { validate as validateUUID } from 'uuid';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -16,7 +15,7 @@ cloudinary.v2.config({
 const router = Router();
 
 router.put('/:id', upload.single('foto'), async (req, res) => {
-    const { id } = req.params;
+    const vehicleId = req.params.id;
     const {
         modelo,
         anoFabricacao,
@@ -37,36 +36,18 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
         combustivel
     } = req.body;
 
-    try {
-        const veiculoId = String(id);
-        if (!validateUUID(veiculoId)) {
-            return res.status(400).json({ message: 'ID do veículo inválido.' });
-        }
+    if (!modelo || !marca || !usuarioId) {
+        return res.status(400).json({ message: 'Modelo, marca e ID do usuário são obrigatórios.' });
+    }
 
-        const veiculoData = {
-            modelo,
-            anoFabricacao: isNaN(parseInt(anoFabricacao)) ? null : parseInt(anoFabricacao),
-            cor,
-            descricao,
-            valor: isNaN(parseFloat(valor)) ? null : parseFloat(valor),
-            km: isNaN(parseFloat(km)) ? null : parseFloat(km),
-            marca,
-            usuarioId,
-            cidade,
-            estado,
-            cep,
-            complemento,
-            logradouro,
-            numero,
-            cambio,
-            carroceria,
-            combustivel
-        };
+    try {
+        let fotoUrl;
 
         if (req.file) {
             const uploadOptions = {
                 resource_type: 'auto',
                 public_id: `veiculos/${Date.now()}_${req.file.originalname}`,
+                overwrite: true  
             };
 
             const uploadResponse = await new Promise((resolve, reject) => {
@@ -78,19 +59,35 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
                 }).end(req.file.buffer);
             });
 
-            veiculoData.foto = uploadResponse.secure_url;
+            fotoUrl = uploadResponse.secure_url;
         }
 
-        const updatedVeiculo = await updateVeiculo(veiculoId, veiculoData);
+        const veiculoData = {
+            modelo,
+            anoFabricacao: parseInt(anoFabricacao, 10),
+            cor,
+            descricao,
+            valor: parseFloat(valor),
+            km: parseFloat(km),
+            marca,
+            usuarioId,
+            cidade,
+            estado,
+            cep,
+            complemento,
+            logradouro,
+            numero,
+            cambio,
+            carroceria,
+            combustivel,
+            ...(fotoUrl && { foto: fotoUrl }) 
+        };
 
-        if (!updatedVeiculo) {
-            return res.status(404).json({ message: 'Veículo não encontrado.' });
-        }
-
+        const updatedVeiculo = await updateVeiculo(vehicleId, veiculoData); 
         res.status(200).json(updatedVeiculo);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Erro ao atualizar veículo.' });
+        console.error('Erro ao atualizar veículo:', error.message);
+        res.status(500).json({ message: 'Erro ao atualizar veículo.', error: error.message });
     }
 });
 
