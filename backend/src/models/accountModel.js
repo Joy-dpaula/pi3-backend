@@ -95,21 +95,28 @@ export const deleteUsuarioById = async (id) => {
 };
 
 
-export const updateUsuario = async (id, data, token) => {
+export const updateUsuario = async (id, data, token, senha) => {
     if (!id) {
         throw new Error('ID não fornecido');
     }
-
+  
+    if (senha) {
+        const hashedSenha = await bcrypt.hash(senha, 12);
+        data.senha = hashedSenha; // Atualiza o campo senha em `data` com o hash
+    }
 
     try {
         const updatedUsuario = await prisma.usuario.update({
             where: { id },
-            data,
+            data:{
+                ...data,
+            },
             select: {
                 id: true,
                 nome: true,
                 email: true,
                 isAdmin: true,
+                senha: true
             },
         });
 

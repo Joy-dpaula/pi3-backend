@@ -69,6 +69,10 @@ const updateController = async (req, res) => {
             usuario.nascimento = new Date(usuario.nascimento);
         }
 
+        if (usuario.senha) {
+            usuario.senha = await bcrypt.hash(usuario.senha, 12);
+        }
+
 
 
         const result = await updateUsuario(usuario.id, usuario);
